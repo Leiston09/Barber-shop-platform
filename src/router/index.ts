@@ -9,7 +9,7 @@ const routes = [
   {
     path: "/admin",
     name: "Admin",
-    component: () => import("@/views/admin/AdminLayout.vue"),
+    component: () => import("@/views/admin/AdminLayouts.vue"),
     meta: { requireAdmin: true },
     children: [
       {
