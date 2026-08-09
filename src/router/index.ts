@@ -49,7 +49,7 @@ const routes = [
       {
         path: ":id/editar",
         component: () =>
-          import("@/views/appoiments/EditAppoinetmentsLayout.vue"),
+          import("@/views/appoiments/EdiAppoinetmentsLayout.vue"),
         children: [
           {
             path: "",
