@@ -308,6 +308,14 @@
               >
                 Desbloquear
               </button>
+              <button
+                v-if="canDelete(user)"
+                type="button"
+                @click="openModal('delete', user)"
+                class="px-3 py-2 text-[9px] uppercase tracking-[0.2em] border border-red-500/30 text-red-400/80 hover:text-red-300 hover:border-red-500/60 hover:bg-red-500/10 rounded-lg transition-all duration-200"
+              >
+                Eliminar
+              </button>
             </div>
           </article>
         </div>
@@ -352,7 +360,9 @@
 
           <div class="flex justify-between border-b border-white/5 pb-3">
             <span class="text-white/35 text-xs">Rol</span>
-            <span class="text-white/80">{{ roleLabel(selectedUser.role) }}</span>
+            <span class="text-white/80">{{
+              roleLabel(selectedUser.role)
+            }}</span>
           </div>
 
           <div class="flex justify-between border-b border-white/5 pb-3">
@@ -389,7 +399,9 @@
           <div
             class="bg-white/[0.02] border border-white/5 rounded-xl p-3 text-center"
           >
-            <p class="text-[8px] uppercase tracking-[0.25em] text-white/30 mb-1">
+            <p
+              class="text-[8px] uppercase tracking-[0.25em] text-white/30 mb-1"
+            >
               Citas
             </p>
             <p class="font-barber text-lg text-white">
@@ -399,7 +411,9 @@
           <div
             class="bg-white/[0.02] border border-white/5 rounded-xl p-3 text-center"
           >
-            <p class="text-[8px] uppercase tracking-[0.25em] text-white/30 mb-1">
+            <p
+              class="text-[8px] uppercase tracking-[0.25em] text-white/30 mb-1"
+            >
               Gastado
             </p>
             <p class="font-barber text-lg text-[#ffb700]">
@@ -409,7 +423,9 @@
           <div
             class="bg-white/[0.02] border border-white/5 rounded-xl p-3 text-center"
           >
-            <p class="text-[8px] uppercase tracking-[0.25em] text-white/30 mb-1">
+            <p
+              class="text-[8px] uppercase tracking-[0.25em] text-white/30 mb-1"
+            >
               Última
             </p>
             <p class="font-barber text-xs text-white/80 mt-1">
@@ -688,6 +704,63 @@
         </div>
       </div>
     </div>
+    <!-- ============ MODAL ELIMINAR ============ -->
+    <div
+      v-if="activeModal === 'delete' && selectedUser"
+      class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/80 backdrop-blur-sm"
+      @click.self="closeModal"
+    >
+      <div
+        class="w-full max-w-md bg-[#0b0b0b] border border-white/10 rounded-2xl p-6 relative"
+      >
+        <div
+          class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-red-500/60 to-transparent"
+        />
+
+        <p
+          class="text-[9px] uppercase tracking-[0.3em] text-red-400/80 font-medium mb-2"
+        >
+          Confirmar eliminación
+        </p>
+        <h2 class="text-lg font-barber uppercase text-white mb-3">
+          ¿Eliminar a {{ selectedUser.name }}?
+        </h2>
+
+        <p class="text-white/45 text-xs leading-relaxed mb-5">
+          Esta acción borra la cuenta
+          <strong class="text-white/70">permanentemente</strong>
+          de la base de datos. El usuario podrá registrarse de nuevo con el
+          mismo correo si lo desea. No se puede deshacer.
+        </p>
+
+        <div
+          class="bg-red-500/5 border border-red-500/20 rounded-xl px-4 py-3 mb-6"
+        >
+          <p class="text-red-400/80 text-[11px] leading-relaxed">
+            Cuenta sin verificar:
+            <span class="text-white/70">{{ selectedUser.email }}</span>
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-end gap-2">
+          <button
+            type="button"
+            @click="closeModal"
+            class="px-4 py-2 border border-white/10 text-white/55 hover:text-white hover:border-white/25 text-[10px] uppercase tracking-[0.2em] rounded-lg transition"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            @click="handleDelete"
+            class="px-4 py-2 bg-red-500/90 text-white text-[10px] uppercase tracking-[0.2em] font-medium rounded-lg hover:bg-red-500 transition"
+          >
+            Sí, eliminar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -706,12 +779,32 @@ const toast = useToast();
    HELPERS FECHA
    ========================================================= */
 const MESES = [
-  "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-  "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
+  "Ene",
+  "Feb",
+  "Mar",
+  "Abr",
+  "May",
+  "Jun",
+  "Jul",
+  "Ago",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dic",
 ];
 const MESES_LARGO = [
-  "enero", "febrero", "marzo", "abril", "mayo", "junio",
-  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+  "enero",
+  "febrero",
+  "marzo",
+  "abril",
+  "mayo",
+  "junio",
+  "julio",
+  "agosto",
+  "septiembre",
+  "octubre",
+  "noviembre",
+  "diciembre",
 ];
 
 const shortDate = (iso: string | null) => {
@@ -735,8 +828,7 @@ const isPast = (dateIso: string) => {
   return d < today;
 };
 
-const initialOf = (name: string) =>
-  name?.trim().charAt(0).toUpperCase() || "?";
+const initialOf = (name: string) => name?.trim().charAt(0).toUpperCase() || "?";
 
 const roleLabel = (role: string) => {
   if (role === "admin") return "Admin";
@@ -758,6 +850,13 @@ const canChangeRole = (target: AdminUser) => {
 const canBlock = (target: AdminUser) => {
   if (target.protected) return false;
   if (target._id === currentUserId.value) return false;
+  return true;
+};
+
+const canDelete = (target: AdminUser) => {
+  if (target.protected) return false;
+  if (target._id === currentUserId.value) return false;
+  if (target.verified) return false; // ← solo no verificados
   return true;
 };
 
@@ -832,7 +931,9 @@ const statistics = computed(() => {
 /* =========================================================
    MODALES
    ========================================================= */
-const activeModal = ref<null | "detail" | "role" | "block" | "unblock">(null);
+const activeModal = ref<
+  null | "detail" | "role" | "block" | "unblock" | "delete"
+>(null);
 const selectedUser = ref<AdminUser | null>(null);
 const selectedRole = ref<"client" | "barber" | "admin">("client");
 
@@ -855,7 +956,7 @@ const roleOptions = [
 ];
 
 const openModal = (
-  modal: "detail" | "role" | "block" | "unblock",
+  modal: "detail" | "role" | "block" | "unblock" | "delete",
   user: AdminUser,
 ) => {
   selectedUser.value = user;
@@ -895,6 +996,14 @@ const handleBlock = async (blocked: boolean) => {
     blocked,
     toast,
   );
+
+  if (success) closeModal();
+};
+
+const handleDelete = async () => {
+  if (!selectedUser.value) return;
+
+  const success = await adminStore.deleteUser(selectedUser.value._id, toast);
 
   if (success) closeModal();
 };

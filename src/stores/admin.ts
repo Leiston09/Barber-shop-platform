@@ -276,6 +276,24 @@ export const useAdminStore = defineStore("admin", () => {
     }
   }
 
+  async function deleteUser(id: string, toast: any) {
+    try {
+      const { data } = await AdminAPI.deleteUser(id);
+
+      // Quitar del array local
+      users.value = users.value.filter((u) => u._id !== id);
+
+      toast.open({ message: data.msg, type: "warning" });
+      return true;
+    } catch (err: any) {
+      toast.open({
+        message: err?.response?.data?.msg || "Error al eliminar el usuario",
+        type: "error",
+      });
+      return false;
+    }
+  }
+
   return {
     appointments,
     clients,
@@ -298,5 +316,6 @@ export const useAdminStore = defineStore("admin", () => {
     getAllUsers,
     updateUserRole,
     updateUserBlockStatus,
+    deleteUser,
   };
 });

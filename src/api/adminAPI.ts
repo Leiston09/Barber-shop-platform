@@ -44,4 +44,8 @@ export default {
   updateUserBlockStatus(id: string, blocked: boolean) {
     return api.patch(`/auth/users/${id}/block`, { blocked });
   },
+
+  deleteUser(id: string) {
+  return api.delete(`/auth/users/${id}`);
+},
 };
