@@ -1,49 +1,85 @@
-import api from "@/lib/axios";
-import OlvidePasswordView from "@/views/auth/OlvidePasswordView.vue";
+// src/api/AuthAPI.ts
 
-interface RegisterFormData {
+import api from "@/lib/axios";
+
+export interface RegisterFormData {
   name: string;
   email: string;
   password: string;
 }
 
-interface LoginFormData {
+export interface LoginFormData {
   email: string;
   password: string;
 }
 
+export interface UpdatePasswordData {
+  password: string;
+}
+
+export interface UserResponse {
+  _id: string;
+  name: string;
+  email: string;
+  admin: boolean;
+  role: "client" | "barber" | "admin";
+}
+
+export interface AuthResponse {
+  token: string;
+}
+
+export interface MessageResponse {
+  msg: string;
+}
+
 export default {
   register(data: RegisterFormData) {
-    return api.post("/auth/register", data);
+    return api.post<MessageResponse>(
+      "/auth/register",
+      data
+    );
   },
 
   verifyAccount(token: string) {
-    return api.get(`/auth/verify/${token}`);
+    return api.get<MessageResponse>(
+      `/auth/verify/${token}`
+    );
   },
 
   login(data: LoginFormData) {
-    return api.post(`/auth/login`, data);
+    return api.post<AuthResponse>(
+      "/auth/login",
+      data
+    );
   },
 
   auth() {
-    const token = localStorage.getItem("AUTH_TOKEN");
-    return api.get("auth/user", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    return api.get(
+      "/auth/user"
+    );
   },
-  olvidePasswor(data) {
-    return api.post("auth/olvide-password", data);
-  },
-  verifyPasswordResetToken(token) {
-    return api.get(`auth/olvide-password/${token}`);
-  },
-  updatePassword(token, data) {
-    return api.post(`auth/olvide-password/${token}`, data);
-  },
-  admin(){
-    api.get('auth/admin')
-  }
 
+  olvidePassword(data: { email: string }) {
+    return api.post<MessageResponse>(
+      "/auth/olvide-password",
+      data
+    );
+  },
+
+  verifyPasswordResetToken(token: string) {
+    return api.get<MessageResponse>(
+      `/auth/olvide-password/${token}`
+    );
+  },
+
+  updatePassword(
+    token: string,
+    data: UpdatePasswordData
+  ) {
+    return api.post<MessageResponse>(
+      `/auth/olvide-password/${token}`,
+      data
+    );
+  },
 };

@@ -1,74 +1,125 @@
-import AuthAPI from "@/api/AuthAPI";
+import { useUserStore } from "@/stores/user";
 import { createRouter, createWebHistory } from "vue-router";
+
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: () => import("@/views/Home.vue"),
+    name: "Layout",
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "Home",
+        component: () => import("@/views/Home.vue"),
+      },
+      {
+        path: "services",
+        name: "Services",
+        component: () => import("@/views/Services.vue"),
+        children: [],
+      },
+      {
+        path: "/services/reservaciones",
+        name: "Reservaciones",
+        component: () =>
+          import("@/components/appointments/ServiceReservaTitle.vue"),
+        meta: {
+          requireAuth: true,
+        },
+        redirect: {
+          name: "My-appointments",
+        },
+        children: [
+          {
+            path: "",
+            name: "My-appointments",
+            component: () =>
+              import("@/components/appointments/ServicesMyAppointments.vue"),
+          },
+          {
+            path: "nueva",
+            component: () =>
+              import("@/components/appointments/ServicesNewAppointmentsButtons.vue"),
+            children: [
+              {
+                path: "barber",
+                name: "BarberSelect",
+                component: () =>
+                  import("@/components/appointments/newAppointments/BarberSelect.vue"),
+              },
+              {
+                path: "",
+                name: "New-appointments",
+                component: () =>
+                  import("@/components/appointments/newAppointments/ServicesNewAppointments.vue"),
+              },
+              {
+                path: "detalles",
+                name: "New-Appointments-details",
+                component: () =>
+                  import("@/components/appointments/newAppointments/ServicesAppointmentsDetails.vue"),
+              },
+            ],
+          },
+          
+        ],
+      },
+      {
+        path: "history",
+        name: "History",
+        component: () => import("@/views/History.vue"),
+      },
+      {
+        path: "contact",
+        name: "Contact",
+        component: () => import("@/views/Contact.vue"),
+      },
+    ],
   },
+
   {
     path: "/admin",
     name: "Admin",
-    component: () => import("@/views/admin/AdminLayouts.vue"),
-    meta: { requireAdmin: true },
+    component: () => import("@/components/admin/AdminLayout.vue"),
+    meta: {
+      requireAdmin: true,
+    },
+    redirect: {
+      name: "Admin-Home",
+    },
     children: [
       {
-        path: "",
-        name: "Admin-appointments",
-        component: () => import("@/views/admin/appointmentsView.vue"),
+        path: "Home",
+        name: "Admin-Home",
+        component: () => import("@/views/Admin.vue"),
+      },
+      {
+        path: "appointments",
+        name: "Admin-Appointments",
+        component: () => import("@/views/admin/Appointments.vue"),
+      },
+      {
+        path: "barbers",
+        name: "Admin-Barbers",
+        component: () => import("@/views/admin/Barbers.vue"),
+      },
+      {
+        path: "customer",
+        name: "Admin-Customer",
+        component: () => import("@/views/admin/Customer.vue"),
+      },
+      {
+        path: "services",
+        name: "Admin-Services",
+        component: () => import("@/views/admin//Services.vue"),
       },
     ],
   },
-  {
-    path: "/reservaciones",
-    name: "Reservaciones",
-    component: () => import("@/views/appoiments/AppoimentsLayout.vue"),
-    meta: { requireAuth: true },
-    children: [
-      {
-        path: "",
-        name: "My-appoiments",
-        component: () => import("@/views/appoiments/MyAppoimentsView.vue"),
-      },
-      {
-        path: "nueva",
-        component: () => import("@/views/appoiments/NewAppoimentsLayout.vue"),
-        children: [
-          {
-            path: "",
-            name: "new-appoiments",
-            component: () => import("@/views/appoiments/ServicesView.vue"),
-          },
-          {
-            path: "detalles",
-            name: "Appoiments-details",
-            component: () => import("@/views/appoiments/ApoimentsView.vue"),
-          },
-        ],
-      },
-      {
-        path: ":id/editar",
-        component: () =>
-          import("@/views/appoiments/EdiAppoinetmentsLayout.vue"),
-        children: [
-          {
-            path: "",
-            name: "Edit-appoiments",
-            component: () => import("@/views/appoiments/ServicesView.vue"),
-          },
-          {
-            path: "detalles",
-            name: "Edit-Appoiments-details",
-            component: () => import("@/views/appoiments/ApoimentsView.vue"),
-          },
-        ],
-      },
-    ],
-  },
+
   {
     path: "/auth",
     name: "Auth",
-    component: () => import("@/views/auth/AuthLayout.vue"),
+    component: () => import("@/views/AuthLayout.vue"),
     children: [
       {
         path: "login",
@@ -102,40 +153,44 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior() {
+    return {
+      top: 0,
+      behavior: "instant",
+    };
+  },
 });
 
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to) => {
   const requireAuth = to.matched.some((url) => url.meta.requireAuth);
 
-  if (!requireAuth) {
-    //Si no requiere auth, deja pasar
+  const requireAdmin = to.matched.some((url) => url.meta.requireAdmin);
+
+  const userStore = useUserStore();
+
+  const token = localStorage.getItem("AUTH_TOKEN");
+
+  if (token && !userStore.user) {
+    await userStore.init();
+  }
+
+  if (!requireAuth && !requireAdmin) {
     return true;
   }
 
-  try {
-    const { data } = await AuthAPI.auth();
-
-    if (data.admin) {
-      return { name: "Admin" };
-    } else {
-      return true; //Autenticado, deja pasar
-    }
-  } catch (error) {
-    return { name: "Login" }; //Redirige al login
+  if (!userStore.user) {
+    return {
+      name: "Login",
+    };
   }
-});
 
-router.beforeEach(async (to, from) => {
-  const requireAdmin = to.matched.some((url) => url.meta.requireAdmin);
-
-  if (!requireAdmin) {
-    try {
-      await AuthAPI.admin();
-      return true; //Autenticado, deja pasar
-    } catch (error) {
-      return { name: "Login" }; //Redirige al login
-    }
+  if (requireAdmin && !userStore.isAdmin) {
+    return {
+      name: "Login",
+    };
   }
+
+  return true;
 });
 
 export default router;

@@ -4,19 +4,24 @@ export default {
   create(data: any) {
     return api.post("/appointments", data);
   },
-  getByDate(date) {
-    return api.get(`/appointments?date=${date}`);
+
+  getByDate(date: string, barber: string) {
+    return api.get(
+      `/appointments?date=${encodeURIComponent(
+        date
+      )}&barber=${encodeURIComponent(barber)}`
+    );
   },
-  getUserAppointments(userId) {
-    return api.get(`/users/${userId}/appointments`);
-  },
-  getById(id) {
+
+  getById(id: string) {
     return api.get(`/appointments/${id}`);
   },
-  update(id, data) {
-    return api.put(`appointments/${id}`, data);
+
+  update(id: string, data: any) {
+    return api.put(`/appointments/${id}`, data);
   },
-  delete(id) {
-    return api.delete(`appointments/${id}`);
+
+  delete(id: string) {
+    return api.delete(`/appointments/${id}`);
   },
 };

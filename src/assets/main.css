@@ -1,1 +1,6 @@
+/* main.css */
 @import "tailwindcss";
+
+@theme {
+  --font-barber: "Playfair Display", serif;
+}

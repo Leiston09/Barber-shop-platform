@@ -1,19 +1,45 @@
-import { parse, formatISO, parseISO, format } from "date-fns";
+import { format, parse, parseISO, isValid } from "date-fns";
 import { es } from "date-fns/locale";
 
-export function convertToISO(starDate: string) {
-  const newDate = parse(starDate, "dd/MM/yyyy", new Date());
-  return formatISO(newDate);
+export function displayDate(date: string | Date): string {
+  const newDate =
+    typeof date === "string"
+      ? parseISO(date)
+      : date;
+
+  if (!isValid(newDate)) {
+    return "";
+  }
+
+  return format(newDate, "PPPP", {
+    locale: es,
+  });
 }
 
-export function displayDate(date: any) {
-  const newDate = parseISO(date);
-  const formated = format(newDate, "PPPP", { locale: es });
-  return formated;
-}
+export function convertToDatePicker(date: string | Date): string {
+  if (typeof date === "string") {
+    const parsedDate = parseISO(date);
 
-export function converToDDMMYYYY(isDate : any) {
-  const newDate = new Date(isDate);
-  const formated = format(newDate, "dd/MM/yyyy");
-  return formated;
+    if (isValid(parsedDate)) {
+      return format(parsedDate, "yyyy-MM-dd");
+    }
+
+    const parsedLegacyDate = parse(
+      date,
+      "dd/MM/yyyy",
+      new Date()
+    );
+
+    if (isValid(parsedLegacyDate)) {
+      return format(parsedLegacyDate, "yyyy-MM-dd");
+    }
+
+    return "";
+  }
+
+  if (!isValid(date)) {
+    return "";
+  }
+
+  return format(date, "yyyy-MM-dd");
 }

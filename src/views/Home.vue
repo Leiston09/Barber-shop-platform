@@ -1,19 +1,24 @@
 <template>
-  <div class="">
-    <div class="w-full md:w-2/3">
-      <h1>AppSalon</h1>
-    </div>
-  </div>
+  <!-- SCROLL -->
+  <Container @update:currentScene="handleSceneChange" />
+
+  <!-- SECCIÓN UBICACIÓN + MAPA -->
+  <Location />
+
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { useRouter } from "vue-router";
+import Container from "@/components/Home/Container.vue";
+import Location from "@/components/Home/Location.vue";
+import { ref } from "vue";
 
-const router = useRouter();
-onMounted(() => {
-  router.push({ name: "Login" });
-});
+
+const showNavbarBackground = ref(false);
+
+const handleSceneChange = (scene: number) => {
+  showNavbarBackground.value = scene === 4;
+};
+
 </script>
 
 <style scoped></style>

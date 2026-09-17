@@ -4,17 +4,20 @@
 
 <script setup lang="ts">
 import AuthAPI from "@/api/AuthAPI";
-import { inject, onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
-const toast = inject("toast") as any;
-const Router = useRouter();
-const Route = useRoute(); 
-const { token } = Route.params as { token?: string };
+// Tipar toast correctamente
+import { useToast } from 'vue-toast-notification'
 
-interface VerifyResponse {
-  msg: string;
-}
+const toast = useToast()
+
+const router = useRouter();
+const route = useRoute();
+const { token } = route.params as { token?: string };
+
+// Timeout ref para cleanup
+let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
 onMounted(async () => {
   if (!token) {
@@ -22,31 +25,36 @@ onMounted(async () => {
       message: "Token de verificación no encontrado",
       type: "error",
     });
-    setTimeout(() => Router.push({ name: "Login" }), 2000);
+    timeoutId = setTimeout(() => router.push({ name: "Login" }), 2000);
     return;
   }
+
   try {
-    const { data } = (await AuthAPI.verifyAccount(token)) as {
-      data: VerifyResponse;
-    };
+    const { data } = await AuthAPI.verifyAccount(token);
+    
     toast.open({
       message: data.msg,
       type: "success",
     });
 
-    setTimeout(() => {
-      Router.push({ name: "Login" });
+    timeoutId = setTimeout(() => {
+      router.push({ name: "Login" });
     }, 1000);
-  } catch (error) {
-    const errorMsg =
-      (error as any)?.response?.data?.msg || "Error al verificar la cuenta (token)";
+    
+  } catch (error: any) {
+    const errorMsg = error?.response?.data?.msg || "Error al verificar la cuenta (token)";
 
-    toast?.open({
+    toast.open({
       message: errorMsg,
       type: "error",
     });
   }
 });
-</script>
 
-<style scoped></style>
+// Limpiar timeout si el componente se destruye
+onUnmounted(() => {
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+  }
+});
+</script>
