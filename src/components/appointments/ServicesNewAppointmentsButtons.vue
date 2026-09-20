@@ -4,12 +4,12 @@
     <div class="min-w-0">
       <!-- NAV DE PASOS -->
       <nav
-        class="flex items-center gap-1.5 p-1.5 mb-10 bg-white/[0.025] border border-white/5 rounded-xl"
+        class="flex items-center gap-1 p-1 sm:gap-1.5 sm:p-1.5 mb-6 sm:mb-10 bg-white/[0.025] border border-white/5 rounded-xl overflow-x-auto scrollbar-hide"
       >
         <!-- BARBERO -->
         <RouterLink
           :to="{ name: 'BarberSelect' }"
-          class="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 text-[9px] font-barber uppercase tracking-[0.22em] rounded-lg transition-all duration-500 ease-out overflow-hidden"
+          class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3.5 px-2 sm:px-4 text-[8px] sm:text-[9px] font-barber uppercase tracking-[0.12em] sm:tracking-[0.22em] rounded-lg transition-all duration-500 ease-out whitespace-nowrap shrink-0"
           :class="
             route.name === 'BarberSelect'
               ? 'flex-[1.8] bg-[#ffb700] text-black shadow-[0_0_25px_rgba(255,183,0,0.08)]'
@@ -24,14 +24,14 @@
                 : 'bg-white/20'
             "
           />
-          <span class="whitespace-nowrap"> Barbero </span>
+          <span>Barbero</span>
         </RouterLink>
 
         <!-- SERVICIOS -->
         <RouterLink
           v-if="canAccessServices"
           :to="{ name: 'New-appointments' }"
-          class="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 text-[9px] font-barber uppercase tracking-[0.22em] rounded-lg transition-all duration-500 ease-out overflow-hidden"
+          class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3.5 px-2 sm:px-4 text-[8px] sm:text-[9px] font-barber uppercase tracking-[0.12em] sm:tracking-[0.22em] rounded-lg transition-all duration-500 ease-out whitespace-nowrap shrink-0"
           :class="
             route.name === 'New-appointments'
               ? 'flex-[1.8] bg-[#ffb700] text-black shadow-[0_0_25px_rgba(255,183,0,0.08)]'
@@ -46,24 +46,24 @@
                 : 'bg-white/20'
             "
           />
-          <span class="whitespace-nowrap"> Servicios </span>
+          <span>Servicios</span>
         </RouterLink>
 
         <button
           v-else
           type="button"
           disabled
-          class="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 text-[9px] font-barber uppercase tracking-[0.22em] rounded-lg text-white/15 cursor-not-allowed"
+          class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3.5 px-2 sm:px-4 text-[8px] sm:text-[9px] font-barber uppercase tracking-[0.12em] sm:tracking-[0.22em] rounded-lg text-white/15 cursor-not-allowed whitespace-nowrap shrink-0"
         >
           <span class="w-1.5 h-1.5 rounded-full shrink-0 bg-white/10" />
-          <span class="whitespace-nowrap"> Servicios </span>
+          <span>Servicios</span>
         </button>
 
         <!-- DETALLES -->
         <RouterLink
           v-if="canAccessDetails"
           :to="{ name: 'New-Appointments-details' }"
-          class="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 text-[9px] font-barber uppercase tracking-[0.22em] rounded-lg transition-all duration-500 ease-out overflow-hidden"
+          class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3.5 px-2 sm:px-4 text-[8px] sm:text-[9px] font-barber uppercase tracking-[0.12em] sm:tracking-[0.22em] rounded-lg transition-all duration-500 ease-out whitespace-nowrap shrink-0"
           :class="
             route.name === 'New-Appointments-details'
               ? 'flex-[1.8] bg-[#ffb700] text-black shadow-[0_0_25px_rgba(255,183,0,0.08)]'
@@ -78,17 +78,17 @@
                 : 'bg-white/20'
             "
           />
-          <span class="whitespace-nowrap"> Detalles y horarios </span>
+          <span>Detalles</span>
         </RouterLink>
 
         <button
           v-else
           type="button"
           disabled
-          class="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 text-[9px] font-barber uppercase tracking-[0.22em] rounded-lg text-white/15 cursor-not-allowed"
+          class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3.5 px-2 sm:px-4 text-[8px] sm:text-[9px] font-barber uppercase tracking-[0.12em] sm:tracking-[0.22em] rounded-lg text-white/15 cursor-not-allowed whitespace-nowrap shrink-0"
         >
           <span class="w-1.5 h-1.5 rounded-full shrink-0 bg-white/10" />
-          <span class="whitespace-nowrap"> Detalles y horarios </span>
+          <span>Detalles</span>
         </button>
       </nav>
 
@@ -101,19 +101,14 @@
       <BookingSummary class="sticky top-20" />
     </aside>
 
-    <!-- MOBILE: BOTÓN FLOTANTE -->
+    <!-- MOBILE: BOTÓN FLOTANTE (arriba del bottom nav) -->
     <button
       type="button"
-      class="xl:hidden fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#ffb700] text-black shadow-2xl shadow-black/50 flex items-center justify-center font-barber text-xs"
+      class="xl:hidden fixed bottom-24 right-4 z-40 w-12 h-12 rounded-full bg-[#ffb700] text-black shadow-2xl shadow-[#ffb700]/25 flex items-center justify-center active:scale-95 transition-transform"
       @click="summaryOpen = true"
       aria-label="Ver resumen de la reserva"
     >
-      <svg
-        class="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -123,7 +118,7 @@
       </svg>
     </button>
 
-    <!-- MOBILE: DRAWER -->
+    <!-- MOBILE: DRAWER (bottom sheet) -->
     <Transition
       enter-active-class="transition-opacity duration-300"
       enter-from-class="opacity-0"
@@ -134,24 +129,38 @@
     >
       <div
         v-if="summaryOpen"
-        class="xl:hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center px-10"
+        class="xl:hidden fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end"
         @click.self="summaryOpen = false"
       >
-        <div
-          class="w-full bg-[#0b0b0b] border-t border-white/10 rounded-t-3xl p-5 pb-8 max-h-[85vh] overflow-y-auto"
+        <Transition
+          appear
+          enter-active-class="transition-transform duration-300"
+          enter-from-class="translate-y-full"
+          enter-to-class="translate-y-0"
         >
-          <div class="flex justify-end mb-3">
-            <button
-              type="button"
-              @click="summaryOpen = false"
-              class="text-white/40 hover:text-white text-xl leading-none"
-              aria-label="Cerrar resumen"
-            >
-              ✕
-            </button>
+          <div
+            class="w-full bg-[#0b0b0b] border-t border-white/10 rounded-t-3xl px-5 pt-4 pb-8 max-h-[85vh] overflow-y-auto"
+          >
+            <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4" />
+
+            <div class="flex justify-between items-center mb-4">
+              <p class="text-[9px] uppercase tracking-[0.3em] text-[#ffb700] font-medium">
+                Resumen
+              </p>
+
+              <button
+                type="button"
+                @click="summaryOpen = false"
+                class="text-white/40 hover:text-white text-lg leading-none"
+                aria-label="Cerrar resumen"
+              >
+                ✕
+              </button>
+            </div>
+
+            <BookingSummary />
           </div>
-          <BookingSummary />
-        </div>
+        </Transition>
       </div>
     </Transition>
   </div>
@@ -202,7 +211,6 @@ async function validateCurrentStep() {
   }
 }
 
-// Cerrar el drawer cuando cambia de paso
 watch(
   () => route.name,
   () => {
@@ -242,4 +250,12 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+</style>

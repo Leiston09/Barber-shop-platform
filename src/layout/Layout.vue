@@ -8,7 +8,7 @@
   </main>
 
   <!-- CRÉDITOS / FOOTER -->
-  <Footer />
+  <footer class="pb-10 lg:pb-0"><Footer /></footer>
 </template>
 
 <script setup lang="ts">

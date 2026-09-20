@@ -1,12 +1,9 @@
 <template>
   <section class="relative w-full bg-[#090909] text-white -mt-[60px]">
-    <div ref="containerRef" class="relative h-[1000vh] w-full">
+    <div ref="containerRef" class="relative h-[600vh] w-full">
       <div class="sticky top-0 h-screen w-full overflow-hidden">
         <!-- CANVAS -->
-        <canvas
-          ref="canvasRef"
-          class="absolute inset-0 z-0 w-full h-full"
-        />
+        <canvas ref="canvasRef" class="absolute inset-0 z-0 w-full h-full" />
 
         <!-- GIF DE CARGA -->
         <img
@@ -53,9 +50,7 @@
           <div
             class="w-6 h-10 border-2 border-slate-500 rounded-full flex justify-center p-1.5 animate-bounce"
           >
-            <div
-              class="w-1 h-2 bg-amber-400 rounded-full animate-bounce"
-            />
+            <div class="w-1 h-2 bg-amber-400 rounded-full animate-bounce" />
           </div>
         </div>
       </div>
@@ -64,12 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  onMounted,
-  onBeforeUnmount,
-  watch,
-} from "vue";
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 
 import SidebarIndicator from "@/components/Navbar/SidebarIndicator.vue";
 import SceneWelcome from "@/components/Home/Scene/SceneWelcome.vue";
@@ -88,17 +78,9 @@ const sceneLayerRef = ref<HTMLElement | null>(null);
 
 const isLoading = ref(true);
 
-const {
-  images,
-  preloadAllImages,
-  drawImageOnCanvas,
-} = useCanvas();
+const { images, preloadAllImages, drawImageOnCanvas } = useCanvas();
 
-const {
-  currentScene,
-  setupAnimation,
-  cleanup,
-} = useScrollAnimation(
+const { currentScene, setupAnimation, cleanup } = useScrollAnimation(
   containerRef,
   sceneLayerRef,
 );
@@ -124,11 +106,7 @@ const resizeCanvas = () => {
   const firstImage = images.value[0];
 
   if (firstImage) {
-    drawImageOnCanvas(
-      firstImage,
-      context,
-      canvas,
-    );
+    drawImageOnCanvas(firstImage, context, canvas);
   }
 };
 
@@ -151,12 +129,7 @@ onMounted(async () => {
 
   resizeCanvas();
 
-  setupAnimation(
-    context,
-    canvas,
-    images.value,
-    drawImageOnCanvas,
-  );
+  setupAnimation(context, canvas, images.value, drawImageOnCanvas);
 
   currentScenes.setScene(0);
 
@@ -167,22 +140,14 @@ onMounted(async () => {
   requestAnimationFrame(() => {
     resizeCanvas();
 
-    window.dispatchEvent(
-      new Event("scroll"),
-    );
+    window.dispatchEvent(new Event("scroll"));
   });
 
-  window.addEventListener(
-    "resize",
-    resizeCanvas,
-  );
+  window.addEventListener("resize", resizeCanvas);
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener(
-    "resize",
-    resizeCanvas,
-  );
+  window.removeEventListener("resize", resizeCanvas);
 
   cleanup();
 });

@@ -1,24 +1,31 @@
 <template>
   <div>
     <!-- ENCABEZADO -->
-    <div class="mb-10">
-      <div class="flex items-center gap-3 mb-4">
-        <span class="w-8 h-px bg-[#ffb700]" />
+    <div class="text-center mb-8 sm:mb-12">
+      <div class="inline-flex items-center gap-3 mb-4 sm:mb-5">
         <span
-          class="text-[#ffb700] text-[9px] uppercase tracking-[0.35em] font-medium"
+          class="text-[#ffb700] text-[10px] sm:text-[11px] uppercase tracking-[0.3em] font-medium"
         >
           Paso 03
+        </span>
+        <span class="w-8 h-px bg-[#ffb700]/40" />
+        <span
+          class="text-white/30 text-[10px] sm:text-[11px] uppercase tracking-[0.3em]"
+        >
+          Resumen
         </span>
       </div>
 
       <h1
-        class="font-barber text-3xl sm:text-4xl lg:text-5xl font-light text-white tracking-tight"
+        class="font-barber text-3xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-white leading-[0.95]"
       >
         Detalles y
-        <span class="text-[#ffb700] font-medium">Resumen</span>
+        <span class="text-[#ffb700]"> resumen.</span>
       </h1>
 
-      <p class="text-white/40 text-sm font-light mt-3 max-w-md">
+      <p
+        class="text-white/40 text-xs sm:text-sm font-light mt-3 sm:mt-4 max-w-md mx-auto leading-relaxed"
+      >
         Verifica la información de tu cita antes de confirmar.
       </p>
     </div>
@@ -26,29 +33,33 @@
     <!-- SERVICIOS + BARBERO -->
     <div
       v-if="!appointmentBooking.noServiceSelect"
-      class="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-6 lg:gap-8 mb-8"
+      class="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-5 sm:gap-6 lg:gap-8 mb-6 sm:mb-8"
     >
       <!-- SERVICIOS -->
       <section
-        class="border border-white/5 rounded-2xl bg-white/[0.02] p-6 sm:p-7"
+        class="border border-white/5 rounded-2xl bg-white/[0.02] p-5 sm:p-6 lg:p-7"
       >
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-5 sm:mb-6">
           <div>
             <p
               class="text-[9px] uppercase tracking-[0.3em] text-[#ffb700] font-medium"
             >
               Tu reservación
             </p>
-            <h2 class="font-barber text-2xl text-white font-light mt-2">
+            <h2
+              class="font-barber text-xl sm:text-2xl text-white font-light mt-1.5 sm:mt-2"
+            >
               Servicios
             </h2>
           </div>
-          <span class="text-white/20 text-[9px] uppercase tracking-[0.2em]">
+          <span
+            class="text-white/20 text-[9px] uppercase tracking-[0.2em]"
+          >
             {{ appointmentBooking.services.length }} seleccionados
           </span>
         </div>
 
-        <div class="grid gap-3">
+        <div class="grid gap-2.5 sm:gap-3">
           <SelectService
             v-for="service in appointmentBooking.services"
             :key="service._id"
@@ -57,13 +68,16 @@
         </div>
 
         <div
-          class="flex items-center justify-between gap-4 mt-6 pt-5 border-t border-white/5"
+          class="flex items-center justify-between gap-4 mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-white/5"
         >
           <span
             class="text-[9px] uppercase tracking-[0.3em] text-white/35 font-medium"
-            >Total</span
           >
-          <span class="font-barber text-2xl text-[#ffb700] font-medium">
+            Total
+          </span>
+          <span
+            class="font-barber text-xl sm:text-2xl text-[#ffb700] font-medium"
+          >
             {{ formatCurrency(appointmentBooking.totalService) }}
           </span>
         </div>
@@ -72,17 +86,12 @@
       <!-- BARBERO -->
       <section
         v-if="appointmentBooking.barber"
-        class="relative min-h-[340px] rounded-2xl overflow-hidden border border-[#ffb700]/25 group"
+        class="relative min-h-[240px] sm:min-h-[300px] lg:min-h-[340px] rounded-2xl overflow-hidden border border-[#ffb700]/25 group"
       >
         <img
           :src="`/img/barbers/barber${selectedBarberIndex + 1}.jpg`"
           :alt="appointmentBooking.barber.name"
           class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
-          :class="
-            appointmentBooking.barber?._id
-              ? 'brightness-100'
-              : 'brightness-[0.5] group-hover:brightness-[0.65]'
-          "
         />
         <div
           class="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent"
@@ -91,7 +100,7 @@
           class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ffb700] to-transparent"
         />
 
-        <div class="absolute inset-x-0 bottom-0 p-6 sm:p-7">
+        <div class="absolute inset-x-0 bottom-0 p-5 sm:p-6 lg:p-7">
           <div class="flex items-end justify-between gap-4">
             <div>
               <p
@@ -100,16 +109,16 @@
                 Profesional
               </p>
               <h2
-                class="font-barber text-3xl sm:text-4xl text-white font-light leading-none"
+                class="font-barber text-2xl sm:text-3xl lg:text-4xl text-white font-light leading-none"
               >
                 {{ appointmentBooking.barber.name }}
               </h2>
-              <p class="text-white/45 text-xs mt-3 font-light">
+              <p class="text-white/45 text-xs mt-2 sm:mt-3 font-light">
                 Tu barbero seleccionado
               </p>
             </div>
             <div
-              class="w-9 h-9 shrink-0 rounded-full border border-[#ffb700] bg-[#ffb700] text-black flex items-center justify-center text-sm"
+              class="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full border border-[#ffb700] bg-[#ffb700] text-black flex items-center justify-center text-sm"
             >
               ✓
             </div>
@@ -118,22 +127,64 @@
       </section>
     </div>
 
-    <!-- FECHA + HORARIOS -->
+    <!-- SIN HORARIO (cuando el barbero no tiene horario configurado) -->
     <div
-      v-if="!appointmentBooking.noServiceSelect"
-      class="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-6 lg:gap-8 mb-8"
+      v-if="!appointmentBooking.noServiceSelect && appointmentBooking.noSchedule"
+      class="border border-amber-500/20 rounded-2xl bg-amber-500/[0.04] p-8 sm:p-12 text-center mb-6 sm:mb-8"
+    >
+      <div
+        class="w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-full border border-amber-500/30 bg-amber-500/5 flex items-center justify-center mb-4"
+      >
+        <svg
+          class="w-6 h-6 sm:w-7 sm:h-7 text-amber-400/70"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      </div>
+
+      <p class="text-amber-400/90 text-sm sm:text-base font-barber">
+        Este profesional aún no tiene horario configurado
+      </p>
+
+      <p class="text-white/35 text-xs mt-2 max-w-sm mx-auto leading-relaxed">
+        Elige otro barbero para continuar con tu reserva, o vuelve a intentarlo
+        más tarde.
+      </p>
+
+      <RouterLink
+        :to="{ name: 'BarberSelect' }"
+        class="inline-block mt-6 px-6 py-3 bg-[#ffb700] text-black text-[10px] font-barber uppercase tracking-[0.2em] rounded-lg hover:bg-[#e6a500] transition-all duration-300"
+      >
+        Elegir otro barbero
+      </RouterLink>
+    </div>
+
+    <!-- FECHA + HORARIOS (solo si el barbero SÍ tiene horario) -->
+    <div
+      v-else-if="!appointmentBooking.noServiceSelect"
+      class="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-5 sm:gap-6 lg:gap-8 mb-6 sm:mb-8"
     >
       <!-- FECHA -->
       <section
-        class="border border-white/5 rounded-2xl bg-white/[0.02] p-5 sm:p-6 items-center"
+        class="border border-white/5 rounded-2xl bg-white/[0.02] p-5 sm:p-6"
       >
-        <div class="mb-5">
+        <div class="mb-4 sm:mb-5">
           <p
             class="text-[9px] uppercase tracking-[0.3em] text-[#ffb700] font-medium"
           >
             Fecha
           </p>
-          <h2 class="font-barber text-2xl text-white font-light mt-2">
+          <h2
+            class="font-barber text-xl sm:text-2xl text-white font-light mt-1.5 sm:mt-2"
+          >
             Elige tu día
           </h2>
         </div>
@@ -179,7 +230,7 @@
         class="border border-white/5 rounded-2xl bg-white/[0.02] p-5 sm:p-6"
       >
         <div
-          class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6"
+          class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6"
         >
           <div>
             <p
@@ -187,15 +238,15 @@
             >
               Horarios
             </p>
-            <h2 class="font-barber text-2xl text-white font-light mt-2">
+            <h2
+              class="font-barber text-xl sm:text-2xl text-white font-light mt-1.5 sm:mt-2"
+            >
               Disponibilidad
             </h2>
           </div>
 
           <div
-            v-if="
-              appointmentBooking.isDateSelect && !appointmentBooking.noSchedule
-            "
+            v-if="appointmentBooking.isDateSelect"
             class="flex items-center gap-4 text-[8px] uppercase tracking-[0.18em]"
           >
             <div class="flex items-center gap-2 text-white/50">
@@ -212,28 +263,15 @@
           </div>
         </div>
 
-        <!-- BARBERO SIN HORARIO -->
-        <div
-          v-if="appointmentBooking.noSchedule"
-          class="min-h-[250px] flex items-center justify-center border border-amber-500/20 rounded-xl bg-amber-500/5 text-center px-6"
-        >
-          <div>
-            <p class="text-amber-400/90 text-sm font-light">
-              Este profesional aún no tiene un horario configurado.
-            </p>
-            <p class="text-white/30 text-xs mt-2">
-              Elige otro barbero o inténtalo más tarde.
-            </p>
-          </div>
-        </div>
-
         <!-- SIN FECHA -->
         <div
-          v-else-if="!appointmentBooking.isDateSelect"
-          class="min-h-[250px] flex items-center justify-center border border-white/5 rounded-xl bg-black/10"
+          v-if="!appointmentBooking.isDateSelect"
+          class="min-h-[200px] sm:min-h-[250px] flex items-center justify-center border border-white/5 rounded-xl bg-black/10"
         >
           <div class="text-center">
-            <p class="text-white/30 text-[10px] uppercase tracking-[0.25em]">
+            <p
+              class="text-white/30 text-[10px] uppercase tracking-[0.25em]"
+            >
               Selecciona una fecha
             </p>
             <p class="text-white/15 text-xs mt-2 font-light">
@@ -248,12 +286,14 @@
             appointmentBooking.loadingHours ||
             appointmentBooking.loadingSchedule
           "
-          class="min-h-[250px] flex flex-col items-center justify-center"
+          class="min-h-[200px] sm:min-h-[250px] flex flex-col items-center justify-center"
         >
           <div
             class="w-7 h-7 border-2 border-white/10 border-t-[#ffb700] rounded-full animate-spin"
           />
-          <p class="text-white/30 text-[9px] uppercase tracking-[0.3em] mt-4">
+          <p
+            class="text-white/30 text-[9px] uppercase tracking-[0.3em] mt-4"
+          >
             Cargando horarios...
           </p>
         </div>
@@ -264,7 +304,7 @@
             !appointmentBooking.isDayWorking(appointmentBooking.date) ||
             appointmentBooking.isDateFullyBlocked(appointmentBooking.date)
           "
-          class="min-h-[250px] flex items-center justify-center border border-white/5 rounded-xl bg-black/10 text-center px-6"
+          class="min-h-[200px] sm:min-h-[250px] flex items-center justify-center border border-white/5 rounded-xl bg-black/10 text-center px-6"
         >
           <div>
             <p class="text-white/40 text-sm font-light">
@@ -277,7 +317,7 @@
         <!-- TODAS OCUPADAS -->
         <div
           v-else-if="appointmentBooking.allHoursOccupied"
-          class="min-h-[250px] flex items-center justify-center border border-white/5 rounded-xl bg-black/10 text-center"
+          class="min-h-[200px] sm:min-h-[250px] flex items-center justify-center border border-white/5 rounded-xl bg-black/10 text-center"
         >
           <div>
             <p class="text-white/40 text-sm font-light">
@@ -290,13 +330,13 @@
         <!-- HORARIOS -->
         <div
           v-else
-          class="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-3"
+          class="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-3"
         >
           <button
             v-for="hour in appointmentBooking.hours"
             :key="hour"
             type="button"
-            class="relative py-4 text-sm font-barber uppercase tracking-[0.1em] border rounded-lg transition-all duration-300 cursor-pointer"
+            class="relative py-3 sm:py-4 text-xs sm:text-sm font-barber uppercase tracking-[0.1em] border rounded-lg transition-all duration-300 cursor-pointer"
             :class="{
               'bg-[#ffb700] text-black border-[#ffb700] shadow-lg shadow-[#ffb700]/20':
                 appointmentBooking.time === hour,
@@ -332,14 +372,14 @@
       </section>
     </div>
 
-    <!-- CONFIRMAR -->
     <!-- NAVEGACIÓN FINAL -->
     <div
-      class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 mt-10 border-t border-white/5"
+      v-if="!appointmentBooking.noServiceSelect"
+      class="flex flex-col-reverse sm:flex-row justify-between items-center gap-3 sm:gap-4 pt-6 mt-6 sm:mt-10 border-t border-white/5"
     >
       <RouterLink
         :to="{ name: 'New-appointments' }"
-        class="text-[10px] uppercase tracking-[0.2em] text-white/40 hover:text-[#ffb700] transition"
+        class="w-full sm:w-auto text-center text-[10px] uppercase tracking-[0.2em] text-white/40 hover:text-[#ffb700] transition py-3"
       >
         ← Volver a servicios
       </RouterLink>
@@ -348,7 +388,7 @@
         type="button"
         :disabled="!appointmentBooking.validateReservation"
         @click="handleSave"
-        class="px-8 py-4 bg-[#ffb700] text-black text-sm font-barber font-medium uppercase tracking-[0.15em] rounded-lg hover:bg-[#e6a500] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#ffb700]/20 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none"
+        class="w-full sm:w-auto text-center px-6 sm:px-8 py-4 bg-[#ffb700] text-black text-xs sm:text-sm font-barber font-medium uppercase tracking-[0.15em] rounded-lg hover:bg-[#e6a500] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#ffb700]/20 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none"
       >
         Confirmar Reservación
       </button>
@@ -398,30 +438,27 @@ const dateKeyOf = (d: Date): string => {
 
 /* =========================================================
    DESHABILITAR DÍAS
-   El store decide: pasados, no laborables, bloqueados.
    ========================================================= */
 const disabledDates = (date: Date) => {
   return appointmentBooking.isDateDisabled(date);
 };
 
 /* =========================================================
-   CLASE POR DÍA (para pintar punto amarillo / rojo)
+   CLASE POR DÍA
    ========================================================= */
 const dayClass = (date: Date): string => {
   if (!appointmentBooking.barberSchedule) return "";
 
   const key = dateKeyOf(date);
 
-  // Punto amarillo: bloqueado por el admin (total o parcial)
-  const isBlocked = appointmentBooking.barberSchedule.blockedDates.some((b) => {
-    const bKey = typeof b.date === "string" ? b.date.slice(0, 10) : "";
-    return bKey === key;
-  });
+  const isBlocked = appointmentBooking.barberSchedule.blockedDates.some(
+    (b) => {
+      const bKey = typeof b.date === "string" ? b.date.slice(0, 10) : "";
+      return bKey === key;
+    },
+  );
 
   if (isBlocked) return "day-dot-yellow";
-
-  // Punto rojo: día con reservas
-  // (pendiente: requiere cargar reservas del mes)
 
   return "";
 };
@@ -439,7 +476,7 @@ onMounted(() => {
 
 <style scoped>
 /* =========================================================
-   ESTILOS DE VUE DATEPICKER (los tuyos, sin tocar)
+   ESTILOS VUE DATEPICKER (sin cambios)
    ========================================================= */
 :deep(.dp__theme_dark) {
   --dp-background-color: #0a0a0a;
@@ -519,9 +556,7 @@ onMounted(() => {
   display: none;
 }
 
-/* =========================================================
-   PUNTO AMARILLO (día bloqueado por el admin)
-   ========================================================= */
+/* PUNTO AMARILLO */
 :deep(.day-dot-yellow .dp__cell_inner) {
   position: relative;
 }
@@ -539,10 +574,7 @@ onMounted(() => {
   box-shadow: 0 0 6px rgba(255, 183, 0, 0.6);
 }
 
-/* =========================================================
-   PUNTO ROJO (día con reservas) — listo para cuando
-   se agregue la lógica de conteo por día
-   ========================================================= */
+/* PUNTO ROJO (pendiente) */
 :deep(.day-dot-red .dp__cell_inner) {
   position: relative;
 }

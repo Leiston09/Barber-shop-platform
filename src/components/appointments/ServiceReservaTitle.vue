@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#0a0a0a] text-white">
+  <div class="">
     <!-- HEADER DE RESERVACIONES -->
     <header class="border-b border-white/5 px-6 sm:px-10 lg:px-14 py-2">
       <div
@@ -18,7 +18,6 @@
             </h1>
 
             <div class="flex items-center gap-2 mt-2">
-              <span class="w-5 h-px bg-[#ffb700]" />
 
               <p
                 class="text-white/30 text-[9px] uppercase tracking-[0.3em]"

@@ -11,7 +11,7 @@ export function useScrollAnimation(
   sceneLayerRef: Ref<HTMLElement | null>,
 ) {
   const currentScene = ref(0);
-  const frameCount = 826;
+  const frameCount = 401; // ← mismo que useCanvas
 
   const setupAnimation = (
     context: CanvasRenderingContext2D,
@@ -31,6 +31,12 @@ export function useScrollAnimation(
 
     if (!scenes.length) return;
 
+    // 5 escenas total (Welcome + 4)
+    // Cada escena ocupa un 20% del scroll (100 / 5)
+    const sceneCount = scenes.length;
+    const segmentSize = 1 / sceneCount;
+    const fadeDuration = 0.03; // duración del fade en unidades de progress
+
     gsap.set(sceneLayerRef.value, { opacity: 1 });
     gsap.set(scenes, { opacity: 0, y: 60 });
 
@@ -47,7 +53,6 @@ export function useScrollAnimation(
         scrub: 0.6,
         invalidateOnRefresh: true,
         onRefresh: () => {
-          // ✅ currentScene a 0 al cargar
           currentScene.value = 0;
         },
         onUpdate: (self) => {
@@ -62,32 +67,31 @@ export function useScrollAnimation(
     });
 
     scenes.forEach((scene, index) => {
+      const isFirst = index === 0;
       const isLast = index === scenes.length - 1;
 
-      if (index === 0) {
+      // Tiempo reservado para cada escena
+      const segmentDuration = segmentSize - fadeDuration;
+
+      if (isFirst) {
+        // Escena 0 (Welcome): aparece al inicio, se mantiene, desaparece
         sceneTimeline
           .to(scene, {
             opacity: 1,
             y: 0,
-            duration: 0.05,
-            ease: "none",
-            pointerEvents: "auto",
-          })
-          .to(scene, {
-            opacity: 1,
-            y: 0,
-            duration: 0.1,
+            duration: segmentDuration,
             ease: "none",
             pointerEvents: "auto",
           })
           .to(scene, {
             opacity: 0,
             y: -50,
-            duration: 0.05,
+            duration: fadeDuration,
             ease: "none",
             pointerEvents: "none",
           });
       } else if (isLast) {
+        // Última escena: aparece y se queda
         sceneTimeline
           .fromTo(
             scene,
@@ -95,20 +99,20 @@ export function useScrollAnimation(
             {
               opacity: 1,
               y: 0,
-              duration: 0.12,
+              duration: fadeDuration,
               ease: "none",
               pointerEvents: "auto",
             },
-            "-=0.04",
           )
           .to(scene, {
             opacity: 1,
             y: 0,
-            duration: 0.4,
+            duration: segmentDuration,
             ease: "none",
             pointerEvents: "auto",
           });
       } else {
+        // Escenas intermedias: aparecen, se mantienen, desaparecen
         sceneTimeline
           .fromTo(
             scene,
@@ -116,23 +120,22 @@ export function useScrollAnimation(
             {
               opacity: 1,
               y: 0,
-              duration: 0.12,
+              duration: fadeDuration,
               ease: "none",
               pointerEvents: "auto",
             },
-            "-=0.04",
           )
           .to(scene, {
             opacity: 1,
             y: 0,
-            duration: 0.4,
+            duration: segmentDuration,
             ease: "none",
             pointerEvents: "auto",
           })
           .to(scene, {
             opacity: 0,
             y: -50,
-            duration: 0.12,
+            duration: fadeDuration,
             ease: "none",
             pointerEvents: "none",
           });

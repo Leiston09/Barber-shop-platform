@@ -5,10 +5,13 @@ import { ref } from "vue";
 export function useCanvas() {
   const images = ref<HTMLImageElement[]>([]);
 
-  const frameCount = 826;
+  // Ahora son 401 frames reales
+  const frameCount = 401;
 
   const currentFrame = (index: number): string => {
-    const paddedIndex = String(index).padStart(4, "0");
+    // Los frames van del 0001 al 0401 (1-indexados, sin saltos)
+    const realIndex = index + 1;
+    const paddedIndex = String(realIndex).padStart(4, "0");
     return `/frames/frame_${paddedIndex}.jpg`;
   };
 
@@ -18,10 +21,7 @@ export function useCanvas() {
 
       const finishLoading = () => {
         loaded++;
-
-        if (loaded === frameCount) {
-          resolve();
-        }
+        if (loaded === frameCount) resolve();
       };
 
       for (let i = 0; i < frameCount; i++) {
@@ -32,9 +32,7 @@ export function useCanvas() {
           finishLoading();
         };
 
-        img.onerror = () => {
-          finishLoading();
-        };
+        img.onerror = () => finishLoading();
 
         img.src = currentFrame(i);
       }
@@ -46,24 +44,18 @@ export function useCanvas() {
     context: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
   ) => {
-    if (!img || !img.complete || img.naturalWidth === 0) {
-      return;
-    }
+    if (!img || !img.complete || img.naturalWidth === 0) return;
 
     const hRatio = canvas.width / img.width;
     const vRatio = canvas.height / img.height;
-
     const ratio = Math.max(hRatio, vRatio);
 
     const width = img.width * ratio;
     const height = img.height * ratio;
-
     const centerX = (canvas.width - width) / 2;
-
     const centerY = (canvas.height - height) / 2;
 
     context.clearRect(0, 0, canvas.width, canvas.height);
-
     context.drawImage(
       img,
       0,

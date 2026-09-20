@@ -269,7 +269,7 @@
                   Horario
                 </button>
 
-                <button
+                <!-- <button
                   type="button"
                   @click="notImplemented('Editar datos')"
                   class="px-3 py-2 text-[9px] uppercase tracking-[0.2em] border border-white/10 text-white/55 hover:text-white hover:border-white/25 rounded-lg transition-all duration-200"
@@ -283,7 +283,7 @@
                   class="px-3 py-2 text-[9px] uppercase tracking-[0.2em] border border-red-500/20 text-red-400/70 hover:text-red-400 hover:border-red-500/50 hover:bg-red-500/5 rounded-lg transition-all duration-200"
                 >
                   ✕
-                </button>
+                </button> -->
               </div>
             </div>
           </article>

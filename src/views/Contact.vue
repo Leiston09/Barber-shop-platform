@@ -7,7 +7,7 @@
       <!-- Encabezado -->
       <div class="max-w-2xl mb-14">
         <div class="flex items-center gap-3 mb-5">
-          <span class="w-8 h-px bg-[#ffb700]" />
+          <span class="w-2 h-px bg-[#ffb700]" />
           <span
             class="text-[#ffb700] text-[9px] uppercase tracking-[0.35em] font-medium"
           >

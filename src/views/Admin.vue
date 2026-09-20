@@ -1,7 +1,7 @@
 <!-- src/views/admin/AdminDashboard.vue -->
 
 <template>
-  <div class="min-h-screen text-white px-5 sm:px-8 lg:px-10">
+  <div class="min-h-screen text-white">
     <div class="max-w-7xl mx-auto">
       <div class="mb-10">
         <p

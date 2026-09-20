@@ -2,16 +2,16 @@
 
 <template>
   <div class="absolute inset-0 flex items-center pointer-events-none">
-    <div class="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-20 pt-10">
-      <div class="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-20 items-center">
+    <div class="w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-20 pt-16 pb-28 sm:pt-20 sm:pb-24 lg:pt-10 lg:pb-0">
+      <div class="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-6 sm:gap-8 lg:gap-20 items-center">
 
         <div class="order-2 lg:order-1 max-w-lg">
-          <p class="text-[#ffb700] text-[9px] uppercase tracking-[0.3em] font-medium">
+          <p class="text-[#ffb700] text-[10px] sm:text-[9px] uppercase tracking-[0.3em] font-medium">
             02 / La experiencia
           </p>
 
           <h2
-            class="mt-4 font-barber uppercase text-white text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[0.92] tracking-[-0.03em]"
+            class="mt-4 sm:mt-4 lg:mt-4 font-barber uppercase text-white text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[0.92] tracking-[-0.03em]"
           >
             VEN POR
             <br />
@@ -22,20 +22,20 @@
             LA EXPERIENCIA.
           </h2>
 
-          <p class="mt-5 text-white/60 text-xs sm:text-sm leading-6 font-light max-w-[380px]">
+          <p class="mt-5 sm:mt-5 lg:mt-5 text-white/60 text-sm sm:text-sm leading-6 font-light max-w-[380px]">
             Aquí no se trata de entrar, sentarte y salir.
             Queremos que disfrutes el momento, la conversación
             y la sensación de estar en un lugar hecho para ti.
           </p>
 
-          <p class="mt-4 text-white/35 text-[11px] sm:text-xs italic">
+          <p class="mt-4 sm:mt-4 lg:mt-4 text-white/35 text-xs sm:text-xs italic">
             Tómate el tiempo. Nosotros nos encargamos del resto.
           </p>
         </div>
 
         <div class="order-1 lg:order-2">
           <div
-            class="relative w-full h-[34vh] sm:h-[40vh] lg:h-[48vh] max-h-[480px] overflow-hidden"
+            class="relative w-full h-[28vh] sm:h-[34vh] lg:h-[48vh] max-h-[480px] overflow-hidden"
           >
             <img
               src="/img/home/barberia.jpg"
@@ -47,12 +47,12 @@
               class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/5"
             />
 
-            <div class="absolute bottom-5 left-5 sm:bottom-6 sm:left-6">
-              <p class="text-[#ffb700] text-[8px] uppercase tracking-[0.3em]">
+            <div class="absolute bottom-4 left-4 sm:bottom-6 sm:left-6">
+              <p class="text-[#ffb700] text-[9px] sm:text-[8px] uppercase tracking-[0.3em]">
                 El ambiente
               </p>
 
-              <p class="mt-1.5 text-white text-lg sm:text-xl font-serif italic">
+              <p class="mt-1.5 text-white text-base sm:text-lg lg:text-xl font-serif italic">
                 Aquí el tiempo se disfruta.
               </p>
             </div>
