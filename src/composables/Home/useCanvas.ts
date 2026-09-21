@@ -9,10 +9,9 @@ export function useCanvas() {
   const frameCount = 401;
 
   const currentFrame = (index: number): string => {
-    // Los frames van del 0001 al 0401 (1-indexados, sin saltos)
     const realIndex = index + 1;
     const paddedIndex = String(realIndex).padStart(4, "0");
-    return `/frames/frame_${paddedIndex}.jpg`;
+    return `/frames_webp/frame_${paddedIndex}.webp`;
   };
 
   const preloadAllImages = (): Promise<void> => {

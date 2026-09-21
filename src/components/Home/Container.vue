@@ -8,7 +8,7 @@
         <!-- GIF DE CARGA -->
         <img
           v-if="isLoading"
-          src="/frames/gif/peluqueria.gif"
+          src="/frames_webp/gif/peluqueria.gif"
           alt="Cargando"
           class="absolute inset-0 z-[2] w-full h-full object-cover"
         />

@@ -31,11 +31,10 @@ export function useScrollAnimation(
 
     if (!scenes.length) return;
 
-    // 5 escenas total (Welcome + 4)
-    // Cada escena ocupa un 20% del scroll (100 / 5)
-    const sceneCount = scenes.length;
-    const segmentSize = 1 / sceneCount;
-    const fadeDuration = 0.03; // duración del fade en unidades de progress
+    // Welcome ocupa la mitad que las demás (ya está cargado cuando llega el usuario)
+    // Duraciones individuales por escena (deben sumar 1.0)
+    const holdDurations = [0.1, 0.225, 0.225, 0.225, 0.225];
+    const fadeDuration = 0.03;
 
     gsap.set(sceneLayerRef.value, { opacity: 1 });
     gsap.set(scenes, { opacity: 0, y: 60 });
@@ -70,8 +69,9 @@ export function useScrollAnimation(
       const isFirst = index === 0;
       const isLast = index === scenes.length - 1;
 
-      // Tiempo reservado para cada escena
-      const segmentDuration = segmentSize - fadeDuration;
+      // Tiempo reservado para cada escena (según su índice)
+      const holdDuration = holdDurations[index] ?? 0.225;
+      const segmentDuration = holdDuration - fadeDuration;
 
       if (isFirst) {
         // Escena 0 (Welcome): aparece al inicio, se mantiene, desaparece
