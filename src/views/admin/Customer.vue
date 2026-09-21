@@ -190,7 +190,6 @@
                     {{ user.name }}
                   </p>
 
-                  <!-- Badge protegido -->
                   <span
                     v-if="user.protected"
                     class="text-[8px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full border bg-blue-500/5 border-blue-500/20 text-blue-400/80"
@@ -198,7 +197,6 @@
                     Protegido
                   </span>
 
-                  <!-- Badge bloqueado -->
                   <span
                     v-if="user.blocked"
                     class="text-[8px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full border bg-red-500/5 border-red-500/20 text-red-400/80"
@@ -206,7 +204,6 @@
                     Bloqueado
                   </span>
 
-                  <!-- Badge sin verificar -->
                   <span
                     v-else-if="!user.verified"
                     class="text-[8px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full border bg-amber-500/5 border-amber-500/20 text-amber-400/80"
@@ -214,7 +211,6 @@
                     Sin verificar
                   </span>
 
-                  <!-- Badge rol -->
                   <span
                     :class="[
                       'text-[8px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full border',
@@ -308,8 +304,10 @@
               >
                 Desbloquear
               </button>
+
+              <!-- Eliminar rápido SOLO para usuarios no verificados -->
               <button
-                v-if="canDelete(user)"
+                v-if="canQuickDelete(user)"
                 type="button"
                 @click="openModal('delete', user)"
                 class="px-3 py-2 text-[9px] uppercase tracking-[0.2em] border border-red-500/30 text-red-400/80 hover:text-red-300 hover:border-red-500/60 hover:bg-red-500/10 rounded-lg transition-all duration-200"
@@ -480,6 +478,7 @@
           </p>
         </div>
 
+        <!-- ACCIONES DEL MODAL -->
         <div
           class="flex flex-col sm:flex-row justify-end gap-2 mt-6 pt-5 border-t border-white/5"
         >
@@ -489,6 +488,16 @@
             class="px-4 py-2 border border-white/10 text-white/60 hover:text-white hover:border-white/25 text-[10px] uppercase tracking-[0.2em] rounded-lg transition"
           >
             Cerrar
+          </button>
+
+          <!-- ⬇️ NUEVO: Eliminar cuenta dentro del detalle -->
+          <button
+            v-if="canDeleteFromDetail(selectedUser)"
+            type="button"
+            @click="openModal('delete', selectedUser)"
+            class="px-4 py-2 border border-red-500/30 text-red-400/90 hover:text-red-300 hover:border-red-500/60 hover:bg-red-500/10 text-[10px] uppercase tracking-[0.2em] rounded-lg transition"
+          >
+            Eliminar cuenta
           </button>
 
           <button
@@ -704,6 +713,7 @@
         </div>
       </div>
     </div>
+
     <!-- ============ MODAL ELIMINAR ============ -->
     <div
       v-if="activeModal === 'delete' && selectedUser"
@@ -734,11 +744,41 @@
         </p>
 
         <div
-          class="bg-red-500/5 border border-red-500/20 rounded-xl px-4 py-3 mb-6"
+          class="bg-red-500/5 border border-red-500/20 rounded-xl px-4 py-3 mb-6 space-y-1"
         >
           <p class="text-red-400/80 text-[11px] leading-relaxed">
-            Cuenta sin verificar:
+            Correo:
             <span class="text-white/70">{{ selectedUser.email }}</span>
+          </p>
+
+          <p
+            v-if="selectedUser.appointmentsCount > 0"
+            class="text-red-400/80 text-[11px] leading-relaxed"
+          >
+            Se eliminarán
+            <span class="font-medium">
+              {{ selectedUser.appointmentsCount }}
+              {{
+                selectedUser.appointmentsCount === 1 ? "cita" : "citas"
+              }}
+            </span>
+            del historial.
+          </p>
+
+          <p
+            v-if="selectedUser.futureAppointmentsCount > 0"
+            class="text-red-400/80 text-[11px] leading-relaxed"
+          >
+            Se cancelarán
+            <span class="font-medium">
+              {{ selectedUser.futureAppointmentsCount }}
+              {{
+                selectedUser.futureAppointmentsCount === 1
+                  ? "cita futura"
+                  : "citas futuras"
+              }}
+            </span>
+            y se notificará a los barberos.
           </p>
         </div>
 
@@ -779,32 +819,12 @@ const toast = useToast();
    HELPERS FECHA
    ========================================================= */
 const MESES = [
-  "Ene",
-  "Feb",
-  "Mar",
-  "Abr",
-  "May",
-  "Jun",
-  "Jul",
-  "Ago",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dic",
+  "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+  "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
 ];
 const MESES_LARGO = [
-  "enero",
-  "febrero",
-  "marzo",
-  "abril",
-  "mayo",
-  "junio",
-  "julio",
-  "agosto",
-  "septiembre",
-  "octubre",
-  "noviembre",
-  "diciembre",
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
 ];
 
 const shortDate = (iso: string | null) => {
@@ -837,7 +857,7 @@ const roleLabel = (role: string) => {
 };
 
 /* =========================================================
-   PERMISOS: quién puede hacer qué
+   PERMISOS
    ========================================================= */
 const currentUserId = computed(() => userStore.user?._id);
 
@@ -853,10 +873,24 @@ const canBlock = (target: AdminUser) => {
   return true;
 };
 
-const canDelete = (target: AdminUser) => {
+/**
+ * Botón rápido "Eliminar" en la card:
+ * SOLO para usuarios NO verificados.
+ */
+const canQuickDelete = (target: AdminUser) => {
   if (target.protected) return false;
   if (target._id === currentUserId.value) return false;
-  if (target.verified) return false; // ← solo no verificados
+  if (target.verified) return false;
+  return true;
+};
+
+/**
+ * Botón "Eliminar cuenta" dentro del modal de detalle:
+ * Para cualquier usuario (verificado o no), excepto protegido/uno mismo.
+ */
+const canDeleteFromDetail = (target: AdminUser) => {
+  if (target.protected) return false;
+  if (target._id === currentUserId.value) return false;
   return true;
 };
 
