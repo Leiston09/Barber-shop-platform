@@ -4,17 +4,17 @@ const config = {
   config: {
     classes: generateClasses({
       global: {
-        wrapper: "space-y-2 mb-3",
+        wrapper: "space-y-2 mb-4",
         message:
-          "bg-red-500 text-white text-center text-sm font-bold uppercase p-2 my-2",
-        label: "block mb-1 font-bold text-lg text-white",
+          "bg-red-500/10 border border-red-500/30 text-red-400 text-center text-xs uppercase tracking-wide p-2.5 rounded-lg my-2",
+        label:
+          "block mb-2 text-[10px] uppercase tracking-[0.25em] text-white/40 font-medium",
         input:
-          "w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all",
+          "w-full px-4 py-3 border border-white/10 rounded-xl bg-black/40 text-white text-sm placeholder-white/30 focus:outline-none focus:border-[#ffb700]/60 focus:bg-black/60 transition-all duration-300",
       },
-      // 👇 ESTO ES LO QUE TE FALTABA PARA EL BOTÓN
       submit: {
         input:
-          "w-full bg-blue-700 hover:bg-purple-700 text-black font-bold py-3 rounded-lg transition-colors shadow-md mt-5 cursor-pointer",
+          "w-full bg-[#ffb700] hover:bg-[#e6a500] text-black font-barber text-xs font-medium uppercase tracking-[0.2em] py-4 rounded-xl transition-all duration-300 cursor-pointer shadow-lg shadow-[#ffb700]/10 hover:shadow-[#ffb700]/20 hover:scale-[1.01] active:scale-[0.99] mt-5 disabled:opacity-40 disabled:cursor-not-allowed",
       },
     }),
   },
