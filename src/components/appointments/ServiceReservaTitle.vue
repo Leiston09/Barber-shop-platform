@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <!-- HEADER DE RESERVACIONES -->
-    <header class="border-b border-white/5 px-6 sm:px-10 lg:px-14 py-2">
+    <header class="border-b  border-white/5 px-6 sm:px-10 lg:px-14 py-2">
       <div
         class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-7"
       >

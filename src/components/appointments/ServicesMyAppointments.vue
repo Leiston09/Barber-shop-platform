@@ -23,7 +23,10 @@
     </div>
 
     <!-- CARGANDO -->
-    <div v-if="appointments.loading" class="text-center py-12 sm:py-16">
+    <div
+      v-if="appointments.loading"
+      class="text-center flex flex-col items-center justify-center min-h-[55vh] sm:min-h-[50vh]"
+    >
       <div
         class="inline-block w-8 h-8 border-2 border-white/10 border-t-[#ffb700] rounded-full animate-spin"
       ></div>
@@ -36,10 +39,10 @@
     <!-- SIN CITAS -->
     <div
       v-else-if="appointments.noAppointments"
-      class="text-center border border-white/5 rounded-2xl bg-white/[0.02] px-5 py-10 sm:px-8 sm:py-16  "
+      class="text-center border border-white/5 rounded-2xl bg-white/[0.02] px-5 py-10 sm:px-8 sm:py-16 min-h-[55vh] sm:min-h-[50vh] flex flex-col items-center justify-center"
     >
       <div
-        class="w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-full border border-white/10 flex items-center justify-center mb-4"
+        class="w-14 h-14 sm:w-16 sm:h-16 rounded-full border border-white/10 flex items-center justify-center mb-4"
       >
         <svg
           class="w-6 h-6 sm:w-7 sm:h-7 text-white/20"

@@ -3,7 +3,7 @@
   <Navbar />
 
   <!-- Container -->
-  <main class="pt-15">
+  <main class="pt-15 ">
     <RouterView />
   </main>
 
