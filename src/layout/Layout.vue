@@ -1,14 +1,15 @@
 <template>
-  <!-- NAVIGATION -->
-  <Navbar />
+  <div class="min-h-screen flex flex-col">
+    <Navbar />
 
-  <!-- Container -->
-  <main class="pt-15 ">
-    <RouterView />
-  </main>
+    <main class="pt-15 flex-1">
+      <RouterView />
+    </main>
 
-  <!-- CRÉDITOS / FOOTER -->
-  <footer class="pb-10 lg:pb-0"><Footer /></footer>
+    <footer class="pb-10 lg:pb-0">
+      <Footer />
+    </footer>
+  </div>
 </template>
 
 <script setup lang="ts">
