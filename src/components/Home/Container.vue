@@ -1,9 +1,18 @@
 <template>
   <section class="relative w-full bg-[#090909] text-white -mt-[60px]">
-    <div ref="containerRef" class="relative h-[600vh] w-full">
+    <div ref="containerRef" class="relative h-[500vh] w-full">
       <div class="sticky top-0 h-screen w-full overflow-hidden">
-        <!-- CANVAS -->
-        <canvas ref="canvasRef" class="absolute inset-0 z-0 w-full h-full" />
+        <!-- VIDEO -->
+        <video
+          ref="videoRef"
+          src="/frames_webp/peluqueria.mp4"
+          autoplay
+          muted
+          playsinline
+          loop
+          preload="auto"
+          class="absolute inset-0 z-0 w-full h-full object-cover"
+        />
 
         <!-- GIF DE CARGA -->
         <img
@@ -17,7 +26,6 @@
         <div
           class="absolute inset-0 z-[3] bg-gradient-to-t from-black/90 via-black/30 to-black/50 pointer-events-none"
         />
-
         <div
           class="absolute inset-0 z-[3] bg-gradient-to-r from-black/60 via-transparent to-black/60 pointer-events-none"
         />
@@ -46,7 +54,6 @@
           >
             Scroll
           </span>
-
           <div
             class="w-6 h-10 border-2 border-slate-500 rounded-full flex justify-center p-1.5 animate-bounce"
           >
@@ -60,6 +67,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import SidebarIndicator from "@/components/Navbar/SidebarIndicator.vue";
 import SceneWelcome from "@/components/Home/Scene/SceneWelcome.vue";
@@ -68,17 +76,14 @@ import Scene2Team from "@/components/Home/Scene/Scene2Team.vue";
 import Scene3Services from "@/components/Home/Scene/Scene3Services.vue";
 import Scene4CTA from "@/components/Home/Scene/Scene4CTA.vue";
 
-import { useCanvas } from "@/composables/Home/useCanvas";
 import { useScrollAnimation } from "@/composables/Home/useScrollAnimation";
 import { useSceneStore } from "@/stores/navbar/currentScene";
 
 const containerRef = ref<HTMLElement | null>(null);
-const canvasRef = ref<HTMLCanvasElement | null>(null);
 const sceneLayerRef = ref<HTMLElement | null>(null);
+const videoRef = ref<HTMLVideoElement | null>(null);
 
 const isLoading = ref(true);
-
-const { images, preloadAllImages, drawImageOnCanvas } = useCanvas();
 
 const { currentScene, setupAnimation, cleanup } = useScrollAnimation(
   containerRef,
@@ -87,83 +92,53 @@ const { currentScene, setupAnimation, cleanup } = useScrollAnimation(
 
 const currentScenes = useSceneStore();
 
-const resizeCanvas = () => {
-  const canvas = canvasRef.value;
-
-  if (!canvas) {
-    return;
-  }
-
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const context = canvas.getContext("2d");
-
-  if (!context) {
-    return;
-  }
-
-  const firstImage = images.value[0];
-
-  if (firstImage) {
-    drawImageOnCanvas(firstImage, context, canvas);
-  }
-};
-
 watch(currentScene, (val) => {
   currentScenes.setScene(val);
 });
 
 onMounted(async () => {
-  const canvas = canvasRef.value;
+  const video = videoRef.value;
+  if (!video) return;
 
-  if (!canvas) {
-    return;
-  }
-
-  const context = canvas.getContext("2d");
-
-  if (!context) {
-    return;
-  }
-
-  resizeCanvas();
-
-  setupAnimation(context, canvas, images.value, drawImageOnCanvas);
-
-  currentScenes.setScene(0);
-
-  await preloadAllImages();
-
-  isLoading.value = false;
-
-  requestAnimationFrame(() => {
-    resizeCanvas();
-
-    window.dispatchEvent(new Event("scroll"));
+  await new Promise<void>((resolve) => {
+    if (video.readyState >= 2) {
+      resolve();
+    } else {
+      video.addEventListener("canplay", () => resolve(), { once: true });
+    }
   });
 
-  window.addEventListener("resize", resizeCanvas);
+  try {
+    await video.play();
+  } catch {
+    /* ignorar */
+  }
+
+  setupAnimation();
+  currentScenes.setScene(0);
+  isLoading.value = false;
+
+  // ✅ Recalcular medidas después de montar
+  // El onRefresh se encarga de reproducir la escena correcta
+  requestAnimationFrame(() => {
+    ScrollTrigger.refresh();
+  });
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", resizeCanvas);
-
   cleanup();
 });
 </script>
 
 <style scoped>
-.absolute {
-  position: absolute;
+video {
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 img {
   user-select: none;
   -webkit-user-drag: none;
-}
-
-a {
-  text-decoration: none;
 }
 </style>

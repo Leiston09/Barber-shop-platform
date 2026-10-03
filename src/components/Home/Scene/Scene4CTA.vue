@@ -5,7 +5,7 @@
     <div class="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-25 pt-10">
       <div class="max-w-3xl mx-auto text-center">
 
-        <div class="flex items-center justify-center gap-5">
+        <div data-anim class="flex items-center justify-center gap-5">
           <span class="w-10 h-px bg-[#ffb700]/50" />
 
           <span
@@ -18,6 +18,7 @@
         </div>
 
         <h2
+          data-anim
           class="mt-3 font-barber uppercase text-white font-medium leading-[0.86] tracking-[-0.035em] text-[clamp(48px,6vw,82px)]"
         >
           Tu próximo
@@ -26,7 +27,7 @@
           empieza aquí.
         </h2>
 
-        <div class="mt-6 flex items-start justify-center gap-5">
+        <div data-anim class="mt-6 flex items-start justify-center gap-5">
           <span class="w-px h-12 bg-[#ffb700]/70 shrink-0" />
 
           <div>
@@ -66,7 +67,10 @@
           <span class="w-px h-12 bg-[#ffb700]/70 shrink-0" />
         </div>
 
-        <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+        <div
+          data-anim
+          class="mt-7 flex flex-wrap items-center justify-center gap-3"
+        >
           <RouterLink
             v-if="user.user"
             :to="{ name: 'Reservaciones' }"

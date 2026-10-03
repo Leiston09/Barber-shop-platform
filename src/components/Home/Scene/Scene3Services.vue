@@ -1,5 +1,3 @@
-<!-- components/Home/Scene3Services.vue -->
-
 <template>
   <div class="absolute inset-0 flex items-center pointer-events-none">
     <div class="w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-20 pt-16 pb-28 sm:pt-20 sm:pb-24 lg:pt-10 lg:pb-0">
@@ -8,6 +6,7 @@
         <div class="relative h-[26vh] sm:h-[40vh] lg:h-[52vh] max-h-[540px]">
 
           <div
+            data-anim
             class="absolute left-[4%] top-0 w-[47%] h-[82%] overflow-hidden"
           >
             <img
@@ -28,6 +27,7 @@
           </div>
 
           <div
+            data-anim
             class="absolute right-[4%] top-[18%] w-[47%] h-[82%] overflow-hidden"
           >
             <img
@@ -50,11 +50,15 @@
         </div>
 
         <div class="max-w-lg">
-          <p class="text-[#ffb700] text-[10px] sm:text-[9px] uppercase tracking-[0.3em] font-medium">
+          <p
+            data-anim
+            class="text-[#ffb700] text-[10px] sm:text-[9px] uppercase tracking-[0.3em] font-medium"
+          >
             03 / El equipo
           </p>
 
           <h2
+            data-anim
             class="mt-4 sm:mt-4 lg:mt-4 font-barber uppercase text-white text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[0.92] tracking-[-0.03em]"
           >
             ENCUENTRA
@@ -65,6 +69,7 @@
           </h2>
 
           <p
+            data-anim
             class="mt-5 sm:mt-5 lg:mt-5 text-white/60 text-sm sm:text-sm leading-6 font-light max-w-[380px]"
           >
             No todos buscan lo mismo. Por eso cada barbero tiene
@@ -72,7 +77,10 @@
             convertirla en un resultado que vaya contigo.
           </p>
 
-          <p class="mt-4 sm:mt-4 lg:mt-4 text-white/35 text-xs sm:text-xs italic">
+          <p
+            data-anim
+            class="mt-4 sm:mt-4 lg:mt-4 text-white/35 text-xs sm:text-xs italic"
+          >
             Tú eliges el estilo. Nosotros ponemos la experiencia.
           </p>
         </div>

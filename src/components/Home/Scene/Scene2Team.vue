@@ -1,16 +1,18 @@
-<!-- components/Home/Scene/Scene2Team.vue -->
-
 <template>
   <div class="absolute inset-0 flex items-center pointer-events-none">
     <div class="w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-20 pt-16 pb-28 sm:pt-20 sm:pb-24 lg:pt-10 lg:pb-0">
       <div class="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-6 sm:gap-8 lg:gap-20 items-center">
 
         <div class="order-2 lg:order-1 max-w-lg">
-          <p class="text-[#ffb700] text-[10px] sm:text-[9px] uppercase tracking-[0.3em] font-medium">
+          <p
+            data-anim
+            class="text-[#ffb700] text-[10px] sm:text-[9px] uppercase tracking-[0.3em] font-medium"
+          >
             02 / La experiencia
           </p>
 
           <h2
+            data-anim
             class="mt-4 sm:mt-4 lg:mt-4 font-barber uppercase text-white text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[0.92] tracking-[-0.03em]"
           >
             VEN POR
@@ -22,18 +24,24 @@
             LA EXPERIENCIA.
           </h2>
 
-          <p class="mt-5 sm:mt-5 lg:mt-5 text-white/60 text-sm sm:text-sm leading-6 font-light max-w-[380px]">
+          <p
+            data-anim
+            class="mt-5 sm:mt-5 lg:mt-5 text-white/60 text-sm sm:text-sm leading-6 font-light max-w-[380px]"
+          >
             Aquí no se trata de entrar, sentarte y salir.
             Queremos que disfrutes el momento, la conversación
             y la sensación de estar en un lugar hecho para ti.
           </p>
 
-          <p class="mt-4 sm:mt-4 lg:mt-4 text-white/35 text-xs sm:text-xs italic">
+          <p
+            data-anim
+            class="mt-4 sm:mt-4 lg:mt-4 text-white/35 text-xs sm:text-xs italic"
+          >
             Tómate el tiempo. Nosotros nos encargamos del resto.
           </p>
         </div>
 
-        <div class="order-1 lg:order-2">
+        <div data-anim class="order-1 lg:order-2">
           <div
             class="relative w-full h-[28vh] sm:h-[34vh] lg:h-[48vh] max-h-[480px] overflow-hidden"
           >

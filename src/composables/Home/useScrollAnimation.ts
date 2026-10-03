@@ -1,5 +1,3 @@
-// composables/Home/useScrollAnimation.ts
-
 import { ref, type Ref } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -11,18 +9,13 @@ export function useScrollAnimation(
   sceneLayerRef: Ref<HTMLElement | null>,
 ) {
   const currentScene = ref(0);
-  const frameCount = 190; // ← mismo que useCanvas
 
-  const setupAnimation = (
-    context: CanvasRenderingContext2D,
-    canvas: HTMLCanvasElement,
-    images: HTMLImageElement[],
-    drawFn: (
-      img: HTMLImageElement,
-      context: CanvasRenderingContext2D,
-      canvas: HTMLCanvasElement,
-    ) => void,
-  ) => {
+  let masterTrigger: ScrollTrigger | null = null;
+  let sceneTimelines: gsap.core.Timeline[] = [];
+  let activeIndex = -1;
+  let pendingPlay: gsap.core.Tween | null = null;
+
+  const setupAnimation = () => {
     if (!containerRef.value || !sceneLayerRef.value) return;
 
     const scenes = Array.from(
@@ -31,142 +24,133 @@ export function useScrollAnimation(
 
     if (!scenes.length) return;
 
-    // Welcome ocupa la mitad que las demás (ya está cargado cuando llega el usuario)
-    // Duraciones individuales por escena (deben sumar 1.0)
-    const holdDurations = [0.1, 0.225, 0.225, 0.225, 0.225];
-    const fadeDuration = 0.03;
-
     gsap.set(sceneLayerRef.value, { opacity: 1 });
-    gsap.set(scenes, { opacity: 0, y: 60 });
 
-    const firstScene = scenes[0];
-    if (firstScene) {
-      gsap.set(firstScene, { opacity: 1, y: 0 });
-    }
+    // =========================================================
+    // 🎬 Timeline POR ESCENA (autónoma, sin scrub)
+    // =========================================================
+    sceneTimelines = scenes.map((scene) => {
+      const marked = scene.querySelectorAll<HTMLElement>("[data-anim]");
+      const targets: HTMLElement[] = marked.length
+        ? Array.from(marked)
+        : (Array.from(scene.children) as HTMLElement[]);
 
-    const sceneTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.value,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.6,
-        invalidateOnRefresh: true,
-        onRefresh: () => {
-          currentScene.value = 0;
+      gsap.set(scene, { opacity: 0, pointerEvents: "none" });
+      gsap.set(targets, { opacity: 0, y: 60 });
+
+      const tl = gsap.timeline({
+        paused: true,
+        defaults: { ease: "power2.out" },
+      });
+
+      tl.to(scene, {
+        opacity: 1,
+        pointerEvents: "auto",
+        duration: 0.15,
+      }).to(
+        targets,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.18,
         },
-        onUpdate: (self) => {
-          const progress = self.progress;
-          const sceneIndex = Math.min(
-            scenes.length - 1,
-            Math.floor(progress * scenes.length),
-          );
-          currentScene.value = sceneIndex;
-        },
-      },
+        "<0.05",
+      );
+
+      return tl;
     });
 
-    scenes.forEach((scene, index) => {
-      const isFirst = index === 0;
-      const isLast = index === scenes.length - 1;
-
-      // Tiempo reservado para cada escena (según su índice)
-      const holdDuration = holdDurations[index] ?? 0.225;
-      const segmentDuration = holdDuration - fadeDuration;
-
-      if (isFirst) {
-        // Escena 0 (Welcome): aparece al inicio, se mantiene, desaparece
-        sceneTimeline
-          .to(scene, {
-            opacity: 1,
-            y: 0,
-            duration: segmentDuration,
-            ease: "none",
-            pointerEvents: "auto",
-          })
-          .to(scene, {
-            opacity: 0,
-            y: -50,
-            duration: fadeDuration,
-            ease: "none",
-            pointerEvents: "none",
-          });
-      } else if (isLast) {
-        // Última escena: aparece y se queda
-        sceneTimeline
-          .fromTo(
-            scene,
-            { opacity: 0, y: 50, pointerEvents: "none" },
-            {
-              opacity: 1,
-              y: 0,
-              duration: fadeDuration,
-              ease: "none",
-              pointerEvents: "auto",
-            },
-          )
-          .to(scene, {
-            opacity: 1,
-            y: 0,
-            duration: segmentDuration,
-            ease: "none",
-            pointerEvents: "auto",
-          });
-      } else {
-        // Escenas intermedias: aparecen, se mantienen, desaparecen
-        sceneTimeline
-          .fromTo(
-            scene,
-            { opacity: 0, y: 50, pointerEvents: "none" },
-            {
-              opacity: 1,
-              y: 0,
-              duration: fadeDuration,
-              ease: "none",
-              pointerEvents: "auto",
-            },
-          )
-          .to(scene, {
-            opacity: 1,
-            y: 0,
-            duration: segmentDuration,
-            ease: "none",
-            pointerEvents: "auto",
-          })
-          .to(scene, {
-            opacity: 0,
-            y: -50,
-            duration: fadeDuration,
-            ease: "none",
-            pointerEvents: "none",
-          });
-      }
-    });
-
-    let lastFrame = -1;
-
-    ScrollTrigger.create({
+    // =========================================================
+    // 🎯 Master ScrollTrigger: SOLO decide qué escena está activa
+    // =========================================================
+    masterTrigger = ScrollTrigger.create({
       trigger: containerRef.value,
       start: "top top",
       end: "bottom bottom",
       invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        const frameIndex = Math.min(
-          frameCount - 1,
-          Math.max(0, Math.round(self.progress * (frameCount - 1))),
+      onRefresh: (self) => {
+        // Cancelar cualquier delayedCall pendiente
+        if (pendingPlay) {
+          pendingPlay.kill();
+          pendingPlay = null;
+        }
+
+        // Detectar la escena correspondiente al progreso actual
+        const idx = Math.min(
+          scenes.length - 1,
+          Math.max(0, Math.floor(self.progress * scenes.length)),
         );
 
-        if (frameIndex === lastFrame) return;
-        lastFrame = frameIndex;
+        currentScene.value = idx;
 
-        const image = images[frameIndex];
-        if (!image) return;
-        drawFn(image, context, canvas);
+        // Resetear TODAS las escenas al estado inicial
+        sceneTimelines.forEach((tl) => tl.pause(0));
+
+        // ✅ Reproducir inmediatamente la escena correcta
+        //    (sin esto, al recargar quedaba todo invisible)
+        const activeTl = sceneTimelines[idx];
+        if (activeTl) {
+          activeTl.play();
+          activeIndex = idx;
+        }
+      },
+      onUpdate: (self) => {
+        const progress = self.progress;
+        const sceneIndex = Math.min(
+          scenes.length - 1,
+          Math.floor(progress * scenes.length),
+        );
+
+        currentScene.value = sceneIndex;
+
+        if (sceneIndex === activeIndex) return;
+
+        if (pendingPlay) {
+          pendingPlay.kill();
+          pendingPlay = null;
+        }
+
+        sceneTimelines.forEach((tl, i) => {
+          if (i !== sceneIndex) {
+            tl.timeScale(3).reverse();
+          }
+        });
+
+        const nextTl = sceneTimelines[sceneIndex];
+        if (nextTl) {
+          nextTl.timeScale(1);
+          pendingPlay = gsap.delayedCall(0.15, () => {
+            nextTl.play();
+            pendingPlay = null;
+          });
+        }
+
+        activeIndex = sceneIndex;
       },
     });
+
+    // =========================================================
+    // Arrancar la primera escena al cargar la página
+    // =========================================================
+    const firstTl = sceneTimelines[0];
+    if (firstTl) {
+      firstTl.play();
+      activeIndex = 0;
+      currentScene.value = 0;
+    }
   };
 
   const cleanup = () => {
-    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    if (pendingPlay) {
+      pendingPlay.kill();
+      pendingPlay = null;
+    }
+    sceneTimelines.forEach((tl) => tl.kill());
+    sceneTimelines = [];
+    masterTrigger?.kill();
+    masterTrigger = null;
+    activeIndex = -1;
   };
 
   return {

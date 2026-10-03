@@ -20,23 +20,35 @@
       <!-- CONTENIDO -->
       <div class="grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] gap-12 lg:gap-16 items-start">
         
-        <!-- MAPA -->
-        <div class="relative w-full h-[320px] sm:h-[380px] lg:h-[420px] overflow-hidden border border-white/10 rounded-sm">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.7595!2d-80.2298!3d-1.5535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x902d2e1e8f9f9f9f%3A0x5b5b5b5b5b5b5b5b!2sPedro%20Carbo%2C%20Ecuador!5e0!3m2!1ses!2s!4v1700000000000!5m2!1ses!2s"
-            width="100%"
-            height="100%"
-            style="border:0"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            class="w-full h-full grayscale-[0.6]"
+        <!-- MAPA (imagen estática clickeable) -->
+        <a
+          href="https://www.google.com/maps/place/Pedro+Carbo,+Ecuador"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="relative block w-full h-[320px] sm:h-[380px] lg:h-[420px] overflow-hidden border border-white/10 rounded-sm group"
+        >
+          <img
+            src="/img/home/mapa.png"
+            alt="Ubicación The Barber Studio — Pedro Carbo, Ecuador"
+            class="w-full h-full object-cover grayscale-[0.6] transition-transform duration-500 group-hover:scale-105"
           />
+
+          <!-- Overlay al hacer hover -->
+          <div
+            class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          >
+            <span class="text-white text-[10px] uppercase tracking-[0.25em] border border-white/40 px-5 py-2.5">
+              Abrir en Google Maps →
+            </span>
+          </div>
+
+          <!-- Etiqueta inferior -->
           <div class="absolute bottom-5 left-5 bg-black/60 backdrop-blur-sm px-4 py-2 border border-white/10">
             <span class="text-white/60 text-[9px] uppercase tracking-[0.2em] font-light">
               The Barber Studio
             </span>
           </div>
-        </div>
+        </a>
 
         <!-- INFORMACIÓN -->
         <div class="space-y-8">
@@ -101,5 +113,7 @@
     </div>
   </section>
 </template>
+
 <script setup lang="ts"></script>
+
 <style scoped></style>

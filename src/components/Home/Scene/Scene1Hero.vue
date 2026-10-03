@@ -1,5 +1,3 @@
-<!-- components/Home/Scene1Hero.vue -->
-
 <template>
   <div class="absolute inset-0 flex items-center pointer-events-none">
     <div
@@ -8,8 +6,8 @@
       <div
         class="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-20 items-center"
       >
-        <!-- IMAGEN -->
-        <div class="flex justify-center">
+        <!-- GRUPO 1: IMAGEN -->
+        <div data-anim class="flex justify-center">
           <div
             class="relative w-full max-w-[220px] sm:max-w-[260px] lg:max-w-[300px] aspect-[4/5] overflow-hidden"
           >
@@ -43,13 +41,17 @@
 
         <!-- TEXTO -->
         <div class="max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
+          <!-- GRUPO 2 -->
           <p
+            data-anim
             class="text-[#ffb700] text-[10px] sm:text-[10px] lg:text-[11px] uppercase tracking-[0.3em] sm:tracking-[0.35em] font-medium"
           >
             01 / El oficio
           </p>
 
+          <!-- GRUPO 3 -->
           <h2
+            data-anim
             class="mt-3 sm:mt-4 lg:mt-5 font-barber uppercase text-white text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold leading-[0.9] tracking-[-0.03em]"
           >
             TU ESTILO
@@ -59,7 +61,9 @@
             <span class="text-[#ffb700]">AQUÍ.</span>
           </h2>
 
+          <!-- GRUPO 4 -->
           <p
+            data-anim
             class="mt-4 sm:mt-5 lg:mt-6 text-white/60 text-sm sm:text-base leading-6 sm:leading-7 font-light max-w-[430px] mx-auto lg:mx-0"
           >
             Cada persona tiene una forma distinta de llevar su estilo.
@@ -67,7 +71,9 @@
             a un resultado que realmente se sienta tuyo.
           </p>
 
+          <!-- GRUPO 5 -->
           <p
+            data-anim
             class="mt-3 sm:mt-4 lg:mt-4 text-white/35 text-xs sm:text-sm leading-5 sm:leading-6"
           >
             No seguimos un molde. Creamos algo que encaje contigo.

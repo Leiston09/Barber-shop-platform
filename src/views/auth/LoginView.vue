@@ -16,7 +16,7 @@
         <!-- BOTÓN VOLVER -->
         <RouterLink
           to="/"
-          class="absolute top-4 left-4 text-white/30 hover:text-[#ffb700] transition-colors duration-300"
+          class="absolute top-4 left-4 text-white hover:text-[#ffb700] transition-colors duration-300"
           aria-label="Volver al inicio"
         >
           <svg
