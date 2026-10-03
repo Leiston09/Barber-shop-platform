@@ -6,7 +6,7 @@ export function useCanvas() {
   const images = ref<HTMLImageElement[]>([]);
 
   // Ahora son 401 frames reales
-  const frameCount = 401;
+  const frameCount = 190;
 
   const currentFrame = (index: number): string => {
     const realIndex = index + 1;

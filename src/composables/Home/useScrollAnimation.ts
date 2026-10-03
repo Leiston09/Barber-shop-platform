@@ -11,7 +11,7 @@ export function useScrollAnimation(
   sceneLayerRef: Ref<HTMLElement | null>,
 ) {
   const currentScene = ref(0);
-  const frameCount = 401; // ← mismo que useCanvas
+  const frameCount = 190; // ← mismo que useCanvas
 
   const setupAnimation = (
     context: CanvasRenderingContext2D,
