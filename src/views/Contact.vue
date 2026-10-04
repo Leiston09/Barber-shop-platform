@@ -1,7 +1,7 @@
 <template>
   <section
     ref="sectionRef"
-    class="w-full bg-[#050505] text-white px-6 sm:px-10 lg:px-20 py-5"
+    class="w-full bg-[#050505] text-white px-6 sm:px-10 lg:px-20 py-5 "
   >
     <div class="max-w-7xl mx-auto">
       <!-- Encabezado (lo único que anima el padre) -->

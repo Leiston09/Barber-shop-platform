@@ -1,10 +1,10 @@
 <template>
   <section
     ref="sectionRef"
-    class="relative w-full  bg-[#090909] text-white overflow-hidden flex items-center"
+    class="relative w-full bg-[#090909] text-white overflow-hidden min-h-screen flex items-center justify-center"
   >
     <div
-      class="relative w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-20 py-10"
+      class="relative w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-20 py-8 sm:py-12 lg:py-16"
     >
       <div
         class="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-6 sm:gap-8 lg:gap-14 items-center w-full"
@@ -12,7 +12,7 @@
         <!-- IMAGEN -->
         <div data-anim class="relative order-1 lg:order-1">
           <div
-            class="relative w-full max-w-[220px] sm:max-w-[280px] lg:max-w-[340px] mx-auto lg:mx-0 aspect-[4/5] overflow-hidden"
+            class="relative w-full max-w-[200px] sm:max-w-[260px] lg:max-w-[320px] xl:max-w-[360px] mx-auto lg:mx-0 aspect-[4/5] overflow-hidden"
           >
             <img
               src="/img/home/barberia.jpg"
@@ -28,7 +28,7 @@
               class="absolute bottom-4 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5"
             >
               <p
-                class="text-[#ffb700] text-[8px] sm:text-[9px] uppercase tracking-[0.3em]"
+                class="text-[#ffb700] text-[9px] sm:text-[10px] uppercase tracking-[0.3em]"
               >
                 The Barber Studio
               </p>
@@ -55,7 +55,7 @@
 
           <h2
             data-anim
-            class="mt-2 sm:mt-3 font-barber uppercase text-white text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold leading-[0.95] tracking-[-0.03em]"
+            class="mt-2 sm:mt-3 font-barber uppercase text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[0.95] tracking-[-0.03em]"
           >
             DONDE TU ESTILO
             <br />
@@ -64,7 +64,7 @@
 
           <div
             data-anim
-            class="mt-3 sm:mt-4 space-y-2.5 text-white/55 text-xs sm:text-sm leading-5 sm:leading-6 font-light max-w-[480px] mx-auto lg:mx-0"
+            class="mt-3 sm:mt-4 space-y-2.5 sm:space-y-3 text-white/55 text-xs sm:text-sm md:text-base leading-5 sm:leading-6 md:leading-7 font-light max-w-[500px] mx-auto lg:mx-0"
           >
             <p>
               Nuestra peluquería nació para hacer de cada visita algo más que un
@@ -82,36 +82,36 @@
           <!-- STATS -->
           <div
             data-anim
-            class="mt-4 sm:mt-5 grid grid-cols-3 border-t border-white/10 pt-4"
+            class="mt-4 sm:mt-5 grid grid-cols-3 border-t border-white/10 pt-4 sm:pt-5"
           >
             <div>
-              <span class="block font-barber text-xl sm:text-2xl text-white">
+              <span class="block font-barber text-xl sm:text-2xl lg:text-3xl text-white">
                 +5
               </span>
               <span
-                class="block mt-0.5 text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-white/35"
+                class="block mt-0.5 text-[8px] sm:text-[9px] lg:text-[10px] uppercase tracking-[0.2em] text-white/35"
               >
                 Años
               </span>
             </div>
 
             <div>
-              <span class="block font-barber text-xl sm:text-2xl text-white">
+              <span class="block font-barber text-xl sm:text-2xl lg:text-3xl text-white">
                 +2K
               </span>
               <span
-                class="block mt-0.5 text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-white/35"
+                class="block mt-0.5 text-[8px] sm:text-[9px] lg:text-[10px] uppercase tracking-[0.2em] text-white/35"
               >
                 Clientes
               </span>
             </div>
 
             <div>
-              <span class="block font-barber text-xl sm:text-2xl text-white">
+              <span class="block font-barber text-xl sm:text-2xl lg:text-3xl text-white">
                 100%
               </span>
               <span
-                class="block mt-0.5 text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-white/35"
+                class="block mt-0.5 text-[8px] sm:text-[9px] lg:text-[10px] uppercase tracking-[0.2em] text-white/35"
               >
                 Dedicación
               </span>
@@ -120,7 +120,7 @@
 
           <div data-anim class="mt-4 sm:mt-5">
             <p
-              class="text-[11px] sm:text-xs text-[#ffb700] italic leading-relaxed max-w-[420px] mx-auto lg:mx-0"
+              class="text-[11px] sm:text-xs lg:text-sm text-[#ffb700] italic leading-relaxed max-w-[440px] mx-auto lg:mx-0"
             >
               "No se trata solo de cómo te ves, sino de cómo te sientes al
               salir."
