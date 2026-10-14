@@ -1,25 +1,18 @@
 <template>
   <section class="relative w-full bg-[#090909] text-white -mt-[60px]">
-    <div ref="containerRef" class="relative h-[500vh] w-full">
+    <div ref="containerRef" class="relative h-[450vh] w-full">
       <div class="sticky top-0 h-screen w-full overflow-hidden">
-        <!-- VIDEO -->
+        <!-- VIDEO (con poster fallback) -->
         <video
           ref="videoRef"
           src="/frames_webp/peluqueria.mp4"
+          poster="/frames_webp/peluqueriaEstatica.png"
           autoplay
           muted
           playsinline
           loop
           preload="auto"
           class="absolute inset-0 z-0 w-full h-full object-cover"
-        />
-
-        <!-- GIF DE CARGA -->
-        <img
-          v-if="isLoading"
-          src="/frames_webp/gif/peluqueria.gif"
-          alt="Cargando"
-          class="absolute inset-0 z-[2] w-full h-full object-cover"
         />
 
         <!-- OVERLAYS -->
@@ -83,8 +76,6 @@ const containerRef = ref<HTMLElement | null>(null);
 const sceneLayerRef = ref<HTMLElement | null>(null);
 const videoRef = ref<HTMLVideoElement | null>(null);
 
-const isLoading = ref(true);
-
 const { currentScene, setupAnimation, cleanup } = useScrollAnimation(
   containerRef,
   sceneLayerRef,
@@ -96,30 +87,20 @@ watch(currentScene, (val) => {
   currentScenes.setScene(val);
 });
 
-onMounted(async () => {
-  const video = videoRef.value;
-  if (!video) return;
-
-  await new Promise<void>((resolve) => {
-    if (video.readyState >= 2) {
-      resolve();
-    } else {
-      video.addEventListener("canplay", () => resolve(), { once: true });
-    }
-  });
-
-  try {
-    await video.play();
-  } catch {
-    /* ignorar */
-  }
-
+onMounted(() => {
+  // 1. Arrancar las escenas inmediatamente (sin esperar al video)
   setupAnimation();
   currentScenes.setScene(0);
-  isLoading.value = false;
 
-  // ✅ Recalcular medidas después de montar
-  // El onRefresh se encarga de reproducir la escena correcta
+  // 2. Intentar reproducir el video en background (no bloquea nada)
+  const video = videoRef.value;
+  if (video) {
+    video.play().catch(() => {
+      // Si falla, el poster se queda visible como fallback
+    });
+  }
+
+  // 3. Recalcular medidas después de montar
   requestAnimationFrame(() => {
     ScrollTrigger.refresh();
   });
