@@ -143,7 +143,7 @@
           />
         </svg>
         <span
-          class="text-[7px] uppercase tracking-[0.08em] font-medium leading-none"
+          class="text-[7px] uppercase tracking-[0.08em] font-medium leading-none text-center"
           >Mi agenda</span
         >
         <span
