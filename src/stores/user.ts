@@ -20,10 +20,11 @@ export const useUserStore = defineStore("user", () => {
 
   const user = ref<User | null>(null);
   const loading = ref(true);
-  const initialized = ref(false); // ← NUEVO
+  const initialized = ref(false);
 
   async function init() {
-    if (initialized.value) return; // ← NUEVO: no repetir
+    // Si ya tenemos un usuario cargado, no volver a pedirlo
+    if (user.value) return;
 
     const token = localStorage.getItem("AUTH_TOKEN");
 
@@ -64,7 +65,7 @@ export const useUserStore = defineStore("user", () => {
   return {
     user,
     loading,
-    initialized, // ← NUEVO
+    initialized,
     getUserName,
     isAuthenticated,
     isAdmin,

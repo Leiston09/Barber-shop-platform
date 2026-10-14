@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div class="min-h-screen flex flex-col bg-[#0a0a0a]">
     <Navbar />
 
-    <main class="pt-15 flex-1">
+    <main class="flex-1 pt-[64px]">
       <RouterView />
     </main>
 
-    <footer class="pb-10 lg:pb-0">
+    <footer>
       <Footer />
     </footer>
   </div>
@@ -16,5 +16,3 @@
 import Footer from "@/components/Home/Footer.vue";
 import Navbar from "@/components/Navbar/Navbar.vue";
 </script>
-
-<style scoped></style>

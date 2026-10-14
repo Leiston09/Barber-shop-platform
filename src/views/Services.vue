@@ -1,7 +1,7 @@
 <template>
   <div
     ref="sectionRef"
-    class="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-6 py-5 overflow-hidden"
+    class="w-full min-h-full bg-[#0a0a0a] flex items-center justify-center px-6 py-12 overflow-hidden"
   >
     <div class="w-full max-w-5xl mx-auto">
       <div class="text-center mb-5">

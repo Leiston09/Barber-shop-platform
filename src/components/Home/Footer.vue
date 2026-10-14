@@ -1,6 +1,6 @@
 <template>
   <footer
-    class="w-full bg-[#050505] text-white px-6 sm:px-10 lg:px-20 py-10 border-t border-white/[0.06]"
+    class="w-full bg-[#050505] text-white px-6 sm:px-10 lg:px-20 py-5 border-t border-white/[0.06]"
   >
     <div class="max-w-7xl mx-auto">
       <div class="flex flex-col sm:flex-row items-center justify-between gap-8">
