@@ -22,4 +22,8 @@ export default {
   deleteSchedule(barberId: string) {
     return api.delete(`/barbers/${barberId}`);
   },
+
+  getMyClients() {
+    return api.get("/barbers/me/clients");
+  },
 };

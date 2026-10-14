@@ -4,7 +4,6 @@
       <!-- ENCABEZADO -->
       <div class="mb-14">
         <div class="flex items-center gap-3 mb-5">
-          <span class="w-8 h-px bg-[#ffb700]" />
           <span class="text-[#ffb700] text-[10px] uppercase tracking-[0.3em] font-medium">
             Ubicación
           </span>

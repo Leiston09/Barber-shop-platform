@@ -61,7 +61,6 @@ const routes = [
               },
             ],
           },
-          
         ],
       },
       {
@@ -73,6 +72,15 @@ const routes = [
         path: "contact",
         name: "Contact",
         component: () => import("@/views/Contact.vue"),
+      },
+      {
+        path: "barber/clients",
+        name: "Barber-Clients",
+        component: () => import("@/views/barber/Clients.vue"),
+        meta: {
+          requireAuth: true,
+          requireBarber: true,
+        },
       },
     ],
   },
@@ -163,8 +171,8 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const requireAuth = to.matched.some((url) => url.meta.requireAuth);
-
   const requireAdmin = to.matched.some((url) => url.meta.requireAdmin);
+  const requireBarber = to.matched.some((url) => url.meta.requireBarber);
 
   const userStore = useUserStore();
 
@@ -174,20 +182,20 @@ router.beforeEach(async (to) => {
     await userStore.init();
   }
 
-  if (!requireAuth && !requireAdmin) {
+  if (!requireAuth && !requireAdmin && !requireBarber) {
     return true;
   }
 
   if (!userStore.user) {
-    return {
-      name: "Login",
-    };
+    return { name: "Login" };
   }
 
   if (requireAdmin && !userStore.isAdmin) {
-    return {
-      name: "Login",
-    };
+    return { name: "Login" };
+  }
+
+  if (requireBarber && userStore.user.role !== "barber") {
+    return { name: "Login" };
   }
 
   return true;

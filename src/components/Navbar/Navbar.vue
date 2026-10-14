@@ -33,9 +33,9 @@
       <!-- Menú de laptop -->
       <Laptop />
 
-      <!-- Reservar cita -->
+      <!-- Reservar cita (solo cliente o sin sesión) -->
       <button
-        v-if="!user.isAdmin"
+        v-if="!user.isAdmin && !user.isBarber"
         @click="checkAuthAndShowWarning"
         class="flex items-center text-white gap-5 border border-[#ffb700]/60 px-5 py-3 text-[9px] uppercase tracking-[0.22em] hover:bg-[#ffb700] hover:text-black transition-all duration-300 shrink-0"
       >
@@ -44,7 +44,10 @@
       </button>
 
       <!-- Saludo (laptop) -->
-      <div v-if="user.isAuthenticated" class="hidden lg:flex items-center gap-3">
+      <div
+        v-if="user.isAuthenticated"
+        class="hidden lg:flex items-center gap-3"
+      >
         <span
           class="w-7 h-7 rounded-full border border-[#ffb700]/30 flex items-center justify-center text-[#ffb700] text-[10px]"
         >
@@ -59,13 +62,103 @@
         </p>
       </div>
 
-      <!-- Avatar simple (móvil) -->
-      <div v-if="user.isAuthenticated" class="flex lg:hidden items-center">
+      <!-- Avatar + hamburguesa (móvil) -->
+      <div
+        v-if="user.isAuthenticated"
+        class="relative flex lg:hidden items-center gap-2"
+      >
         <span
           class="w-8 h-8 rounded-full border border-[#ffb700]/30 bg-[#ffb700]/5 flex items-center justify-center text-[#ffb700] text-[11px] font-barber"
         >
           {{ user.getUserName?.charAt(0)?.toUpperCase() || "C" }}
         </span>
+
+        <button
+          type="button"
+          @click.stop="mobileMenuOpen = !mobileMenuOpen"
+          class="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+          aria-label="Menú de usuario"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M4 7h16M4 12h16M4 17h16"
+            />
+          </svg>
+        </button>
+
+        <!-- OVERLAY para cerrar al pulsar fuera -->
+        <div
+          v-if="mobileMenuOpen"
+          class="fixed inset-0 z-40"
+          @click="mobileMenuOpen = false"
+        />
+
+        <!-- DROPDOWN -->
+        <Transition
+          enter-active-class="transition-all duration-200"
+          enter-from-class="opacity-0 -translate-y-2"
+          enter-to-class="opacity-100 translate-y-0"
+          leave-active-class="transition-all duration-150"
+          leave-from-class="opacity-100 translate-y-0"
+          leave-to-class="opacity-0 -translate-y-2"
+        >
+          <div
+            v-if="mobileMenuOpen"
+            class="absolute top-full right-0 mt-3 w-64 bg-[#0b0b0b] border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-black/60 z-50"
+          >
+            <!-- Usuario -->
+            <div class="flex items-center gap-3 px-5 py-4 border-b border-white/5">
+              <span
+                class="w-10 h-10 shrink-0 rounded-full border border-[#ffb700]/30 bg-[#ffb700]/5 flex items-center justify-center text-[#ffb700] text-sm font-barber"
+              >
+                {{ user.getUserName?.charAt(0)?.toUpperCase() || "C" }}
+              </span>
+
+              <div class="min-w-0">
+                <p class="text-white/90 text-sm font-barber truncate">
+                  {{ user.getUserName || "Cliente" }}
+                </p>
+                <p class="text-white/35 text-[11px] truncate mt-0.5">
+                  {{ user.user?.email || "" }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Cerrar sesión -->
+            <button
+              type="button"
+              @click="handleLogout"
+              class="w-full flex items-center gap-3 px-5 py-3.5 text-red-400/80 hover:text-red-300 hover:bg-red-500/5 transition-colors"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.6"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              <span
+                class="text-[10px] uppercase tracking-[0.2em] font-medium"
+              >
+                Cerrar sesión
+              </span>
+            </button>
+          </div>
+        </Transition>
       </div>
     </div>
   </header>
@@ -89,7 +182,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { useSceneStore } from "@/stores/navbar/currentScene";
@@ -101,7 +194,9 @@ const router = useRouter();
 const route = useRoute();
 const user = useUserStore();
 const sceneStore = useSceneStore();
+
 const showWarning = ref(false);
+const mobileMenuOpen = ref(false);
 
 const isHome = computed(() => route.name === "Home");
 
@@ -128,6 +223,19 @@ const handleWarningButton = (index: number) => {
     router.push({ name: "Register" });
   }
 };
+
+const handleLogout = () => {
+  mobileMenuOpen.value = false;
+  user.logout();
+};
+
+// Cerrar el menú al cambiar de ruta
+watch(
+  () => route.name,
+  () => {
+    mobileMenuOpen.value = false;
+  },
+);
 </script>
 
 <style scoped></style>
