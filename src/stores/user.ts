@@ -20,48 +20,57 @@ export const useUserStore = defineStore("user", () => {
 
   const user = ref<User | null>(null);
   const loading = ref(true);
+  const initialized = ref(false); // ← NUEVO
 
   async function init() {
+    if (initialized.value) return; // ← NUEVO: no repetir
+
+    const token = localStorage.getItem("AUTH_TOKEN");
+
+    if (!token) {
+      user.value = null;
+      loading.value = false;
+      initialized.value = true;
+      return;
+    }
+
     try {
       const { data } = await AuthAPI.auth();
       user.value = data;
     } catch {
       user.value = null;
+      localStorage.removeItem("AUTH_TOKEN");
     } finally {
       loading.value = false;
+      initialized.value = true;
     }
   }
 
   const getUserName = computed(() => user.value?.name || "");
-
   const isAuthenticated = computed(() => !!user.value);
-
   const isAdmin = computed(
     () => user.value?.role === "admin" || user.value?.admin === true,
   );
-
   const isBarber = computed(() => user.value?.role === "barber");
-
   const isClient = computed(() => user.value?.role === "client");
 
   function logout() {
     localStorage.removeItem("AUTH_TOKEN");
     user.value = null;
 
-    router.push({
-      name: "Login",
-    });
+    router.push({ name: "Login" });
   }
 
   return {
-    user, // Guarda la información del usuario actualmente autenticado.
-    loading, // Indica si el sistema todavía está comprobando/cargando la sesión del usuario.
-    getUserName, // Obtiene el nombre del usuario para mostrarlo en la interfaz.
-    isAuthenticated, // Comprueba si existe un usuario autenticado actualmente.
-    isAdmin, // Comprueba si el usuario tiene el rol de administrador.
-    isBarber, // Comprueba si el usuario tiene el rol de barbero.
-    isClient, // Comprueba si el usuario tiene el rol de cliente.
-    logout, // Cierra la sesión, elimina el token y devuelve al usuario al Login.
-    init, // Comprueba el token y obtiene desde el backend los datos del usuario autenticado.
+    user,
+    loading,
+    initialized, // ← NUEVO
+    getUserName,
+    isAuthenticated,
+    isAdmin,
+    isBarber,
+    isClient,
+    logout,
+    init,
   };
 });
