@@ -7,7 +7,7 @@
     </main>
 
     <footer>
-      <Footer />
+      <Footer class="mb-15" />
     </footer>
   </div>
 </template>
