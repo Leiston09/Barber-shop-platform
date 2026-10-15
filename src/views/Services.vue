@@ -1,7 +1,7 @@
 <template>
   <div
     ref="sectionRef"
-    class="w-full min-h-full bg-[#0a0a0a] flex items-center justify-center px-6 py-12 overflow-hidden"
+    class="w-full min-h-full bg-[#050505] flex items-center justify-center px-6 py-5 overflow-hidden"
   >
     <div class="w-full max-w-5xl mx-auto">
       <div class="text-center mb-5">
@@ -28,12 +28,13 @@
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto">
-        <!-- BARBERÍA (entra desde la IZQUIERDA) -->
+      <!-- TARJETAS DE SERVICIOS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
+        <!-- BARBERÍA -->
         <RouterLink
           data-card-left
           :to="{ name: 'Reservaciones' }"
-          class="group relative h-[380px] sm:h-[420px] rounded-xl overflow-hidden border border-white/10 hover:border-[#ffb700]/35 transition-all duration-500 bg-gradient-to-br from-[#1a1408] via-[#0d0d0d] to-black"
+          class="group relative h-[280px] sm:h-[320px] rounded-xl overflow-hidden border border-white/10 hover:border-[#ffb700]/35 transition-all duration-500 bg-gradient-to-br from-[#1a1408] via-[#0d0d0d] to-black"
         >
           <img
             src="/img/services/barberia.png"
@@ -50,7 +51,7 @@
             class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ffb700]/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
           />
 
-          <div class="absolute inset-x-0 bottom-0 p-7 text-center">
+          <div class="absolute inset-x-0 bottom-0 p-5 text-center">
             <p
               class="text-[#ffb700]/80 text-[8px] uppercase tracking-[0.3em] font-medium mb-2"
             >
@@ -71,19 +72,19 @@
             </p>
 
             <span
-              class="inline-block mt-5 text-white/55 text-[8px] uppercase tracking-[0.25em] transition-colors duration-300 group-hover:text-[#ffb700]"
+              class="inline-block mt-4 text-white/55 text-[8px] uppercase tracking-[0.25em] transition-colors duration-300 group-hover:text-[#ffb700]"
             >
               Reservar servicio
             </span>
           </div>
         </RouterLink>
 
-        <!-- TATUAJES (DESHABILITADO — entra desde la DERECHA) -->
+        <!-- TATUAJES -->
         <button
           type="button"
           data-card-right
           @click="handleTatuajesClick"
-          class="group relative h-[380px] sm:h-[420px] rounded-xl overflow-hidden border border-white/10 hover:border-[#ffb700]/35 transition-all duration-500 bg-gradient-to-br from-[#1a1408] via-[#0d0d0d] to-black cursor-not-allowed text-left"
+          class="group relative h-[280px] sm:h-[320px] rounded-xl overflow-hidden border border-white/10 hover:border-[#ffb700]/35 transition-all duration-500 bg-gradient-to-br from-[#1a1408] via-[#0d0d0d] to-black cursor-not-allowed text-left"
         >
           <img
             src="/img/services/tatuajes.png"
@@ -100,9 +101,9 @@
             class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ffb700]/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
           />
 
-          <!-- BADGE "PRÓXIMAMENTE" -->
+          <!-- PRÓXIMAMENTE -->
           <div
-            class="absolute top-4 right-4 bg-black/70 backdrop-blur-sm border border-[#ffb700]/30 px-3 py-1.5 rounded-full"
+            class="absolute top-3 right-3 bg-black/70 backdrop-blur-sm border border-[#ffb700]/30 px-3 py-1.5 rounded-full"
           >
             <span
               class="text-[#ffb700] text-[8px] uppercase tracking-[0.25em] font-medium"
@@ -111,7 +112,7 @@
             </span>
           </div>
 
-          <div class="absolute inset-x-0 bottom-0 p-7 text-center">
+          <div class="absolute inset-x-0 bottom-0 p-5 text-center">
             <p
               class="text-[#ffb700]/80 text-[8px] uppercase tracking-[0.3em] font-medium mb-2"
             >
@@ -132,7 +133,7 @@
             </p>
 
             <span
-              class="inline-block mt-5 text-white/55 text-[8px] uppercase tracking-[0.25em] transition-colors duration-300 group-hover:text-[#ffb700]"
+              class="inline-block mt-4 text-white/55 text-[8px] uppercase tracking-[0.25em] transition-colors duration-300 group-hover:text-[#ffb700]"
             >
               Reservar servicio
             </span>
@@ -152,7 +153,7 @@ import { useRevealOnScroll } from "@/composables/useRevealOnScroll";
 const sectionRef = ref<HTMLElement | null>(null);
 const toast = useToast();
 
-// Card de tatuajes deshabilitada — muestra advertencia
+// Tarjeta de tatuajes deshabilitada
 const handleTatuajesClick = () => {
   toast.open({
     message: "Esta función está en mantenimiento",
@@ -161,10 +162,10 @@ const handleTatuajesClick = () => {
   });
 };
 
-// 1) Encabezado → fade + subir (comportamiento default)
+// Encabezado
 useRevealOnScroll(sectionRef);
 
-// 2) Card izquierda → entra desde la IZQUIERDA
+// Tarjeta izquierda
 useRevealOnScroll(sectionRef, {
   selector: "[data-card-left]",
   y: 0,
@@ -175,7 +176,7 @@ useRevealOnScroll(sectionRef, {
   ease: "power3.out",
 });
 
-// 3) Card derecha → entra desde la DERECHA
+// Tarjeta derecha
 useRevealOnScroll(sectionRef, {
   selector: "[data-card-right]",
   y: 0,

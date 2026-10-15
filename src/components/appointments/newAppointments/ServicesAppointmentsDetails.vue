@@ -1,21 +1,9 @@
+```vue
 <template>
   <div>
     <!-- ENCABEZADO -->
     <div class="text-center mb-8 sm:mb-12">
-      <div class="inline-flex items-center gap-3 mb-4 sm:mb-5">
-        <span
-          class="text-[#ffb700] text-[10px] sm:text-[11px] uppercase tracking-[0.3em] font-medium"
-        >
-          Paso 03
-        </span>
-        <span class="w-8 h-px bg-[#ffb700]/40" />
-        <span
-          class="text-white/30 text-[10px] sm:text-[11px] uppercase tracking-[0.3em]"
-        >
-          Resumen
-        </span>
-      </div>
-
+    
       <h1
         class="font-barber text-3xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-white leading-[0.95]"
       >
@@ -256,9 +244,9 @@
 
             <div class="flex items-center gap-2 text-white/25">
               <span class="w-2 h-2 rounded-full bg-white/15" />
-              <span
-                >{{ appointmentBooking.occupiedHours.length }} ocupados</span
-              >
+              <span>
+                {{ appointmentBooking.occupiedHours.length }} ocupados
+              </span>
             </div>
           </div>
         </div>
@@ -370,28 +358,6 @@
           </button>
         </div>
       </section>
-    </div>
-
-    <!-- NAVEGACIÓN FINAL -->
-    <div
-      v-if="!appointmentBooking.noServiceSelect"
-      class="flex flex-col-reverse sm:flex-row justify-between items-center gap-3 sm:gap-4 pt-6 mt-6 sm:mt-10 border-t border-white/5"
-    >
-      <RouterLink
-        :to="{ name: 'New-appointments' }"
-        class="w-full sm:w-auto text-center text-[10px] uppercase tracking-[0.2em] text-white/40 hover:text-[#ffb700] transition py-3"
-      >
-        ← Volver a servicios
-      </RouterLink>
-
-      <button
-        type="button"
-        :disabled="!appointmentBooking.validateReservation"
-        @click="handleSave"
-        class="w-full sm:w-auto text-center px-6 sm:px-8 py-4 bg-[#ffb700] text-black text-xs sm:text-sm font-barber font-medium uppercase tracking-[0.15em] rounded-lg hover:bg-[#e6a500] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#ffb700]/20 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none"
-      >
-        Confirmar Reservación
-      </button>
     </div>
   </div>
 </template>
@@ -592,3 +558,4 @@ onMounted(() => {
   box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
 }
 </style>
+```

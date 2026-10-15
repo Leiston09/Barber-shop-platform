@@ -39,7 +39,7 @@ const routes = [
           {
             path: "nueva",
             component: () =>
-              import("@/components/appointments/ServicesNewAppointmentsButtons.vue"),
+              import("@/components/appointments/ServicesNewAppointments.vue"),
             children: [
               {
                 path: "barber",

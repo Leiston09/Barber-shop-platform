@@ -1,10 +1,10 @@
 <template>
   <section
     ref="sectionRef"
-    class="relative w-full min-h-full bg-[#090909] text-white overflow-hidden flex items-center justify-center"
+    class="relative w-full min-h-full bg-[#050505] text-white overflow-hidden flex items-center justify-center"
   >
     <div
-      class="relative w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-20 py-8 sm:py-12 lg:py-16"
+      class="relative w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-20 py-5 "
     >
       <div
         class="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-6 sm:gap-8 lg:gap-14 items-center w-full"

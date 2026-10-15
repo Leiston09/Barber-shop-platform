@@ -1,14 +1,14 @@
 <template>
   <header
     :class="[
-      'z-50 w-full px-3 sm:px-6 lg:px-14 py-3 fixed top-0 left-0 right-0',
+      'z-50 w-full px-4 sm:px-6 lg:px-14 py-3 fixed top-0 left-0 right-0 ',
       showBackground
         ? 'bg-black/80 backdrop-blur-md border-b border-white/5'
         : 'bg-transparent border-transparent',
     ]"
   >
     <div
-      class="w-full max-w-7xl mx-auto flex items-center justify-between gap-3"
+      class="w-full max-w-7xl mx-auto flex items-center justify-between"
     >
       <!-- Logo (izquierda) -->
       <RouterLink to="/" class="flex items-center gap-2 shrink-0">
@@ -24,12 +24,12 @@
 
         <div class="leading-none">
           <p
-            class="text-[10px] sm:text-[11px] tracking-[0.28em] font-medium text-white/90"
+            class="text-[12px] sm:text-[11px] tracking-[0.28em] font-medium text-white/90"
           >
             STUDIO
           </p>
           <p
-            class="text-[7px] sm:text-[8px] tracking-[0.38em] text-[#ffb700] mt-1"
+            class="text-[8px] sm:text-[8px] tracking-[0.38em] text-[#ffb700] mt-1"
           >
             SILHOUETTE
           </p>
@@ -40,13 +40,13 @@
       <Laptop />
 
       <!-- Grupo derecha: Reservar cita + Hamburguesa -->
-      <div class="flex items-center sm:gap-3 shrink-0">
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0 ">
         <!-- Reservar cita (solo cliente o sin sesión) -->
         <button
           v-if="!user.isAdmin && !user.isBarber"
           @click="checkAuthAndShowWarning"
           class="group flex items-center gap-2 text-black bg-[#ffb700] hover:bg-[#e6a500] text-[10px] font-barber font-semibold uppercase tracking-[0.1em] rounded-xl transition-all duration-300 shrink-0 hover:shadow-[0_8px_30px_rgba(255,183,0,0.35)] active:scale-95"
-          :class="user.isAuthenticated ? 'px-1.5 py-1 md:px-4 md:py-2' : 'px-4 py-2'"
+          :class="user.isAuthenticated ? 'px-2.5 py-1.5 md:px-4 md:py-2' : 'px-4 py-2'"
         >
           Reservar cita
           <span
@@ -71,12 +71,12 @@
         <!-- Hamburguesa (móvil logueado) -->
         <div
           v-if="user.isAuthenticated"
-          class="relative lg:hidden flex items-center"
+          class="relative lg:hidden flex items-center "
         >
           <button
             type="button"
             @click.stop="mobileMenuOpen = !mobileMenuOpen"
-            class="w-9 h-9 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+            class="w-5 h-9 flex items-center justify-center text-white/60 hover:text-white transition-colors"
             aria-label="Menú de usuario"
           >
             <svg
