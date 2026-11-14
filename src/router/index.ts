@@ -135,6 +135,7 @@ const routes = [
       },
       { path: "promotions", name: "Admin-Promotions", component: () => import("@/views/admin/Promotions.vue") },
       { path: "site-images", name: "Admin-SiteImages", component: () => import("@/views/admin/SiteImages.vue") },
+        { path: "database", name: "Admin-Database", component: () => import("@/views/admin/Database.vue"), meta: { requirePrincipalAdmin: true } },
         { path: "settings", name: "Admin-Settings", component: () => import("@/views/admin/Settings.vue") },
     ],
   },
@@ -208,6 +209,8 @@ router.beforeEach(async (to) => {
   if (requireAdmin && !userStore.isAdmin) {
     return { name: "Login" };
   }
+
+  if (to.matched.some(record => record.meta.requirePrincipalAdmin) && !userStore.isPrincipalAdmin) return { name: "Admin-Home" };
 
   if (requireBarber && userStore.user.role !== "barber") {
     return { name: "Login" };

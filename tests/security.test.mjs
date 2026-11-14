@@ -563,3 +563,14 @@ test("formularios propios validan campos, telefono opcional y confirmacion sin a
  assert.match(mod.authFormError("password_confirm","distinta",{password:"original"},true),/coinciden/);
  assert.equal(mod.authFormError("password_confirm","original",{password:"original"},true),"");
 });
+
+test("el acceso principal del frontend requiere la marca del servidor y el rol admin",async()=>{
+ setActivePinia(createPinia());
+ const env=await environment("stores/user.ts");
+ const store=env.mod.useUserStore();
+ store.user={_id:"aaaaaaaaaaaaaaaaaaaaaaaa",name:"Principal",email:"principal@example.test",role:"admin",admin:true};
+ assert.equal(store.isPrincipalAdmin,false);
+ store.user.isPrincipalAdmin=true;assert.equal(store.isPrincipalAdmin,true);
+ store.user.role="client";assert.equal(store.isPrincipalAdmin,false);
+ store.user=null;assert.equal(store.isPrincipalAdmin,false);
+});

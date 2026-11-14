@@ -1,39 +1,70 @@
-# Logs
-logs
+# Dependencies and generated builds
+node_modules/
+dist/
+dist-ssr/
+
+# Environment secrets; keep sanitized templates versioned
+.env
+.env.*
+!.env.example
+!.env.*.example
+!.env.template
+!.env.*.template
+
+# Logs, caches and diagnostics
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.cache/
+.tmp/
+.eslintcache
+*.tsbuildinfo
+*.heapsnapshot
+*.cpuprofile
+.node_repl_history
+/report.*.json
 
-node_modules
-.DS_Store
-dist
-dist-ssr
-coverage
-*.local
+# Test output (keep test code and reference snapshots)
+coverage/
+/test-results/
+/playwright-report/
+/blob-report/
 
-# Editor directories and files
+# Local data, database dumps, exports and secrets
+/backups/
+/exports/
+/imports/
+/uploads/
+/dump/
+/dumps/
+/data/db/
+/secrets/
+*.bson
+*.pem
+*.key
+*.p12
+*.pfx
+service-account*.json
+
+# Personal editor and OS files
 .vscode/*
 !.vscode/extensions.json
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
 
-*.tsbuildinfo
+# Vite cache and temporary config modules
+.vite/
+*.timestamp-*-*.mjs
 
-.eslintcache
-
-# Cypress
+# Recorded test runs
 /cypress/videos/
 /cypress/screenshots/
-
-# Vitest
-__screenshots__/
-
-# Vite
-*.timestamp-*-*.mjs

@@ -51,8 +51,11 @@ import SiteImage from "@/components/UI/SiteImage.vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
 import AccountMenu from "@/components/Navbar/AccountMenu.vue";
 
+import { computed } from "vue";
+import { useUserStore } from "@/stores/user";
+const user = useUserStore();
 const route = useRoute();
-const sections = [
+const sections = computed(() => [
   { name: "Admin-Home", label: "Resumen", icon: "M3 3h7v7H3V3Zm11 0h7v7h-7V3ZM3 14h7v7H3v-7Zm11 0h7v7h-7v-7Z" },
   { name: "Admin-Appointments", label: "Citas", icon: "M8 3v4m8-4v4M3 11h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" },
   { name: "Admin-Barbers", label: "Barberos", icon: "M8 8 20 20M14 10l6-6M8 16 20 4M8.5 6a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm0 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" },
@@ -61,5 +64,6 @@ const sections = [
   { name: "Admin-Promotions", label: "Promociones", icon: "M20 13 13 20 3 10V3h7l10 10ZM7 7h.01" },
   { name: "Admin-Settings", label: "Configuración", icon: "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2" },
   { name: "Admin-SiteImages", label: "Imágenes del sitio", icon: "M3 3h18v18H3ZM3 17l5-5 4 4 3-3 6 6M9 8h.01" },
-];
+  ...(user.isPrincipalAdmin ? [{ name: "Admin-Database", label: "Base de datos", icon: "M3 5c0-2 18-2 18 0v14c0 2-18 2-18 0ZM3 5c0 3 18 3 18 0M3 12c0 3 18 3 18 0" }] : []),
+]);
 </script>
