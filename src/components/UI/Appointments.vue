@@ -1,410 +1,129 @@
-<!-- src/components/UI/Appointments.vue -->
-
 <template>
-  <div
-    class="relative bg-white/[0.02] border border-white/10 rounded-2xl p-5 sm:p-6 hover:border-[#ffb700]/30 transition-all duration-300 group overflow-hidden"
-  >
-    <!-- LÍNEA SUPERIOR (hover) -->
-    <div
-      class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ffb700] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-    />
-
-    <!-- BARRA LATERAL DE ESTADO -->
-    <span
-      :class="[
-        'absolute left-0 top-6 bottom-6 w-[3px] rounded-r-full',
-        statusColor,
-      ]"
-    />
-
-    <!-- CONTENIDO -->
-    <div class="pl-3">
-      <!-- FECHA + HORA + CHIP -->
-      <div
-        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-white/5"
-      >
-        <div class="flex items-center gap-4">
-          <!-- FECHA TIPO CALENDARIO -->
-          <div
-            class="shrink-0 w-14 rounded-xl border border-[#ffb700]/25 bg-[#ffb700]/5 flex flex-col items-center justify-center py-2"
-          >
-            <span class="font-barber text-2xl text-[#ffb700] leading-none">
-              {{ dateParts.day }}
-            </span>
-            <span
-              class="text-[9px] uppercase tracking-[0.2em] text-[#ffb700]/70 mt-1"
-            >
-              {{ dateParts.month }}
-            </span>
-            <span
-              class="text-[8px] uppercase tracking-[0.15em] text-white/30 mt-0.5"
-            >
-              {{ dateParts.weekday }}
-            </span>
+  <article :aria-labelledby="'appointment-time-' + appointment._id" :aria-busy="cancelling"
+    class="flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-neutral-900/60"
+    :class="dayStatus === 'hoy' ? 'border-[#ffb700]/30' : 'border-white/10'">
+    <div class="flex-1 p-4 sm:p-5">
+      <header class="flex items-start justify-between gap-3">
+        <div class="flex min-w-0 items-center gap-3 sm:gap-4">
+          <div aria-hidden="true" class="flex h-16 w-14 shrink-0 flex-col items-center justify-center rounded-xl border border-white/10 bg-neutral-950">
+            <span class="font-barber text-2xl leading-none text-white">{{ dateParts.day }}</span>
+            <span class="mt-1 text-xs text-[#ffb700]">{{ dateParts.month }}</span>
           </div>
-
-          <!-- HORA -->
-          <div>
-            <p
-              class="text-[9px] uppercase tracking-[0.3em] text-white/30 font-medium mb-1"
-            >
-              Hora
-            </p>
-            <p class="font-barber text-xl text-white leading-none">
-              {{ appointment.time }}
-            </p>
-            <p class="text-white/30 text-[10px] mt-1.5">
-              {{ displayDate(appointment.date) }}
-            </p>
+          <div class="min-w-0">
+            <h3 :id="'appointment-time-' + appointment._id" class="text-xl font-semibold leading-tight tabular-nums text-white">{{ appointment.time }}</h3>
+            <p class="mt-1 text-sm capitalize text-white/70">{{ dateParts.weekday }}</p>
+            <time :datetime="dateKey" class="mt-1 block text-xs leading-5 text-white/45">{{ fullDate }}</time>
           </div>
         </div>
+        <span class="shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium sm:text-xs" :class="statusChipClass">{{ statusLabel }}</span>
+      </header>
 
-        <!-- CHIP DE ESTADO -->
-        <span
-          :class="[
-            'self-start sm:self-auto text-[9px] uppercase tracking-[0.2em] px-3 py-1.5 rounded-full border',
-            statusChipClass,
-          ]"
-        >
-          {{ statusLabel }}
-        </span>
-      </div>
-
-      <!-- BARBERO + SERVICIOS -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 py-5 border-b border-white/5">
-        <!-- BARBERO -->
-        <div v-if="appointment.barber">
-          <p
-            class="text-[9px] uppercase tracking-[0.3em] text-white/30 font-medium mb-3"
-          >
-            Barbero
-          </p>
-
-          <div class="flex items-center gap-3">
-            <img
-              :src="`/img/barbers/barber${barberIndex + 1}.jpg`"
-              :alt="appointment.barber.name"
-              class="w-11 h-11 rounded-full object-cover border border-[#ffb700]/30"
-            />
-
-            <div class="min-w-0">
-              <p class="text-white/85 text-sm font-barber truncate">
-                {{ appointment.barber.name }}
-              </p>
-              <p
-                v-if="appointment.barber.email"
-                class="text-white/30 text-[11px] truncate mt-0.5"
-              >
-                {{ appointment.barber.email }}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- SERVICIOS -->
-        <div>
-          <p
-            class="text-[9px] uppercase tracking-[0.3em] text-white/30 font-medium mb-3"
-          >
-            Servicios ({{ appointment.services?.length || 0 }})
-          </p>
-
-          <div
-            v-if="appointment.services && appointment.services.length > 0"
-            class="space-y-1.5"
-          >
-            <div
-              v-for="(service, i) in appointment.services"
-              :key="service._id"
-              class="flex items-center justify-between gap-3 text-xs"
-            >
-              <div class="flex items-center gap-2 min-w-0">
-                <span
-                  class="text-[9px] text-white/20 font-barber shrink-0 w-4"
-                >
-                  {{ String(i + 1).padStart(2, "0") }}
-                </span>
-                <span class="text-white/70 truncate">{{ service.name }}</span>
-              </div>
-              <span class="text-white/45 shrink-0 font-barber">
-                {{ formatCurrency(service.price) }}
-              </span>
-            </div>
-          </div>
-
-          <p v-else class="text-white/30 text-xs italic">
-            No hay servicios en esta cita
-          </p>
+      <div class="mt-5 flex min-w-0 items-center gap-3">
+        <span aria-hidden="true" class="flex size-11 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-sm font-medium text-white/65">{{ barberInitials }}</span>
+        <div class="min-w-0">
+          <p class="text-xs text-white/45">Tu barbero</p>
+          <p class="mt-1 break-words text-sm font-medium leading-5 text-white/90">{{ appointment.barber?.name || "Barbero no disponible" }}</p>
         </div>
       </div>
 
-      <!-- TOTAL -->
-      <div
-        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-5 border-b border-white/5"
-      >
-        <p class="text-[9px] uppercase tracking-[0.3em] text-white/30 font-medium">
-          Total a pagar
-        </p>
-
-        <p class="font-barber text-2xl sm:text-3xl text-[#ffb700] font-medium">
-          {{ formatCurrency(appointment.totalAmount) }}
-        </p>
-      </div>
-
-      <!-- ACCIONES -->
-      <div class="pt-4 flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          @click="openEdit"
-          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[10px] font-barber uppercase tracking-[0.2em] border border-[#ffb700]/30 text-[#ffb700]/90 hover:text-black hover:bg-[#ffb700] hover:border-[#ffb700] transition-all duration-300 rounded-lg"
-        >
-          <svg
-            class="w-3.5 h-3.5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-            />
-          </svg>
-          Reprogramar
-        </button>
-
-        <button
-          type="button"
-          @click="openCancelWarning"
-          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[10px] font-barber uppercase tracking-[0.2em] text-red-400/70 hover:text-red-300 transition-all duration-300 rounded-lg"
-        >
-          <svg
-            class="w-3.5 h-3.5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-          Cancelar reserva
-        </button>
-      </div>
+      <section :aria-labelledby="'appointment-services-' + appointment._id" class="mt-5">
+        <h4 :id="'appointment-services-' + appointment._id" class="mb-2 text-xs font-medium text-white/50">Servicios</h4>
+        <ul v-if="services.length" class="space-y-2">
+          <li v-for="service in services" :key="service._id" class="flex items-start justify-between gap-4 text-sm leading-5">
+            <span class="min-w-0 break-words text-white/80">{{ service.name }}</span>
+            <span class="shrink-0 tabular-nums text-white/60">{{ formatCurrency(service.price) }}</span>
+          </li>
+        </ul>
+        <p v-else class="text-sm text-white/50">Los servicios de esta cita no están disponibles.</p>
+      </section>
     </div>
 
-    <!-- MODAL DE CANCELACIÓN -->
-    <AuthWarning
-      v-model:visible="showWarning"
-      title="¿Cancelar esta cita?"
-      message="Estás a punto de cancelar tu reservación. Esta acción liberará el horario seleccionado para que otro cliente pueda reservarlo."
-      :steps="[
-        'Verifica que esta sea la cita que deseas cancelar.',
-        'La fecha y hora quedarán disponibles nuevamente.',
-      ]"
-      :buttons="['Regresar', 'Confirmar cancelación']"
-      @button-click="handleWarningButton"
-    />
+    <footer class="border-t border-white/10 bg-black/15 p-4 sm:p-5">
+      <div class="mb-4 flex items-center justify-between gap-4">
+        <p class="text-xs text-white/50">Total de tu cita</p>
+        <p class="text-xl font-semibold tabular-nums text-[#ffb700]">{{ formatCurrency(appointment.totalAmount) }}</p>
+      </div>
+      <div class="grid grid-cols-2 gap-2 sm:gap-3">
+        <button type="button" :disabled="cancelling" @click="openEdit"
+          class="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[#ffb700]/35 px-2 text-xs font-medium text-[#ffb700] transition-colors hover:bg-[#ffb700]/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffb700] disabled:cursor-wait disabled:opacity-50 motion-reduce:transition-none sm:text-sm">
+          <svg aria-hidden="true" class="size-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-6M16 3l5 5-9 9H7v-5l9-9Z" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          Reprogramar
+        </button>
+        <button type="button" :disabled="cancelling" @click="openCancelWarning"
+          class="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-2 text-xs font-medium text-white/65 transition-colors hover:border-red-400/35 hover:bg-red-400/5 hover:text-red-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300 disabled:cursor-wait disabled:opacity-50 motion-reduce:transition-none sm:text-sm">
+          <svg aria-hidden="true" class="size-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m6 6 12 12M6 18 18 6" stroke-linecap="round" /></svg>
+          {{ cancelling ? "Cancelando…" : "Cancelar cita" }}
+        </button>
+      </div>
+    </footer>
 
-    <!-- MODAL DE EDICIÓN -->
-    <EditAppointmentModal
-      v-model:visible="editOpen"
-      :appointment="appointment"
-      @saved="handleSaved"
-    />
-  </div>
+    <CancelAppointmentDialog v-if="showWarning" :appointment="appointment" :busy="cancelling" :error="cancellationError" @close="showWarning = false" @confirm="confirmCancellation" />
+    <EditAppointmentModal v-model:visible="editOpen" :appointment="appointment" @saved="handleSaved" />
+  </article>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { formatCurrency } from "@/helpers";
-import { displayDate } from "@/helpers/date";
-import { useMyAppointmentsStore } from "@/stores/myAppointments";
-import { useBarberStore } from "@/stores/barber";
-import { useToast } from "vue-toast-notification";
-import AuthWarning from "@/components/UI/AuthWarning.vue";
+import { useMyAppointmentsStore, type MyAppointment } from "@/stores/myAppointments";
+import { useToast } from "@/lib/notifications";
+import CancelAppointmentDialog from "@/components/UI/CancelAppointmentDialog.vue";
 import EditAppointmentModal from "@/components/UI/EditAppointmentModal.vue";
 
-interface Service {
-  _id: string;
-  name: string;
-  price: number;
-}
-
-interface Barber {
-  _id: string;
-  name: string;
-  email: string;
-}
-
-interface Appointment {
-  _id: string;
-  date: string;
-  services: Service[];
-  time: string;
-  user: {
-    _id: string;
-    name: string;
-    email: string;
-  } | null;
-  barber: Barber | null;
-  totalAmount: number;
-}
-
-const props = defineProps<{
-  appointment: Appointment;
-}>();
-
+const props = defineProps<{ appointment: MyAppointment }>();
 const myAppointmentsStore = useMyAppointmentsStore();
-const barberStore = useBarberStore();
 const toast = useToast();
-
 const showWarning = ref(false);
+const cancellationError = ref("");
 const editOpen = ref(false);
-
-/* =========================================================
-   ÍNDICE DE LA FOTO DEL BARBERO
-   ========================================================= */
-const barberIndex = computed(() => {
-  if (!props.appointment.barber) return 0;
-  const i = barberStore.barbers.findIndex(
-    (b) => b._id === props.appointment.barber?._id,
-  );
-  return i >= 0 ? i : 0;
+const cancelling = ref(false);
+const services = computed(() => (props.appointment.services ?? []).filter(Boolean));
+const barberInitials = computed(() => {
+  const name = props.appointment.barber?.name?.trim();
+  return name ? name.split(/\s+/).slice(0, 2).map(part => part.charAt(0)).join("").toUpperCase() : "—";
 });
 
-/* =========================================================
-   FECHA → PARTES
-   ========================================================= */
-const dateParts = computed(() => {
-  const MESES = [
-    "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-    "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
-  ];
-  const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-
-  const d = new Date(props.appointment.date);
-
-  if (Number.isNaN(d.getTime())) {
-    return { day: "—", month: "—", weekday: "—" };
-  }
-
-  return {
-    day: String(d.getDate()).padStart(2, "0"),
-    month: MESES[d.getMonth()] ?? "—",
-    weekday: DIAS[d.getDay()] ?? "—",
-  };
-});
-
-/* =========================================================
-   ESTADO: Hoy, Mañana, Próxima, Pasada
-   ========================================================= */
-const dayStatus = computed<"hoy" | "manana" | "proxima" | "pasada">(() => {
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-
-  const target = new Date(props.appointment.date);
-  target.setHours(0, 0, 0, 0);
-
-  const diffDays = Math.round(
-    (target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
-  );
-
-  if (diffDays < 0) return "pasada";
-  if (diffDays === 0) return "hoy";
-  if (diffDays === 1) return "manana";
-  return "proxima";
-});
-
+// Mongo stores a business calendar day at UTC midnight; do not shift it to the visitor's timezone.
+const dateKey = computed(() => props.appointment.date.slice(0, 10));
+const calendarDate = computed(() => new Date(dateKey.value + "T12:00:00Z"));
+const validDate = computed(() => !Number.isNaN(calendarDate.value.getTime()));
+const dateParts = computed(() => validDate.value ? {
+  day: String(calendarDate.value.getUTCDate()).padStart(2, "0"),
+  month: new Intl.DateTimeFormat("es-EC", { month: "short", timeZone: "UTC" }).format(calendarDate.value).replace(".", ""),
+  weekday: new Intl.DateTimeFormat("es-EC", { weekday: "long", timeZone: "UTC" }).format(calendarDate.value),
+} : { day: "—", month: "—", weekday: "Fecha por confirmar" });
+const fullDate = computed(() => validDate.value
+  ? new Intl.DateTimeFormat("es-EC", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(calendarDate.value)
+  : "Fecha no disponible");
 const daysFromNow = computed(() => {
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  const target = new Date(props.appointment.date);
-  target.setHours(0, 0, 0, 0);
-  return Math.round(
-    (target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
-  );
+  if (!validDate.value) return null;
+  const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Guayaquil" }).format(new Date());
+  return Math.round((Date.parse(dateKey.value + "T00:00:00Z") - Date.parse(today + "T00:00:00Z")) / 86400000);
 });
-
+const dayStatus = computed(() => daysFromNow.value === null ? "desconocida"
+  : daysFromNow.value < 0 ? "pasada" : daysFromNow.value === 0 ? "hoy" : daysFromNow.value === 1 ? "manana" : "proxima");
 const statusLabel = computed(() => {
-  switch (dayStatus.value) {
-    case "hoy":
-      return "Hoy";
-    case "manana":
-      return "Mañana";
-    case "pasada":
-      return "Pasada";
-    default:
-      if (daysFromNow.value <= 7) return `En ${daysFromNow.value} días`;
-      if (daysFromNow.value <= 14) return "En 2 semanas";
-      return "Próxima";
-  }
+  if (dayStatus.value === "desconocida") return "Por confirmar";
+  if (dayStatus.value === "hoy") return "Hoy";
+  if (dayStatus.value === "manana") return "Mañana";
+  if (dayStatus.value === "pasada") return "Pasada";
+  return daysFromNow.value! <= 7 ? `En ${daysFromNow.value} días` : "Próxima";
 });
-
-const statusColor = computed(() => {
-  switch (dayStatus.value) {
-    case "hoy":
-      return "bg-[#ffb700]";
-    case "manana":
-      return "bg-[#ffb700]/60";
-    case "pasada":
-      return "bg-red-500/50";
-    default:
-      return "bg-white/10";
-  }
-});
-
 const statusChipClass = computed(() => {
-  switch (dayStatus.value) {
-    case "hoy":
-      return "bg-[#ffb700]/10 border-[#ffb700]/40 text-[#ffb700]";
-    case "manana":
-      return "bg-[#ffb700]/5 border-[#ffb700]/25 text-[#ffb700]/80";
-    case "pasada":
-      return "bg-red-500/5 border-red-500/20 text-red-400/70";
-    default:
-      return "bg-white/5 border-white/10 text-white/45";
-  }
+  if (dayStatus.value === "hoy") return "border-[#ffb700]/30 bg-[#ffb700]/10 text-[#ffb700]";
+  if (dayStatus.value === "manana") return "border-white/15 bg-white/5 text-white/80";
+  return "border-white/10 text-white/55";
 });
 
-/* =========================================================
-   ACCIONES
-   ========================================================= */
-const openEdit = () => {
-  editOpen.value = true;
-};
-
-const openCancelWarning = () => {
-  showWarning.value = true;
-};
-
-const cancelAppointment = async () => {
-  await myAppointmentsStore.cancelAppointment(
-    props.appointment._id,
-    toast,
-  );
-};
-
-const handleWarningButton = (index: number) => {
-  if (index === 0) {
-    showWarning.value = false;
-    return;
-  }
-
-  if (index === 1) {
-    showWarning.value = false;
-    cancelAppointment();
-  }
-};
-
-const handleSaved = async () => {
-  // Recargar lista de citas
-  await myAppointmentsStore.getMyAppointments();
-};
+function openEdit() { if (!cancelling.value) editOpen.value = true; }
+function openCancelWarning() { if (!cancelling.value) { toast.clear(); cancellationError.value = ""; showWarning.value = true; } }
+async function confirmCancellation() {
+  if (cancelling.value) return;
+  cancelling.value = true; cancellationError.value = "";
+  try {
+    if (await myAppointmentsStore.cancelAppointment(props.appointment._id, toast)) showWarning.value = false;
+    else cancellationError.value = "La cita sigue en tu agenda. No pudimos cancelarla; puedes volver a intentarlo.";
+  } finally { cancelling.value = false; }
+}
+async function handleSaved() { await myAppointmentsStore.getMyAppointments(); }
 </script>
-
-<style scoped></style>

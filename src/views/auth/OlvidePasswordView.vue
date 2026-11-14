@@ -1,8 +1,9 @@
 <template>
   <div
-    class="relative z-10 w-full h-full flex items-center justify-center px-4 sm:px-6 overflow-y-auto overflow-x-hidden"
+    class="relative z-10 w-full flex flex-1 items-center justify-center px-4 py-6 sm:px-6 sm:py-8"
   >
     <div class="w-full max-w-md mx-auto py-6 sm:py-8">
+      <AuthBackLink />
       <div
         class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/60 relative overflow-hidden"
       >
@@ -44,40 +45,16 @@
         >Te enviaremos un enlace a tu correo
         </p>
 
-        <FormKit
-          id="olvidePassword"
-          type="form"
-          :actions="false"
-          incomplete-message="No se pudo enviar, revisa los mensajes"
-          @submit="handleSubmit"
-          class="mt-4 sm:mt-6"
-        >
-          <FormKit
-            type="email"
-            label="Email"
-            name="email"
-            placeholder="tucorreo@ejemplo.com"
-            validation="required|email"
-            :validation-messages="{
-              required: 'El email es obligatorio',
-              email: 'Ingresa un email válido',
-            }"
-            outer-class="mb-4 sm:mb-5"
-            label-class="text-white/50 text-[10px] sm:text-xs font-barber tracking-[0.2em] font-medium uppercase"
-            input-class="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm sm:text-base placeholder-white/30 focus:outline-none focus:border-[#ffb700] transition-colors duration-300"
-          />
+        <AuthForm id="olvidePassword" @submit="handleSubmit" class="mt-5">
+          <AuthField type="email" name="email" label="Email" placeholder="tucorreo@ejemplo.com" outer-class="mb-4 sm:mb-5" :required="true" />
 
-          <FormKit
-            type="submit"
-            outer-class="w-full"
-            input-class="w-full py-2.5 sm:py-3 bg-[#ffb700] hover:bg-[#e6a500] text-black font-barber font-medium text-sm sm:text-base rounded-lg transition-all duration-300 hover:scale-[1.01] active:scale-[0.98] cursor-pointer shadow-lg shadow-[#ffb700]/20 hover:shadow-[#ffb700]/40"
-          >
+          <AuthSubmit>
             Enviar correo
-          </FormKit>
-        </FormKit>
+          </AuthSubmit>
+        </AuthForm>
 
         <p
-          class="text-white/30 text-[10px] sm:text-xs text-center mt-4 sm:mt-5 font-barber font-light tracking-[0.05em]"
+          class="text-white/55 text-xs text-center mt-4 sm:mt-5 font-normal leading-6"
         >
           ¿Ya tienes cuenta?
           <RouterLink
@@ -97,10 +74,14 @@
 </template>
 
 <script setup lang="ts">
+import AuthBackLink from "@/components/UI/AuthBackLink.vue";
+import AuthSubmit from "@/components/UI/AuthSubmit.vue";
+import AuthForm from "@/components/UI/AuthForm.vue";
+import AuthField from "@/components/UI/AuthField.vue";
 import AuthAPI from "@/api/AuthAPI";
-import { reset } from "@formkit/vue";
+import { resetAuthForm as reset } from "@/helpers/authForm";
 import { useRouter } from "vue-router";
-import { useToast } from "vue-toast-notification";
+import { useToast } from "@/lib/notifications";
 
 const toast = useToast();
 const router = useRouter();

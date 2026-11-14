@@ -3,6 +3,10 @@
 import AuthAPI from "@/api/AuthAPI";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { useAdminStore } from "./admin";
+import { useBarberStore } from "./barber";
+import { useMyAppointmentsStore } from "./myAppointments";
+import { useAppointmentBookingStore } from "./appointmentCreator";
 import { useRouter } from "vue-router";
 
 export type UserRole = "client" | "barber" | "admin";
@@ -38,9 +42,11 @@ export const useUserStore = defineStore("user", () => {
     try {
       const { data } = await AuthAPI.auth();
       user.value = data;
-    } catch {
+    } catch (error: any) {
       user.value = null;
-      localStorage.removeItem("AUTH_TOKEN");
+      if (error?.response?.status === 401 || error?.response?.data?.blocked) {
+        localStorage.removeItem("AUTH_TOKEN");
+      }
     } finally {
       loading.value = false;
       initialized.value = true;
@@ -53,14 +59,19 @@ export const useUserStore = defineStore("user", () => {
     () => user.value?.role === "admin" || user.value?.admin === true,
   );
   const isBarber = computed(() => user.value?.role === "barber");
-  const isClient = computed(() => user.value?.role === "client");
 
   function logout() {
     localStorage.removeItem("AUTH_TOKEN");
     user.value = null;
+    useAdminStore().clearPrivateData();
+    useBarberStore().clearPrivateData();
+    useMyAppointmentsStore().clearPrivateData();
+    useAppointmentBookingStore().clearAppointmentData();
 
     router.push({ name: "Login" });
   }
+
+  window.addEventListener("appsalon:session-invalid", logout);
 
   return {
     user,
@@ -70,7 +81,6 @@ export const useUserStore = defineStore("user", () => {
     isAuthenticated,
     isAdmin,
     isBarber,
-    isClient,
     logout,
     init,
   };

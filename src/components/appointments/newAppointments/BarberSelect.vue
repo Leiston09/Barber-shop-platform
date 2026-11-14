@@ -1,207 +1,94 @@
 <template>
-  <div class="pb-8">
-    <!-- ENCABEZADO -->
-    <header class="text-center mb-8 sm:mb-10">
-      <h1
-        class="font-barber text-3xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-white leading-tight"
-      >
-        Elige tu <span class="text-[#ffb700]">barbero</span>
-      </h1>
-
-      <p class="text-white/50 text-sm mt-3 max-w-md mx-auto leading-relaxed">
-        Selecciona quién te atenderá en tu próxima visita.
-      </p>
+  <section aria-labelledby="barber-title" class="space-y-5">
+    <header>
+      <p class="mb-2 text-xs text-[#c4a760]">Paso {{ preferred ? 1 : 2 }} de 4 · Tu profesional</p>
+      <h2 id="barber-title" class="font-barber text-2xl leading-tight sm:text-3xl">Elige quién <span class="text-[#ffb700]">te atiende.</span></h2>
+      <p class="mt-3 max-w-2xl text-sm leading-6 text-white/55">{{ preferred ? 'Elige a tu barbero y después consulta sus fechas y horas disponibles.' : 'Estos profesionales tienen libre el turno elegido. Selecciona uno para continuar con los servicios.' }}</p>
     </header>
-
-    <!-- CARGANDO -->
-    <div
-      v-if="barberStore.loading"
-      class="flex flex-col items-center justify-center py-20"
-    >
-      <div
-        class="w-9 h-9 border-2 border-white/10 border-t-[#ffb700] rounded-full animate-spin"
-      />
-      <p class="text-white/40 text-xs mt-4">Cargando barberos...</p>
+    <p v-if="loading" role="status" class="rounded-xl border border-white/10 p-5 text-sm text-white/55">Consultando los profesionales…</p>
+    <div v-else-if="error" role="alert" class="rounded-xl border border-rose-300/25 p-5 text-sm text-rose-200">
+      <p>{{ error }}</p><button type="button" @click="refresh" class="mt-2 min-h-11 text-[#ffb700]">Reintentar</button>
+    </div>
+    <div v-else-if="!visibleBarbers.length" class="rounded-xl border border-white/10 p-5 text-sm leading-6 text-white/55">
+      <p>{{ preferred ? 'No hay barberos habilitados para reservar en este momento.' : 'Este turno ya no tiene barberos disponibles. Prueba otra hora; tus servicios se conservan.' }}</p>
+      <RouterLink v-if="!preferred" :to="{ name: 'AppointmentSlot' }" class="mt-2 inline-flex min-h-11 items-center text-[#ffb700]">Buscar otro turno</RouterLink>
     </div>
 
-    <!-- ERROR -->
-    <div v-else-if="barberStore.error" class="text-center py-16">
-      <p class="text-red-400/80 text-sm mb-4">
-        {{ barberStore.error }}
-      </p>
-
-      <button
-        type="button"
-        @click="barberStore.getBarbers()"
-        class="px-5 py-2.5 border border-white/10 rounded-lg text-white/70 text-xs hover:border-[#ffb700]/60 hover:text-white transition-colors"
-      >
-        Intentar de nuevo
-      </button>
-    </div>
-
-    <!-- SIN BARBEROS -->
-    <div
-      v-else-if="barberStore.barbers.length === 0"
-      class="text-center py-16 px-6 border border-white/10 rounded-2xl bg-white/[0.02] max-w-lg mx-auto"
-    >
-      <div
-        class="w-14 h-14 mx-auto rounded-full border border-white/10 flex items-center justify-center mb-4"
-      >
-        <svg
-          class="w-6 h-6 text-white/30"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-          />
-        </svg>
-      </div>
-
-      <h2 class="text-white/80 font-barber text-lg">
-        No hay barberos disponibles
-      </h2>
-
-      <p class="text-white/40 text-sm mt-2">Inténtalo nuevamente más tarde.</p>
-    </div>
-
-    <!-- LISTA DE BARBEROS -->
-    <div
-      v-else
-      class="grid gap-4 sm:gap-5 max-w-5xl mx-auto"
-      :class="{
-        'grid-cols-1 max-w-sm': barberStore.barbers.length === 1,
-        'grid-cols-1 sm:grid-cols-2 max-w-2xl':
-          barberStore.barbers.length === 2,
-        'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3':
-          barberStore.barbers.length >= 3,
-      }"
-    >
-      <button
-        v-for="(barber, index) in barberStore.barbers"
-        :key="barber._id"
-        type="button"
-        :aria-pressed="appointmentBooking.barber?._id === barber._id"
-        :aria-label="`Seleccionar a ${barber.name}`"
-        @click="selectBarber(barber)"
-        class="group relative h-[300px] sm:h-[340px] rounded-2xl overflow-hidden border text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffb700] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-        :class="
-          appointmentBooking.barber?._id === barber._id
-            ? 'border-[#ffb700] ring-1 ring-[#ffb700]/30'
-            : 'border-white/10 hover:border-white/30'
-        "
-      >
-        <!-- IMAGEN -->
-        <img
-          :src="`/img/barbers/barber${index + 1}.jpg`"
-          :alt="barber.name"
-          loading="lazy"
-          class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-          :class="
-            appointmentBooking.barber?._id === barber._id
-              ? 'brightness-100'
-              : 'brightness-[0.65] group-hover:brightness-75'
-          "
-        />
-
-        <!-- DEGRADADO -->
-        <div
-          class="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/5"
-        />
-
-        <!-- SELECCIÓN -->
-        <div
-          class="absolute top-4 right-4 w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-300"
-          :class="
-            appointmentBooking.barber?._id === barber._id
-              ? 'bg-[#ffb700] border-[#ffb700] text-black'
-              : 'bg-black/40 border-white/40 text-transparent'
-          "
-        >
-          <svg
-            v-if="appointmentBooking.barber?._id === barber._id"
-            class="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="m5 12 4 4L19 6"
-            />
-          </svg>
-        </div>
-
-        <!-- INFORMACIÓN -->
-        <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-          <p
-            class="text-[#ffb700] text-[9px] uppercase tracking-[0.2em] font-medium mb-2"
-          >
-            BARBERO
-          </p>
-
-          <h2 class="font-barber text-xl sm:text-2xl text-white leading-tight">
-            {{ barber.name }}
-          </h2>
-
-          <div
-            class="flex items-center justify-between mt-4 pt-3 border-t border-white/15"
-          >
-            <span
-              class="text-xs font-medium"
-              :class="
-                appointmentBooking.barber?._id === barber._id
-                  ? 'text-[#ffb700]'
-                  : 'text-white/70'
-              "
-            >
-              {{
-                appointmentBooking.barber?._id === barber._id
-                  ? "Barbero elegido"
-                  : "Elegir barbero"
-              }}
-            </span>
-
-            <span
-              class="text-xs font-medium"
-              :class="
-                appointmentBooking.barber?._id === barber._id
-                  ? 'text-[#ffb700]'
-                  : 'text-white/40'
-              "
-            >
-              {{ appointmentBooking.barber?._id === barber._id ? "✓" : "+" }}
-            </span>
+    <div v-else data-barber-grid class="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <button v-for="person in visibleBarbers" :key="person._id" type="button" @click="choose(person)"
+        :aria-pressed="booking.barber?._id === person._id" :aria-label="'Elegir a ' + person.name"
+        class="group min-w-0 overflow-hidden rounded-2xl border border-white/15 bg-[#131313] text-left transition-[border-color,box-shadow] duration-300 hover:border-[#ffb700]/50 hover:shadow-[0_12px_28px_#00000030] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ffb700] motion-reduce:transition-none"
+        :class="booking.barber?._id === person._id ? 'border-[#ffb700]' : ''">
+        <div class="relative aspect-[3/4] overflow-hidden bg-neutral-900">
+          <BarberPortrait :id="person._id" :name="person.name" :revision="person.photoUpdatedAt" compact
+            class="absolute inset-0 h-full! w-full transition-transform duration-500 group-hover:scale-[1.035] group-focus-visible:scale-[1.035] motion-reduce:transform-none motion-reduce:transition-none sm:h-full!" />
+          <div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-linear-to-t from-black/95 via-black/10 to-transparent"></div>
+          <span v-if="booking.barber?._id === person._id" aria-hidden="true" class="absolute right-2.5 top-2.5 flex size-6 items-center justify-center rounded-full bg-[#ffb700] text-black">
+            <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6" /></svg>
+          </span>
+          <div class="absolute inset-x-0 bottom-0 p-3 sm:p-3.5">
+            <h3 :title="person.name" class="line-clamp-2 break-words font-barber text-base leading-snug text-white sm:text-lg">{{ person.name }}</h3>
+            <p v-if="ratings[person._id]?.count" :aria-label="ratings[person._id]!.average + ' de 5, ' + ratings[person._id]!.count + ' valoraciones'" class="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] leading-4 text-white/80">
+              <svg aria-hidden="true" class="size-3 shrink-0 text-[#ffb700]" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z" /></svg>
+              <span>{{ ratings[person._id]!.average.toLocaleString('es-EC', { maximumFractionDigits: 1 }) }} / 5</span><span class="text-white/50">({{ ratings[person._id]!.count }})</span>
+            </p>
+            <p v-else class="mt-2 text-[11px] leading-4 text-white/50">{{ ratingsError ? 'Valoración no disponible' : 'Sin valoraciones' }}</p>
           </div>
         </div>
+        <div class="p-2">
+          <span data-barber-action class="relative isolate flex min-h-11 items-center justify-center gap-2 overflow-hidden rounded-lg border border-white/15 px-2 text-center text-xs font-medium text-white/85 transition-colors duration-300 group-hover:border-[#ffb700] group-hover:text-black group-focus-visible:border-[#ffb700] group-focus-visible:text-black motion-reduce:transition-none">
+            <span data-action-fill aria-hidden="true" class="absolute inset-0 -z-10 -translate-y-full bg-[#ffb700] transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 motion-reduce:transition-none"></span>
+            <svg aria-hidden="true" class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <template v-if="preferred"><rect x="4" y="5" width="16" height="16" rx="2" /><path d="M8 3v4m8-4v4M4 10h16M9 14h6m-6 3h3" /></template>
+              <template v-else><circle cx="12" cy="12" r="9" /><path d="m8 12 3 3 5-6" /></template>
+            </svg>
+            <span>{{ preferred ? 'Ver horarios' : 'Elegir barbero' }}</span>
+          </span>
+        </div>
       </button>
     </div>
-  </div>
+
+    <div v-if="!preferred && booking.date && booking.time" class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 p-4 text-sm">
+      <p class="text-white/65">{{ displayDate(booking.date) }} · <strong class="font-medium text-[#ffb700]">{{ booking.time }}</strong> · 60 minutos</p>
+      <RouterLink :to="{ name: 'AppointmentSlot' }" class="inline-flex min-h-11 items-center text-xs text-[#ffb700]">Cambiar turno</RouterLink>
+    </div>
+    <p v-if="preferred" class="text-xs leading-5 text-white/45">La disponibilidad se comprueba al elegir la fecha. Un profesional sin turnos libres no permitirá confirmar una reserva.</p>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { useRouter, RouterLink } from "vue-router";
+import BarberAPI from "@/api/barberAPI";
+import type { Barber } from "@/stores/barber";
+import BarberPortrait from "@/components/UI/BarberPortrait.vue";
+import { displayDate } from "@/helpers/date";
 import { useAppointmentBookingStore } from "@/stores/appointmentCreator";
-import { useBarberStore, type Barber } from "@/stores/barber";
-
-const appointmentBooking = useAppointmentBookingStore();
-const barberStore = useBarberStore();
-
-function selectBarber(barber: Barber) {
-  appointmentBooking.barber = {
-    _id: barber._id,
-    name: barber.name,
-    email: barber.email,
-  };
+const booking = useAppointmentBookingStore(), router = useRouter();
+const allBarbers = ref<Barber[]>([]), ratings = ref<Record<string, { average: number; count: number }>>({}), loading = ref(false), error = ref(""), ratingsError = ref(false);
+let serial = 0, ratingSequence = 0;
+const preferred = computed(() => booking.bookingMode === "barber");
+const visibleBarbers = computed(() => preferred.value ? allBarbers.value : booking.availableBarbers.map(item => ({ ...allBarbers.value.find(person => person._id === item._id), ...item })));
+async function refresh() {
+  const request = ++serial; loading.value = true; error.value = "";
+  try {
+    const [barbers] = await Promise.all([BarberAPI.getBarbers(), preferred.value ? Promise.resolve() : booking.loadGlobalAvailability(booking.date)]);
+    if (request !== serial) return;
+    allBarbers.value = barbers.data;
+    if (!preferred.value && booking.globalError) throw new Error();
+  } catch { if (request === serial) error.value = "No pudimos consultar los barberos disponibles. Vuelve a intentarlo."; }
+  finally { if (request === serial) loading.value = false; }
+  await loadRatings();
 }
-
-onMounted(() => {
-  barberStore.getBarbers();
-});
+async function loadRatings() {
+  const request = ++ratingSequence;
+  try { const { data } = await BarberAPI.getRatings(); if (request === ratingSequence) { ratings.value = Object.fromEntries(data.map(item => [item._id, item])); ratingsError.value = false; } }
+  catch { if (request === ratingSequence) ratingsError.value = true; }
+}
+function choose(person: { _id: string; name: string }) {
+  if (preferred.value) { booking.selectPreferredBarber(person); void router.push({ name: "AppointmentSlot" }); }
+  else if (booking.selectBarber(person._id)) void router.push({ name: "New-appointments" });
+}
+onMounted(() => { void refresh(); window.addEventListener("appsalon:rating-saved", loadRatings); });
+onBeforeUnmount(() => { serial++; ratingSequence++; window.removeEventListener("appsalon:rating-saved", loadRatings); });
 </script>

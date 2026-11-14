@@ -1,6 +1,12 @@
 import api from "@/lib/axios";
 
 export default {
+  availability(date: string, appointment?: string, barber?: string) {
+    return api.get("/appointments/availability", { params: { date, appointment, barber } });
+  },
+  calendarAvailability(date: string, endDate: string, barber?: string, appointment?: string) {
+    return api.get("/appointments/availability", { params: { date, endDate, barber, appointment } });
+  },
   create(data: any) {
     return api.post("/appointments", data);
   },
@@ -19,9 +25,5 @@ export default {
 
   update(id: string, data: any) {
     return api.put(`/appointments/${id}`, data);
-  },
-
-  delete(id: string) {
-    return api.delete(`/appointments/${id}`);
   },
 };

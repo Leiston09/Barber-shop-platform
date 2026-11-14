@@ -42,13 +42,18 @@ const routes = [
               import("@/components/appointments/ServicesNewAppointments.vue"),
             children: [
               {
+                path: "",
+                name: "AppointmentSlot",
+                component: () => import("@/components/appointments/newAppointments/AppointmentSlot.vue"),
+              },
+              {
                 path: "barber",
                 name: "BarberSelect",
                 component: () =>
                   import("@/components/appointments/newAppointments/BarberSelect.vue"),
               },
               {
-                path: "",
+                path: "servicios",
                 name: "New-appointments",
                 component: () =>
                   import("@/components/appointments/newAppointments/ServicesNewAppointments.vue"),
@@ -76,7 +81,14 @@ const routes = [
       {
         path: "barber/clients",
         name: "Barber-Clients",
-        component: () => import("@/views/barber/Clients.vue"),
+        component: () => import("@/views/barber/BarberPanel.vue"),
+        redirect: { name: "Barber-Today" },
+        children: [
+          { path: "hoy", name: "Barber-Today", component: () => import("@/views/barber/Today.vue") },
+          { path: "citas", name: "Barber-Appointments", component: () => import("@/views/barber/Clients.vue") },
+          { path: "rendimiento", name: "Barber-Performance", component: () => import("@/views/barber/Performance.vue") },
+          { path: "horario", name: "Barber-Schedule", component: () => import("@/views/barber/Schedule.vue") },
+        ],
         meta: {
           requireAuth: true,
           requireBarber: true,
@@ -119,8 +131,11 @@ const routes = [
       {
         path: "services",
         name: "Admin-Services",
-        component: () => import("@/views/admin//Services.vue"),
+        component: () => import("@/views/admin/Services.vue"),
       },
+      { path: "promotions", name: "Admin-Promotions", component: () => import("@/views/admin/Promotions.vue") },
+      { path: "site-images", name: "Admin-SiteImages", component: () => import("@/views/admin/SiteImages.vue") },
+        { path: "settings", name: "Admin-Settings", component: () => import("@/views/admin/Settings.vue") },
     ],
   },
 

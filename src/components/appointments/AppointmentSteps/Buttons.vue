@@ -1,106 +1,70 @@
 <template>
-  <nav
-    class="flex items-center gap-1 p-1 sm:gap-1.5 sm:p-1.5 mb-6 sm:mb-10 bg-white/[0.025] border border-white/5 rounded-xl overflow-x-auto scrollbar-hide"
-  >
-    <!-- BARBERO -->
-    <RouterLink
-      :to="{ name: 'BarberSelect' }"
-      class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3.5 px-2 sm:px-4 text-[8px] sm:text-[9px] font-barber uppercase tracking-[0.12em] sm:tracking-[0.22em] rounded-lg transition-all duration-500 ease-out whitespace-nowrap shrink-0"
-      :class="
-        route.name === 'BarberSelect'
-          ? 'flex-[1.8] bg-[#ffb700] text-black shadow-[0_0_25px_rgba(255,183,0,0.08)]'
-          : 'flex-1 text-white/40 hover:text-white/80 hover:bg-white/[0.03]'
-      "
-    >
-      <span
-        class="w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-500"
-        :class="route.name === 'BarberSelect' ? 'bg-black scale-110' : 'bg-white/20'"
-      />
-      <span>Barbero</span>
-    </RouterLink>
-
-    <!-- SERVICIOS -->
-    <RouterLink
-      v-if="canAccessServices"
-      :to="{ name: 'New-appointments' }"
-      class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3.5 px-2 sm:px-4 text-[8px] sm:text-[9px] font-barber uppercase tracking-[0.12em] sm:tracking-[0.22em] rounded-lg transition-all duration-500 ease-out whitespace-nowrap shrink-0"
-      :class="
-        route.name === 'New-appointments'
-          ? 'flex-[1.8] bg-[#ffb700] text-black shadow-[0_0_25px_rgba(255,183,0,0.08)]'
-          : 'flex-1 text-white/40 hover:text-white/80 hover:bg-white/[0.03]'
-      "
-    >
-      <span
-        class="w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-500"
-        :class="route.name === 'New-appointments' ? 'bg-black scale-110' : 'bg-white/20'"
-      />
-      <span>Servicios</span>
-    </RouterLink>
-
-    <button
-      v-else
-      type="button"
-      disabled
-      class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3.5 px-2 sm:px-4 text-[8px] sm:text-[9px] font-barber uppercase tracking-[0.12em] sm:tracking-[0.22em] rounded-lg text-white/15 cursor-not-allowed whitespace-nowrap shrink-0"
-    >
-      <span class="w-1.5 h-1.5 rounded-full shrink-0 bg-white/10" />
-      <span>Servicios</span>
-    </button>
-
-    <!-- DETALLES -->
-    <RouterLink
-      v-if="canAccessDetails"
-      :to="{ name: 'New-Appointments-details' }"
-      class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3.5 px-2 sm:px-4 text-[8px] sm:text-[9px] font-barber uppercase tracking-[0.12em] sm:tracking-[0.22em] rounded-lg transition-all duration-500 ease-out whitespace-nowrap shrink-0"
-      :class="
-        route.name === 'New-Appointments-details'
-          ? 'flex-[1.8] bg-[#ffb700] text-black shadow-[0_0_25px_rgba(255,183,0,0.08)]'
-          : 'flex-1 text-white/40 hover:text-white/80 hover:bg-white/[0.03]'
-      "
-    >
-      <span
-        class="w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-500"
-        :class="route.name === 'New-Appointments-details' ? 'bg-black scale-110' : 'bg-white/20'"
-      />
-      <span>Detalles</span>
-    </RouterLink>
-
-    <button
-      v-else
-      type="button"
-      disabled
-      class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3.5 px-2 sm:px-4 text-[8px] sm:text-[9px] font-barber uppercase tracking-[0.12em] sm:tracking-[0.22em] rounded-lg text-white/15 cursor-not-allowed whitespace-nowrap shrink-0"
-    >
-      <span class="w-1.5 h-1.5 rounded-full shrink-0 bg-white/10" />
-      <span>Detalles</span>
-    </button>
+  <nav aria-label="Progreso de la reserva" class="booking-progress min-w-0">
+    <ol class="grid grid-cols-4 gap-1 sm:gap-3">
+      <li v-for="(step, index) in steps" :key="step.route">
+        <button
+          type="button"
+          class="w-full text-left rounded-lg py-1 px-1 sm:px-2 focus-visible:outline focus-visible:outline-[#ffb700]"
+          :disabled="!canVisit(index) || booking.saving"
+          :aria-current="active === index ? 'step' : undefined"
+          @click="router.push({ name: step.route })"
+        >
+          <span class="flex items-center gap-2 mb-1 px-3"
+            ><span
+              class="flex size-6 shrink-0 items-center justify-center rounded-full text-xs"
+              :class="
+                active === index
+                  ? 'bg-[#ffb700] text-black'
+                  : active > index
+                    ? 'bg-[#ffb700]/15 text-[#ffb700]'
+                    : 'bg-white/10 text-white/55'
+              "
+              >{{ active > index ? "✓" : index + 1 }}</span
+            ><span
+              class="hidden sm:block h-px flex-1"
+              :class="active >= index ? 'bg-[#ffb700]/40' : 'bg-white/10'"
+          /></span>
+          <span
+            class="text-xs sm:text-sm"
+            :class="
+              active === index
+                ? 'text-[#ffb700]'
+                : canVisit(index)
+                  ? 'text-white/80'
+                  : 'text-white/45'
+            "
+            >{{ step.label }}</span
+          >
+        </button>
+      </li>
+    </ol>
   </nav>
 </template>
-
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRoute, RouterLink } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAppointmentBookingStore } from "@/stores/appointmentCreator";
-
+const booking = useAppointmentBookingStore();
 const route = useRoute();
-const appointmentBooking = useAppointmentBookingStore();
-
-const hasBarber = computed(() => !!appointmentBooking.barber);
-const hasServices = computed(() => appointmentBooking.services.length > 0);
-
-const canAccessServices = computed(() => hasBarber.value);
-const canAccessDetails = computed(
-  () => hasBarber.value && hasServices.value,
+const router = useRouter();
+const steps = computed(() => [
+  ...(booking.bookingMode === "barber" ? [
+    { route: "BarberSelect", label: "Barbero" },
+    { route: "AppointmentSlot", label: "Horario" },
+  ] : [
+  { route: "AppointmentSlot", label: "Horario" },
+  { route: "BarberSelect", label: "Barbero" },
+  ]),
+  { route: "New-appointments", label: "Servicios" },
+  { route: "New-Appointments-details", label: "Confirmación" },
+]);
+const active = computed(() =>
+  steps.value.findIndex((step) => step.route === route.name),
 );
+function canVisit(index: number) {
+  if (index === 0) return true;
+  if (index === 1) return booking.bookingMode === "barber" ? !!booking.barber : !!(booking.date && booking.time);
+  const ready = !!(booking.barber && booking.date && booking.time);
+  return ready && (index === 2 || !!booking.services.length);
+}
 </script>
-
-<style scoped>
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-</style>

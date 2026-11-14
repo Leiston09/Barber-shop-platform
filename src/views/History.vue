@@ -1,7 +1,7 @@
 <template>
   <section
     ref="sectionRef"
-    class="relative w-full min-h-full bg-[#050505] text-white overflow-hidden flex items-center justify-center"
+    class="relative w-full flex-1 bg-[#050505] text-white flex items-center justify-center"
   >
     <div
       class="relative w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-20 py-5 "
@@ -14,9 +14,8 @@
           <div
             class="relative w-full max-w-[200px] sm:max-w-[260px] lg:max-w-[320px] xl:max-w-[360px] mx-auto lg:mx-0 aspect-[4/5] overflow-hidden"
           >
-            <img
-              src="/img/home/barberia.jpg"
-              alt="Interior de nuestra barbería"
+            <SiteImage
+              slot="about"
               class="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.03]"
             />
 
@@ -30,13 +29,13 @@
               <p
                 class="text-[#ffb700] text-[9px] sm:text-[10px] uppercase tracking-[0.3em]"
               >
-                The Barber Studio
+                {{ media.find("about")?.title }}
               </p>
 
               <p
                 class="mt-1.5 text-white text-sm sm:text-base font-serif italic leading-snug"
               >
-                Donde comienza tu estilo.
+                {{ media.find("about")?.description }}
               </p>
             </div>
           </div>
@@ -57,9 +56,9 @@
             data-anim
             class="mt-2 sm:mt-3 font-barber uppercase text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[0.95] tracking-[-0.03em]"
           >
-            DONDE TU ESTILO
+            DE UN SUEÑO
             <br />
-            <span class="text-[#ffb700]">TOMA FORMA.</span>
+            <span class="text-[#ffb700]">A LA REALIDAD.</span>
           </h2>
 
           <div
@@ -133,6 +132,9 @@
 </template>
 
 <script setup lang="ts">
+const media = useSiteMediaStore();
+import { useSiteMediaStore } from "@/stores/siteMedia";
+import SiteImage from "@/components/UI/SiteImage.vue";
 import { ref } from "vue";
 import { useRevealOnScroll } from "@/composables/useRevealOnScroll";
 

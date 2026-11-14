@@ -69,47 +69,33 @@ export const useMyAppointmentsStore = defineStore(
       }
     }
 
-    async function cancelAppointment(
-      id: string,
-      toast: any
-    ) {
-      if (!id || !toast) return;
-
+    async function cancelAppointment(id: string, toast: any): Promise<boolean> {
+      if (!id || !toast) return false;
       try {
-        const { data } =
-          await MyAppointmentsAPI.cancelAppointment(
-            id
-          );
-
-        toast.open({
-          message: data.msg,
-          type: "warning",
-        });
-
+        const { data } = await MyAppointmentsAPI.cancelAppointment(id);
+        toast.open({ message: data.msg || "Tu cita se canceló.", type: "success" });
         await getMyAppointments();
+        return true;
       } catch (err: any) {
-        toast.open({
-          message:
-            err?.response?.data?.msg ||
-            "Error al cancelar la cita",
-          type: "error",
-        });
+        toast.open({ message: err?.response?.data?.msg || "No pudimos cancelar tu cita. Inténtalo de nuevo.", type: "error" });
+        return false;
       }
     }
-
-    const hasAppointments = computed(
-      () => appointments.value.length > 0
-    );
 
     const noAppointments = computed(
       () => appointments.value.length === 0
     );
 
+    function clearPrivateData() {
+      appointments.value = [];
+      error.value = null;
+    }
+
     return {
+      clearPrivateData,
       appointments,
       loading,
       error,
-      hasAppointments,
       noAppointments,
       getMyAppointments,
       cancelAppointment,

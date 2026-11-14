@@ -1,5 +1,7 @@
 // src/stores/appointmentBooking.ts
 
+import { useSettingsStore } from "./settings";
+import { useServiceStore } from "./service";
 import AppointmentsAPI from "@/api/AppointmentsAPI";
 import BarberAPI from "@/api/barberAPI";
 import { convertToDatePicker } from "@/helpers/date";
@@ -17,7 +19,7 @@ interface Service {
 interface Barber {
   _id: string;
   name: string;
-  email: string;
+  email?: string;
 }
 
 interface Appointment {
@@ -128,8 +130,10 @@ export const useAppointmentBookingStore = defineStore(
   "appointmentBooking",
   () => {
     const router = useRouter();
+    const settings = useSettingsStore();
     const myAppointmentsStore = useMyAppointmentsStore();
 
+    const bookingMode = ref<"time" | "barber">("time");
     const appointmentId = ref("");
     const barber = ref<Barber | null>(null);
     const services = ref<Service[]>([]);
@@ -137,8 +141,75 @@ export const useAppointmentBookingStore = defineStore(
     const time = ref("");
 
     const appointmentsByDate = ref<Appointment[]>([]);
+    const saving = ref(false);
+    const saveError = ref("");
+    const globalDate = ref("");
+    const globalSlots = ref<{ time: string; endTime: string; barbers: Barber[] }[]>([]);
+    const globalLoading = ref(false);
+    const globalError = ref("");
+    let globalRequest = 0;
+    const availableBarbers = computed(() => globalDate.value === date.value
+      ? globalSlots.value.find(slot => slot.time === time.value)?.barbers ?? [] : []);
+    const clock = ref(Date.now());
+    const refreshClock = () => { clock.value = Date.now(); };
+    const today = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Guayaquil" }).format(new Date(clock.value));
+    const currentTime = () => new Intl.DateTimeFormat("en-GB", { timeZone: "America/Guayaquil", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date(clock.value));
+    async function loadGlobalAvailability(selectedDate = globalDate.value || today()) {
+      const request = ++globalRequest;
+      const preferredId = bookingMode.value === "barber" ? barber.value?._id : undefined;
+      globalDate.value = selectedDate;
+      globalLoading.value = true;
+      globalError.value = "";
+      globalSlots.value = [];
+      if (bookingMode.value === "barber" && !preferredId) { globalLoading.value = false; globalError.value = "Elige primero a tu barbero para consultar su horario."; return; }
+      try {
+        const { data } = await AppointmentsAPI.availability(selectedDate, undefined, preferredId);
+        if (request !== globalRequest) return;
+        globalSlots.value = data.slots;
+      } catch {
+        if (request === globalRequest) globalError.value = "No pudimos consultar los horarios. Reintenta antes de elegir un turno.";
+      } finally { if (request === globalRequest) globalLoading.value = false; }
+    }
+    function selectSlot(hour: string) {
+      refreshClock();
+      if (globalDate.value < today() || (globalDate.value === today() && hour <= currentTime())) {
+        void loadGlobalAvailability();
+        return false;
+      }
+      const slot = globalSlots.value.find(item => item.time === hour);
+      if (globalLoading.value || globalError.value || !slot?.barbers.length) return false;
+      if (bookingMode.value === "barber" && !slot.barbers.some(item => item._id === barber.value?._id)) return false;
+      const keepBarber = (bookingMode.value === "barber" || (date.value === globalDate.value && time.value === hour)) && slot.barbers.some(item => item._id === barber.value?._id);
+      if (!keepBarber) barber.value = null;
+      date.value = globalDate.value;
+      time.value = hour;
+      saveError.value = "";
+      return true;
+    }
+    function setBookingMode(mode: "time" | "barber") {
+      if (bookingMode.value === mode || saving.value) return;
+      bookingMode.value = mode; globalRequest++; globalSlots.value = []; globalDate.value = ""; globalLoading.value = false; globalError.value = "";
+      barber.value = null; date.value = ""; time.value = ""; saveError.value = "";
+    }
+    function selectPreferredBarber(person: { _id: string; name: string }) {
+      if (bookingMode.value !== "barber" || saving.value) return;
+      if (barber.value?._id !== person._id) {
+        globalRequest++; globalSlots.value = []; globalDate.value = ""; globalLoading.value = false; globalError.value = "";
+        barber.value = person; date.value = ""; time.value = ""; saveError.value = "";
+      }
+    }
+    function selectBarber(id: string) {
+      const selected = availableBarbers.value.find(item => item._id === id);
+      if (!selected || globalLoading.value || globalError.value) return false;
+      barber.value = selected;
+      return true;
+    }
+
 
     const loadingHours = ref(false);
+    const availabilityError = ref("");
+    let scheduleRequest = 0;
+    let hoursRequest = 0;
     const barberSchedule = ref<BarberSchedule | null>(null);
     const loadingSchedule = ref(false);
 
@@ -151,7 +222,7 @@ export const useAppointmentBookingStore = defineStore(
         return;
       }
 
-      if (services.value.length >= 2) return;
+      if (services.value.length >= settings.maxServicesPerAppointment) return;
 
       services.value.push(service);
     }
@@ -191,15 +262,21 @@ export const useAppointmentBookingStore = defineStore(
         return;
       }
 
+      const requestId = ++scheduleRequest;
+      const barberId = barber.value._id;
       loadingSchedule.value = true;
+      availabilityError.value = "";
 
       try {
-        const { data } = await BarberAPI.getSchedule(barber.value._id);
-        barberSchedule.value = data as BarberSchedule;
+        const { data } = await BarberAPI.getSchedule(barberId);
+        if (requestId === scheduleRequest && barber.value?._id === barberId) barberSchedule.value = data as BarberSchedule;
       } catch {
-        barberSchedule.value = null;
+        if (requestId === scheduleRequest) {
+          barberSchedule.value = null;
+          availabilityError.value = "No pudimos cargar la agenda de este barbero. Reintenta para continuar.";
+        }
       } finally {
-        loadingSchedule.value = false;
+        if (requestId === scheduleRequest) loadingSchedule.value = false;
       }
     }
 
@@ -257,10 +334,10 @@ export const useAppointmentBookingStore = defineStore(
       if (!barberSchedule.value) return false; // sin horario, permitimos todo (pero mostramos aviso)
 
       const key = toKey(d);
-      const today = toKey(new Date());
+      const todayKey = today();
 
       // No permitir fechas pasadas
-      if (key < today) return true;
+      if (key < todayKey) return true;
 
       // Día no laborable
       if (!isDayWorking(key)) return true;
@@ -290,7 +367,7 @@ export const useAppointmentBookingStore = defineStore(
 
       const result: string[] = [];
 
-      for (let m = start; m < end; m += 60) {
+      for (let m = start; m + 60 <= end; m += 60) {
         result.push(minutesToTime(m));
       }
 
@@ -306,33 +383,13 @@ export const useAppointmentBookingStore = defineStore(
      * Horas bloqueadas por el admin para una fecha (pausas + bloqueos parciales).
      */
     const blockedHours = computed(() => {
-      if (!date.value || !barberSchedule.value) return [];
-
       const day = scheduleDayFor(date.value);
-      const blocked: string[] = [];
-
-      // Pausas del día
-      if (day?.isWorking && day.breaks?.length) {
-        for (const p of day.breaks) {
-          const start = timeToMinutes(p.startTime);
-          const end = timeToMinutes(p.endTime);
-          for (let m = start; m < end; m += 60) {
-            blocked.push(minutesToTime(m));
-          }
-        }
-      }
-
-      // Bloqueos parciales del admin para esa fecha
-      for (const b of partialBlocksFor(date.value)) {
-        if (!b.startTime || !b.endTime) continue;
-        const start = timeToMinutes(b.startTime);
-        const end = timeToMinutes(b.endTime);
-        for (let m = start; m < end; m += 60) {
-          blocked.push(minutesToTime(m));
-        }
-      }
-
-      return blocked;
+      const intervals = [...(day?.breaks ?? []), ...partialBlocksFor(date.value)];
+      return hours.value.filter(hour => {
+        const start = timeToMinutes(hour);
+        return intervals.some(p => start < timeToMinutes(p.endTime!) &&
+          start + 60 > timeToMinutes(p.startTime!));
+      });
     });
 
     const isHourBlocked = computed(() => {
@@ -358,6 +415,9 @@ export const useAppointmentBookingStore = defineStore(
      */
     const isHourUnavailable = computed(() => {
       return (hour: string) => {
+        if (availabilityError.value || loadingHours.value || loadingSchedule.value) return true;
+        if (isDateFullyBlocked(date.value)) return true;
+        if (date.value < today() || (date.value === today() && hour <= currentTime())) return true;
         if (
           appointmentId.value &&
           appointmentsByDate.value.some(
@@ -367,7 +427,8 @@ export const useAppointmentBookingStore = defineStore(
           return false;
         }
 
-        return isHourOccupied.value(hour) || isHourBlocked.value(hour);
+        const start = timeToMinutes(hour);
+        return occupiedHours.value.some(value => start < timeToMinutes(value) + 60 && start + 60 > timeToMinutes(value)) || isHourBlocked.value(hour);
       };
     });
 
@@ -379,14 +440,23 @@ export const useAppointmentBookingStore = defineStore(
       () => hours.value.length > 0 && availableHours.value.length === 0,
     );
 
+    watch([loadingHours, loadingSchedule, availableHours], () => {
+      if (barber.value && date.value && time.value && !loadingHours.value && !loadingSchedule.value &&
+          !availabilityError.value && !availableHours.value.includes(time.value)) {
+        time.value = "";
+        saveError.value = "El turno elegido ya no está disponible. Tus servicios se conservan; selecciona otra hora para este barbero.";
+      }
+    }, { flush: "post" });
     const isDateSelect = computed(() => Boolean(date.value));
 
     const validateReservation = computed(() =>
       Boolean(
-        barber.value &&
+        !availabilityError.value && !loadingHours.value && !loadingSchedule.value &&
+          hours.value.includes(time.value) && !isHourUnavailable.value(time.value) &&
+          barber.value &&
           date.value &&
           time.value &&
-          services.value.length > 0 &&
+          services.value.length > 0 && services.value.length <= settings.maxServicesPerAppointment &&
           barberSchedule.value &&
           isDayWorking(date.value) &&
           !isDateFullyBlocked(date.value),
@@ -402,14 +472,17 @@ export const useAppointmentBookingStore = defineStore(
         return;
       }
 
+      const requestId = ++hoursRequest;
+      const barberId = barber.value._id;
+      availabilityError.value = "";
       loadingHours.value = true;
-      time.value = "";
 
       try {
         const { data } = await AppointmentsAPI.getByDate(
           selectedDate,
-          barber.value._id,
+          barberId,
         );
+        if (requestId !== hoursRequest || barber.value?._id !== barberId || date.value !== selectedDate) return;
 
         appointmentsByDate.value = data;
 
@@ -424,9 +497,12 @@ export const useAppointmentBookingStore = defineStore(
           }
         }
       } catch {
-        appointmentsByDate.value = [];
+        if (requestId === hoursRequest) {
+          appointmentsByDate.value = [];
+          availabilityError.value = "No se pudo consultar la disponibilidad. Selecciona de nuevo la fecha.";
+        }
       } finally {
-        loadingHours.value = false;
+        if (requestId === hoursRequest) loadingHours.value = false;
       }
     }
 
@@ -435,6 +511,7 @@ export const useAppointmentBookingStore = defineStore(
        ========================================================= */
     // Cuando cambia el barbero, cargar su schedule
     watch(barber, async (newBarber) => {
+      scheduleRequest++;
       barberSchedule.value = null;
       if (newBarber?._id) {
         await loadBarberSchedule();
@@ -444,8 +521,9 @@ export const useAppointmentBookingStore = defineStore(
     // Cuando cambia fecha o barbero, cargar las horas ocupadas
     watch([date, barber], async ([newDate, newBarber]) => {
       if (!newDate || !newBarber?._id) {
+        hoursRequest++;
+        loadingHours.value = false;
         appointmentsByDate.value = [];
-        time.value = "";
         return;
       }
 
@@ -456,8 +534,9 @@ export const useAppointmentBookingStore = defineStore(
        GUARDAR / EDITAR
        ========================================================= */
     async function saveAppointment(toast: any) {
+      if (saving.value) return;
       if (
-        !toast ||
+        !toast || !validateReservation.value ||
         !barber.value?._id ||
         !date.value ||
         !time.value ||
@@ -466,7 +545,14 @@ export const useAppointmentBookingStore = defineStore(
         return;
       }
 
+      saving.value = true;
+      saveError.value = "";
+      if (!await settings.load() || services.value.length > settings.maxServicesPerAppointment) {
+        saveError.value = settings.error || "El límite de servicios cambió. Revisa tu selección antes de confirmar.";
+        toast.open({ message: saveError.value, type: "error" }); saving.value = false; return;
+      }
       const appointment = {
+        expectedPrices: services.value.map(service => ({ service: service._id, price: service.price })),
         services: services.value.map((service) => service._id),
         date: date.value,
         time: time.value,
@@ -498,18 +584,36 @@ export const useAppointmentBookingStore = defineStore(
 
         await myAppointmentsStore.getMyAppointments();
 
-        router.push({
+        saving.value = false;
+        await router.push({
           name: "My-appointments",
         });
       } catch (error: any) {
-        toast.open({
-          message: error?.response?.data?.msg || "Error al guardar la cita",
-          type: "error",
-        });
-      }
+        saveError.value = error?.response?.data?.msg || "No pudimos confirmar tu reserva. Revisa la conexión y vuelve a intentarlo.";
+        if (error?.response?.data?.code === "SERVICE_LIMIT_CHANGED") await settings.load();
+        if (error?.response?.data?.code === "PRICE_CHANGED") await useServiceStore().loadServices(true);
+        if (error?.response?.status === 409) {
+          time.value = "";
+          saveError.value = "Ese turno acaba de ser reservado. Tus servicios se conservan; elige otra hora para este barbero.";
+          await Promise.all([loadBarberSchedule(), loadHoursByDate(date.value)]);
+        }
+        toast.open({ message: saveError.value, type: "error" });
+      } finally { saving.value = false; }
     }
 
     function clearAppointmentData() {
+      bookingMode.value = "time";
+      globalRequest++;
+      globalSlots.value = [];
+      globalDate.value = "";
+      globalError.value = "";
+      globalLoading.value = false;
+      saveError.value = "";
+      scheduleRequest++;
+      hoursRequest++;
+      loadingHours.value = false;
+      loadingSchedule.value = false;
+      availabilityError.value = "";
       appointmentId.value = "";
       barber.value = null;
       services.value = [];
@@ -534,6 +638,9 @@ export const useAppointmentBookingStore = defineStore(
     }
 
     return {
+      bookingMode, setBookingMode, selectPreferredBarber,
+      saving, saveError, refreshClock, today, globalDate, globalSlots, globalLoading, globalError,
+      availableBarbers, loadGlobalAvailability, selectSlot, selectBarber,
       appointmentId,
       barber,
       services,
@@ -542,6 +649,7 @@ export const useAppointmentBookingStore = defineStore(
       hours,
       appointmentsByDate,
       loadingHours,
+      availabilityError,
 
       // schedule
       barberSchedule,

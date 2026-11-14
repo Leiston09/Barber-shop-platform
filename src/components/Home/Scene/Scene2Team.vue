@@ -1,76 +1,85 @@
+
 <template>
   <div class="absolute inset-0 flex items-center pointer-events-none">
-    <div class="w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-20 pt-16 pb-28 sm:pt-20 sm:pb-24 lg:pt-10 lg:pb-0">
-      <div class="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-6 sm:gap-8 lg:gap-20 items-center">
-
-        <div class="order-2 lg:order-1 max-w-lg">
+    <div
+      class="mx-auto w-full max-w-7xl px-5 pt-[calc(var(--app-header-height)+1rem)] pb-[calc(var(--app-mobile-nav-clearance)+1rem)] sm:pl-24 sm:pr-8 lg:pl-32 lg:pr-12 xl:pl-36 xl:pr-16"
+    >
+      <div
+        class="grid grid-cols-1 items-center gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-10 xl:gap-16"
+      >
+        <!-- TEXTO -->
+        <div class="min-w-0 max-w-xl text-left order-2 lg:order-1">
           <p
             data-anim
-            class="text-[#ffb700] text-[10px] sm:text-[9px] uppercase tracking-[0.3em] font-medium"
+            class="flex items-center gap-3 text-[11px] font-medium tracking-[0.16em] text-[#ffb700] sm:text-xs"
           >
             02 / La experiencia
           </p>
 
           <h2
             data-anim
-            class="mt-4 sm:mt-4 lg:mt-4 font-barber uppercase text-white text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[0.92] tracking-[-0.03em]"
+            class="mt-3 font-barber text-[clamp(1.75rem,6vw,2.25rem)] font-medium uppercase leading-[1.02] tracking-[-0.025em] text-white sm:text-[2.5rem] lg:mt-4 lg:text-[clamp(3.25rem,5vw,4.75rem)] lg:leading-[0.92] lg:tracking-[-0.03em]"
           >
-            VEN POR
+            MÁS QUE UNA
             <br />
-            EL CORTE.
-            <br />
-            <span class="text-[#ffb700]">QUÉDATE POR</span>
-            <br />
-            LA EXPERIENCIA.
+            <span class="text-[#ffb700]">BARBERÍA.</span>
           </h2>
 
           <p
             data-anim
-            class="mt-5 sm:mt-5 lg:mt-5 text-white/60 text-sm sm:text-sm leading-6 font-light max-w-[380px]"
+            class="mt-4 max-w-[440px] text-sm font-light leading-6 text-white/75 sm:text-[15px] lg:mt-5 lg:text-base lg:leading-7"
           >
-            Aquí no se trata de entrar, sentarte y salir.
-            Queremos que disfrutes el momento, la conversación
-            y la sensación de estar en un lugar hecho para ti.
+            Un lugar donde el ambiente, la atención y los
+            pequeños detalles hacen que cada visita sea diferente.
           </p>
 
           <p
             data-anim
-            class="mt-4 sm:mt-4 lg:mt-4 text-white/35 text-xs sm:text-xs italic"
+            class="mt-4 max-w-[440px] pt-4 text-xs leading-5 text-white/55 sm:text-sm sm:leading-6 lg:text-[15px]"
           >
-            Tómate el tiempo. Nosotros nos encargamos del resto.
+            Un espacio para desconectarte, disfrutar el momento
+            y dedicarte tiempo.
           </p>
         </div>
 
-        <div data-anim class="order-1 lg:order-2">
+        <!-- IMAGEN -->
+        <div data-anim class="min-w-0 order-1 lg:order-2">
           <div
-            class="relative w-full h-[28vh] sm:h-[34vh] lg:h-[48vh] max-h-[480px] overflow-hidden"
+            class="relative h-[clamp(180px,27svh,300px)] w-full overflow-hidden rounded-2xl border border-white/15 bg-neutral-900 shadow-2xl shadow-black/30 sm:h-[clamp(260px,34svh,380px)] lg:h-[clamp(300px,56svh,560px)]"
           >
-            <img
-              src="/img/home/barberia.jpg"
-              alt="Interior de la barbería"
-              class="w-full h-full object-cover"
+            <SiteImage
+              slot="home-experience"
+              class="h-full w-full object-cover object-center"
             />
 
             <div
-              class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/5"
+              class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent"
             />
 
-            <div class="absolute bottom-4 left-4 sm:bottom-6 sm:left-6">
-              <p class="text-[#ffb700] text-[9px] sm:text-[8px] uppercase tracking-[0.3em]">
-                El ambiente
+            <div
+              class="absolute inset-x-0 bottom-0 p-4 sm:p-5 lg:p-6"
+            >
+              <p
+                class="text-[10px] font-medium tracking-[0.12em] text-[#ffb700] sm:text-[11px]"
+              >
+                {{ media.find("home-experience")?.title }}
               </p>
 
-              <p class="mt-1.5 text-white text-base sm:text-lg lg:text-xl font-serif italic">
-                Aquí el tiempo se disfruta.
+              <p
+                class="mt-2 max-w-xs font-barber text-base leading-snug text-white sm:text-lg lg:text-xl"
+              >
+                {{ media.find("home-experience")?.description }}
               </p>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+const media = useSiteMediaStore();
+import { useSiteMediaStore } from "@/stores/siteMedia";
+import SiteImage from "@/components/UI/SiteImage.vue";
 </script>

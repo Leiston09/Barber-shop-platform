@@ -1,202 +1,43 @@
-
 <template>
-  <div class="w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-14 py-8">
-    <!-- ENCABEZADO -->
-    <div class="mb-10">
-      <p
-        class="text-[9px] uppercase tracking-[0.35em] text-[#ffb700] font-medium mb-2"
-      >
-        Mi agenda
-      </p>
-
-      <div
-        class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3"
-      >
-        <div>
-          <h1
-            class="text-3xl sm:text-4xl font-barber uppercase tracking-wide text-white"
-          >
-            Mis clientes
-          </h1>
-
-          <p class="text-white/35 text-sm mt-2">
-            Clientes con citas pendientes y su historial.
-          </p>
-        </div>
-
-        <p class="text-white/25 text-[10px] uppercase tracking-[0.25em]">
-          {{ sortedClients.length }} clientes visibles
-        </p>
-      </div>
+  <section aria-labelledby="appointments-title">
+    <div class="flex flex-wrap items-start justify-between gap-3"><div><h2 id="appointments-title" class="text-xl font-semibold">Mis citas</h2><p class="mt-2 text-sm leading-6 text-white/50">Tus próximas reservas y el historial de quienes reservaron contigo.</p></div><button type="button" :disabled="loading" @click="load" class="min-h-11 rounded-lg border border-white/15 px-4 text-sm text-white/65 disabled:opacity-40">Actualizar</button></div>
+    <div class="my-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div class="grid grid-cols-2 gap-1 rounded-lg bg-white/5 p-1"><button v-for="option in [{ id: 'upcoming', label: 'Próximas reservas' }, { id: 'history', label: 'Historial de citas' }]" :key="option.id" type="button" @click="changeView(option.id)" :aria-pressed="view === option.id" class="min-h-11 rounded-md px-3 text-sm" :class="view === option.id ? 'bg-white/10 text-white' : 'text-white/45'">{{ option.label }}</button></div>
+      <form @submit.prevent="search" class="flex gap-2 sm:max-w-md sm:flex-1"><label class="min-w-0 flex-1"><span class="sr-only">Buscar cliente o servicio</span><input v-model="query" type="search" maxlength="80" placeholder="Buscar cliente o servicio" class="min-h-11 w-full rounded-lg border border-white/15 bg-[#111111] px-3 text-sm outline-none focus:border-[#ffb700]" /></label><button type="submit" class="min-h-11 rounded-lg border border-white/15 px-3 text-sm text-[#ffb700]">Buscar</button></form>
     </div>
-
-    <!-- CARGANDO -->
-    <div
-      v-if="barberStore.loadingClients"
-      class="flex items-center justify-center py-20"
-    >
-      <div
-        class="w-7 h-7 rounded-full border-2 border-white/10 border-t-[#ffb700] animate-spin"
-      ></div>
-    </div>
-
-    <!-- ERROR -->
-    <div
-      v-else-if="barberStore.clientsError"
-      class="py-12 text-center border border-dashed border-red-500/20 rounded-2xl"
-    >
-      <p class="text-red-400/70 text-sm">
-        {{ barberStore.clientsError }}
-      </p>
-
-      <button
-        type="button"
-        @click="barberStore.getMyClients()"
-        class="mt-3 text-[10px] uppercase tracking-[0.2em] text-white/40 hover:text-[#ffb700] transition"
-      >
-        Reintentar
-      </button>
-    </div>
-
-    <!-- SIN CLIENTES CON CITAS PENDIENTES -->
-    <div
-      v-else-if="sortedClients.length === 0"
-      class="text-center border border-white/5 rounded-2xl bg-white/[0.02] px-5 py-16"
-    >
-      <div
-        class="w-14 h-14 mx-auto rounded-full border border-white/10 flex items-center justify-center mb-4"
-      >
-        <svg
-          class="w-6 h-6 text-white/20"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-          />
-        </svg>
+    <p v-if="error" role="alert" class="mb-4 rounded-lg border border-rose-400/25 p-4 text-sm text-rose-200">{{ error }}</p>
+    <p v-if="loading" role="status" class="py-14 text-center text-sm text-white/50">Consultando tus reservas…</p>
+    <template v-else-if="data">
+      <p v-if="!data.items.length" class="rounded-xl border border-white/10 py-16 text-center text-sm text-white/50">{{ appliedSearch ? 'No hay reservas que coincidan con la búsqueda.' : view === 'upcoming' ? 'No tienes próximas reservas web.' : 'Todavía no tienes citas en el historial.' }}</p>
+      <div v-else class="divide-y divide-white/10 rounded-xl border border-white/10 bg-[#0e0e0e]">
+        <article v-for="item in data.items" :key="item._id" class="grid gap-4 p-4 sm:grid-cols-[7.5rem_minmax(0,1fr)_auto] sm:p-5">
+          <div><p class="text-lg font-semibold tabular-nums text-[#ffb700]">{{ item.time }}</p><p class="mt-1 text-xs text-white/50">{{ panelDate(item.date) }}</p></div>
+          <div class="min-w-0"><h3 class="break-words text-sm font-medium">{{ item.user.name }}</h3><p class="mt-1.5 text-sm leading-6 text-white/50">{{ item.services.map(s => s.name).join(', ') || 'Servicio no disponible' }}</p><p class="mt-2 text-xs" :class="item.attendance === 'no_show' ? 'text-rose-300' : item.attendance === 'attended' ? 'text-[#ffb700]' : 'text-white/40'">{{ appointmentLabel(item) }}</p></div>
+          <div class="flex items-center justify-between gap-4 sm:flex-col sm:items-end"><p class="text-sm tabular-nums text-white/75">{{ panelMoney(item.totalAmount) }}</p><button v-if="item.user._id" type="button" @click="selected = item.user._id" class="min-h-11 text-sm text-[#ffb700]">Ver cliente e historial</button></div>
+        </article>
       </div>
-
-      <p class="text-white/70 text-sm font-barber">
-        No tienes clientes con citas pendientes
-      </p>
-
-      <p
-        class="text-white/35 text-xs mt-2 max-w-[280px] mx-auto leading-relaxed"
-      >
-        Cuando alguien tenga una cita actual o futura contigo,
-        aparecerá aquí.
-      </p>
-    </div>
-
-    <!-- CLIENTES -->
-    <template v-else>
-      <!-- BUSCADOR -->
-      <section
-        class="bg-white/[0.02] border border-white/10 rounded-2xl p-5 mb-8"
-      >
-        <input
-          v-model="search"
-          type="text"
-          placeholder="Buscar cliente por nombre"
-          class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-[#ffb700]/50 transition"
-        />
-      </section>
-
-      <!-- SIN COINCIDENCIAS -->
-      <div
-        v-if="filteredClients.length === 0"
-        class="py-16 text-center border border-dashed border-white/10 rounded-2xl"
-      >
-        <p class="text-white/25 text-sm">
-          No hay clientes que coincidan con la búsqueda.
-        </p>
-      </div>
-
-      <!-- TARJETAS -->
-      <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ClientCard
-          v-for="client in filteredClients"
-          :key="client._id"
-          :client="client"
-          :next-appointment="getNextAppointment(client)"
-          :is-global-next="globalNextClientId === client._id"
-          @open-history="openDetail"
-        />
-      </div>
+      <footer v-if="data.total" class="mt-5 flex flex-wrap items-center justify-between gap-3"><p class="text-xs text-white/40">{{ data.total }} reservas · Página {{ page }} de {{ pages }}</p><div class="flex gap-2"><button type="button" :disabled="page <= 1" @click="changePage(-1)" class="min-h-11 rounded-lg border border-white/15 px-4 text-sm disabled:opacity-30">Anterior</button><button type="button" :disabled="page >= pages" @click="changePage(1)" class="min-h-11 rounded-lg border border-white/15 px-4 text-sm disabled:opacity-30">Siguiente</button></div></footer>
     </template>
-
-    <!-- MODAL DEL HISTORIAL -->
-    <ClientHistoryModal
-      v-if="selectedClient"
-      :client="selectedClient"
-      @close="closeDetail"
-    />
-  </div>
+    <ClientHistoryModal v-if="selected" :client-id="selected" @close="selected = ''" />
+  </section>
 </template>
-
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import {
-  useBarberStore,
-  type BarberClient,
-} from "@/stores/barber";
-
-import ClientCard from "./ClientCard.vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import API, { type AppointmentPage } from "@/api/BarberPanelAPI";
+import { appointmentLabel, panelDate, panelMoney } from "@/helpers/barberPanel";
 import ClientHistoryModal from "./ClientHistoryModal.vue";
-import { getNextAppointment } from "@/composables/clientHelpers.ts";
-
-const barberStore = useBarberStore();
-
-const search = ref("");
-const selectedClient = ref<BarberClient | null>(null);
-
-// Solo clientes que tienen al menos una cita actual o futura.
-const sortedClients = computed(() => {
-  return barberStore.myClients
-    .filter((client) => getNextAppointment(client) !== null)
-    .sort((a, b) => {
-      const aNext = getNextAppointment(a)!;
-      const bNext = getNextAppointment(b)!;
-
-      const aKey = `${String(aNext.date).slice(0, 10)}T${aNext.time}`;
-      const bKey = `${String(bNext.date).slice(0, 10)}T${bNext.time}`;
-
-      return aKey.localeCompare(bKey);
-    });
-});
-
-// Búsqueda aplicada a la lista ya filtrada.
-const filteredClients = computed(() => {
-  const text = search.value.trim().toLowerCase();
-
-  if (!text) return sortedClients.value;
-
-  return sortedClients.value.filter((client) =>
-    client.name.toLowerCase().includes(text),
-  );
-});
-
-// Identifica al cliente cuya cita es la más próxima de todos.
-const globalNextClientId = computed<string | null>(() => {
-  const firstClient = sortedClients.value[0];
-
-  return firstClient?._id ?? null;
-});
-
-const openDetail = (client: BarberClient) => {
-  selectedClient.value = client;
-};
-
-const closeDetail = () => {
-  selectedClient.value = null;
-};
-
-onMounted(() => {
-  barberStore.getMyClients();
-});
+const view = ref("upcoming"), page = ref(1), query = ref(""), appliedSearch = ref(""), selected = ref("");
+const data = ref<AppointmentPage | null>(null), loading = ref(false), error = ref("");
+let serial = 0;
+const pages = computed(() => Math.max(1, Math.ceil((data.value?.total ?? 0) / 10)));
+async function load() {
+  const request = ++serial; loading.value = true; error.value = ""; data.value = null;
+  try { const response = await API.appointments({ view: view.value, page: page.value, search: appliedSearch.value }); if (request === serial) data.value = response.data; }
+  catch { if (request === serial) error.value = "No pudimos consultar tus citas. Pulsa Actualizar para volver a intentarlo."; }
+  finally { if (request === serial) loading.value = false; }
+}
+function changeView(value: string) { view.value = value; page.value = 1; void load(); }
+function changePage(direction: number) { page.value += direction; void load(); }
+function search() { appliedSearch.value = query.value.trim(); page.value = 1; void load(); }
+onMounted(load); onBeforeUnmount(() => { serial++; });
 </script>
