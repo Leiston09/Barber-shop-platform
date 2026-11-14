@@ -1,37 +1,39 @@
 <template>
   <div
-    class="absolute inset-0 flex items-center justify-center pointer-events-none"
+    class="pointer-events-none absolute inset-0 flex items-center justify-center"
   >
-    <div class="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-20">
-      <div class="max-w-5xl mx-auto text-center">
+    <div
+      class="mx-auto flex h-full w-full max-w-screen-2xl items-center justify-center px-4 sm:px-6 lg:px-8"
+    >
+      <div
+        class="mb-16 flex w-full flex-col items-center justify-center text-center"
+      >
+        <!-- TEXTO SUPERIOR -->
         <p
-          class="text-[#ffb700] text-[10px] uppercase tracking-[0.4em] font-medium"
+          class="mb-5 font-sans text-xs font-medium uppercase tracking-widest text-yellow-500"
         >
-          The Barber Studio
+          No se trata solo de cómo te ves, sino de cómo te sientes al salir.
         </p>
-
-        <h1 class="font-barber uppercase leading-[0.9] tracking-[-0.03em]">
-          <span
-            class="block text-white text-5xl sm:text-7xl lg:text-[8rem] font-bold"
-          >
-            DONDE TU ESTILO
+        <!-- TÍTULO PRINCIPAL -->
+        <h1 class="w-full font-bebas uppercase leading-none tracking-normal">
+          <span class="block text-7xl text-white sm:text-8xl md:text-10xl">
+            EL ARTE DE UN
           </span>
-          <span
-            class="block text-[#ffb700] text-5xl sm:text-7xl lg:text-[8rem] font-black"
-          >
-            COMIENZA.
+
+          <span class="block text-7xl text-yellow-500 sm:text-8xl md:text-10xl">
+            BUEN CORTE.
           </span>
         </h1>
-        <p
-          class="mt-6 text-white/60 text-sm sm:text-base uppercase tracking-[0.22em] font-light"
-        >
-          Barbería clásica · Estilo contemporáneo
-        </p>
 
-        <p class="text-sm text-[#ffb700] italic mt-2">
-          "No se trata solo de cómo te ves, sino de cómo te sientes al salir."
+        <!-- TEXTO INFERIOR -->
+        <p
+          class="mt-7 font-sans text-xs sm:text-sm font-light uppercase tracking-widest text-white/70"
+        >
+          TRADICIÓN · PRECISIÓN · ESTILO
         </p>
       </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts"></script>

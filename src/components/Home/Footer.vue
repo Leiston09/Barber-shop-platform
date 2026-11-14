@@ -1,87 +1,76 @@
 <template>
-  <footer class="w-full bg-[#050505] text-white border-t border-white/10">
-    <div class="max-w-7xl mx-auto px-6 sm:px-10 lg:px-20">
-
-      <!-- MARCA Y REDES -->
-      <div class="py-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 border border-[#ffb700]/70 flex items-center justify-center">
-            <span class="font-barber text-2xl text-[#ffb700]">A</span>
+  <footer class="w-full border-t border-white/10 bg-[#050505] text-white">
+    <div class="mx-auto max-w-7xl px-5 sm:px-10 lg:px-20">
+      <div class="flex flex-col gap-5 py-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:py-7">
+        <RouterLink :to="{ name: 'Home' }" aria-label="The Barber Studio, ir al inicio"
+          class="flex w-fit max-w-full items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ffb700]">
+          <SiteImage slot="logo" alt="" width="44" height="44" loading="lazy" class="size-11 shrink-0 object-contain" />
+          <div class="min-w-0">
+            <p class="font-barber text-lg leading-tight text-white/90 sm:text-xl">The Barber Studio</p>
+            <p class="mt-1 text-xs leading-5 text-white/40">Estilo, precisión y confianza.</p>
           </div>
+        </RouterLink>
 
-          <div>
-            <p class="font-barber text-sm uppercase tracking-[0.16em] text-white">
-              El Barbero
-            </p>
-            <p class="text-[10px] text-white/40 mt-1">
-              Estilo · Precisión · Confianza
-            </p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-5">
-          <a
-            href="#"
-            aria-label="Instagram"
-            class="text-white/50 hover:text-[#ffb700] transition-colors duration-200"
-          >
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.25-3.75a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z"/>
-            </svg>
-          </a>
-
-          <a
-            href="#"
-            aria-label="Facebook"
-            class="text-white/50 hover:text-[#ffb700] transition-colors duration-200"
-          >
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.027 4.388 11.043 10.125 11.927v-8.437H7.078v-3.49h3.047V9.41c0-3.03 1.792-4.707 4.533-4.707 1.312 0 2.686.236 2.686.236v2.975H15.83c-1.491 0-1.956.93-1.956 1.886v2.273h3.328l-.532 3.49h-2.796V24C19.612 23.116 24 18.1 24 12.073z"/>
-            </svg>
-          </a>
-
-          <a
-            href="#"
-            aria-label="YouTube"
-            class="text-white/50 hover:text-[#ffb700] transition-colors duration-200"
-          >
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z"/>
-            </svg>
-          </a>
-        </div>
+        <a v-if="business.data.mapsUrl" :href="business.data.mapsUrl" target="_blank" rel="noopener noreferrer"
+          aria-label="Ver la ubicación en Google Maps, en una nueva pestaña"
+          class="group flex w-fit max-w-full items-center gap-3 rounded-lg text-white/55 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ffb700] motion-reduce:transition-none">
+          <svg aria-hidden="true" class="size-5 shrink-0 text-[#ffb700]/70 transition-colors group-hover:text-[#ffb700]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" stroke-linejoin="round" /><circle cx="12" cy="10" r="2.5" />
+          </svg>
+          <span class="min-w-0 text-xs leading-5">
+            <span class="block text-white/75">{{ business.data.city || 'Cómo llegar' }}</span>
+            <span class="block break-words text-white/40">{{ business.data.address || 'Ver ubicación en Google Maps' }}</span>
+          </span>
+        </a>
       </div>
 
-      <!-- COPYRIGHT -->
-      <div class="border-t border-white/10 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <p class="text-white/40 text-[11px]">
-          © {{ new Date().getFullYear() }} The Barber Studio
+      <div class="flex items-center justify-between gap-4 border-t border-white/[0.07] py-2">
+        <p class="min-w-0 text-[11px] leading-5 text-white/35">
+          © {{ year }} The Barber Studio.
+          <span class="block sm:inline">Todos los derechos reservados.</span>
         </p>
-
-        <p class="text-white/40 text-[11px]">
-          Todos los derechos reservados
-        </p>
-
-        <p class="text-white/40 text-[11px]">
-          Hecho por:
-          <a
-            href="https://leiston-holguin.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-white hover:text-[#ffb700] transition-colors duration-200 text-[9px]"
-          >
-            LEISTON HOLGUIN
-          </a>
-        </p>
+        <details ref="credits" class="group relative shrink-0" @keydown.esc.stop.prevent="closeCredits">
+          <summary aria-label="Información del sitio"
+            class="flex size-11 cursor-pointer list-none items-center justify-center rounded-lg text-white/30 transition-colors hover:bg-white/[0.03] hover:text-white/65 group-open:text-[#ffb700] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffb700] motion-reduce:transition-none [&::-webkit-details-marker]:hidden">
+            <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="9" /><path d="M12 11v6m0-10v1" stroke-linecap="round" />
+            </svg>
+            <span class="sr-only">Información del sitio</span>
+          </summary>
+          <div class="absolute bottom-full right-0 z-30 mb-2 w-56 max-w-[calc(100vw_-_2.5rem)] rounded-xl border border-white/15 bg-neutral-900 p-4 shadow-xl shadow-black/40">
+            <p class="text-xs text-white/50">Diseño y desarrollo</p>
+            <a href="https://leiston-holguin.com" target="_blank" rel="noopener noreferrer"
+              class="mt-1 inline-flex min-h-10 items-center gap-2 rounded-sm text-sm font-medium text-white/90 transition-colors hover:text-[#ffb700] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ffb700] motion-reduce:transition-none">
+              Leiston Holguin
+              <svg aria-hidden="true" class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </a>
+          </div>
+        </details>
       </div>
-
     </div>
   </footer>
 </template>
 
 <script setup lang="ts">
-</script>
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import { RouterLink } from "vue-router";
+import SiteImage from "@/components/UI/SiteImage.vue";
+import { useBusinessStore } from "@/stores/business";
 
-<style scoped>
-</style>
+const business = useBusinessStore();
+const year = new Date().getFullYear();
+const credits = ref<HTMLDetailsElement | null>(null);
+
+function closeCredits() {
+  if (!credits.value?.open) return;
+  credits.value.open = false;
+  credits.value.querySelector("summary")?.focus();
+}
+function closeCreditsOutside(event: PointerEvent) {
+  if (event.target instanceof Node && !credits.value?.contains(event.target)) {
+    if (credits.value) credits.value.open = false;
+  }
+}
+onMounted(() => document.addEventListener("pointerdown", closeCreditsOutside));
+onBeforeUnmount(() => document.removeEventListener("pointerdown", closeCreditsOutside));
+</script>

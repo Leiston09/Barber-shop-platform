@@ -7,12 +7,8 @@
     <!-- FONDO CON IMAGEN -->
     <div
       class="absolute inset-0 z-0"
-      style="
-        background-image: url('/img/auth/login.jpg');
-        background-size: cover;
-        background-position: center;
-      "
     >
+      <SiteImage slot="auth-background" alt="" class="absolute inset-0 h-full w-full object-cover" />
       <div
         class="absolute inset-0 bg-gradient-to-br from-black/95 via-black/80 to-black/60"
       />
@@ -29,9 +25,8 @@
       <div
         class="w-16 h-16 border border-white/20 flex items-center justify-center mb-6 overflow-hidden"
       >
-        <img
-          src="/img/navbar/profile.png"
-          alt="Logo"
+        <SiteImage
+          slot="logo"
           class="w-full h-full object-cover"
         />
       </div>
@@ -85,6 +80,7 @@
 </template>
 
 <script setup lang="ts">
+import SiteImage from "@/components/UI/SiteImage.vue";
 import { onMounted, ref } from "vue";
 
 const progress = ref(0);

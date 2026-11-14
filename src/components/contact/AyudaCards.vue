@@ -1,9 +1,9 @@
 <template>
-  <div ref="gridRef" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+  <div ref="gridRef" class="grid grid-cols-1 items-stretch lg:grid-cols-12 gap-5">
     <!-- Contacto principal -->
     <div
       data-anim
-      class="lg:col-span-7 relative overflow-hidden rounded-2xl border border-[#ffb700]/20 bg-[#0b0b0b] p-7 sm:p-9"
+      :class="business.whatsapp ? 'lg:col-span-6' : 'lg:col-span-12'" class="relative overflow-hidden rounded-2xl border border-[#ffb700]/20 bg-[#0b0b0b] p-7 sm:p-8"
     >
       <div
         class="absolute -right-24 -top-24 w-64 h-64 rounded-full bg-[#ffb700]/5 blur-3xl"
@@ -50,7 +50,7 @@
         </div>
 
         <a
-          href="https://wa.me/593999999999"
+          v-if="business.whatsapp" :href="business.whatsapp"
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex items-center gap-3 mt-8 px-6 py-3.5 rounded-lg bg-[#ffb700] text-black text-[10px] font-barber uppercase tracking-[0.2em] hover:bg-[#e6a500] transition-all duration-300"
@@ -71,10 +71,10 @@
     <!-- WhatsApp -->
     <a
       data-anim
-      href="https://wa.me/593999999999"
+      v-if="business.whatsapp" :href="business.whatsapp"
       target="_blank"
       rel="noopener noreferrer"
-      class="lg:col-span-5 group rounded-2xl border border-white/8 bg-white/[0.02] p-7 sm:p-8 hover:border-[#25D366]/30 transition-all duration-300"
+      class="lg:col-span-6 group rounded-2xl border border-white/8 bg-white/[0.02] p-7 sm:p-8 hover:border-[#25D366]/30 transition-all duration-300"
     >
       <div class="flex items-start justify-between">
         <div
@@ -118,9 +118,9 @@
     </a>
 
     <!-- Redes sociales -->
-    <div
+    <div v-if="networks.length"
       data-anim
-      class="lg:col-span-7 rounded-2xl border border-white/8 bg-white/[0.02] p-7 sm:p-8"
+      class="lg:col-span-6 rounded-2xl border border-white/8 bg-white/[0.02] p-7 sm:p-8"
     >
       <div class="flex items-center justify-between mb-7">
         <div>
@@ -134,89 +134,34 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <a
-          href="#"
+          v-for="network in networks" :key="network.key" :href="network.href"
           target="_blank"
           rel="noopener noreferrer"
-          class="group flex items-center justify-between p-4 rounded-xl border border-white/8 hover:border-white/20 transition-all duration-300"
+          class="group flex items-center justify-between gap-3 rounded-xl border p-4 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffb700] motion-reduce:transition-none"
+          :class="socialStyles[network.key]?.card"
         >
-          <div class="flex items-center gap-4">
+          <div class="flex min-w-0 items-center gap-4">
             <div
-              class="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center"
+              class="flex size-10 shrink-0 items-center justify-center rounded-lg border" :class="socialStyles[network.key]?.icon"
             >
-              <svg
-                class="w-4 h-4 text-white/50 group-hover:text-white transition-colors"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <rect
-                  width="20"
-                  height="20"
-                  x="2"
-                  y="2"
-                  rx="5"
-                  ry="5"
-                  stroke-width="1.5"
-                />
-                <circle cx="12" cy="12" r="4" stroke-width="1.5" />
-                <circle cx="17.5" cy="6.5" r=".5" fill="currentColor" />
+              <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <template v-if="network.key === 'instagram'"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r=".5" fill="currentColor" /></template>
+                <path v-else-if="network.key === 'facebook'" d="M14 22v-9h3l.5-4H14V7c0-1 .5-2 2-2h2V1h-3c-4 0-5 2-5 6v2H7v4h3v9" />
+                <path v-else-if="network.key === 'tiktok'" d="M14 3v12a5 5 0 1 1-5-5m5-7c1 4 3 5 7 5" />
+                <template v-else><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></template>
               </svg>
             </div>
 
             <div>
-              <p class="text-sm text-white/80">Instagram</p>
-              <p class="text-[11px] text-white/30 mt-1">
-                @studio.silhouette
+              <p class="text-sm text-white/80">{{ network.label }}</p>
+              <p class="break-all text-[11px] text-white/30 mt-1">
+                {{ network.display }}
               </p>
             </div>
           </div>
 
           <svg
-            class="w-4 h-4 text-white/20 group-hover:text-white transition-colors"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-              d="M5 12h14m-6-6 6 6-6 6"
-            />
-          </svg>
-        </a>
-
-        <a
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="group flex items-center justify-between p-4 rounded-xl border border-white/8 hover:border-white/20 transition-all duration-300"
-        >
-          <div class="flex items-center gap-4">
-            <div
-              class="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center"
-            >
-              <svg
-                class="w-4 h-4 text-white/50 group-hover:text-white transition-colors"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V11H7v3h2.8v8h3.7z"
-                />
-              </svg>
-            </div>
-
-            <div>
-              <p class="text-sm text-white/80">Facebook</p>
-              <p class="text-[11px] text-white/30 mt-1">
-                Studio Silhouette
-              </p>
-            </div>
-          </div>
-
-          <svg
-            class="w-4 h-4 text-white/20 group-hover:text-white transition-colors"
+            class="size-4 shrink-0 opacity-50 transition-opacity group-hover:opacity-100 motion-reduce:transition-none"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -235,7 +180,7 @@
     <!-- Información -->
     <div
       data-anim
-      class="lg:col-span-5 rounded-2xl border border-white/8 bg-white/[0.02] p-7 sm:p-8"
+      :class="networks.length ? 'lg:col-span-6' : 'lg:col-span-12'" class="rounded-2xl border border-white/8 bg-white/[0.02] p-7 sm:p-8"
     >
       <p class="text-[9px] uppercase tracking-[0.3em] text-white/30">
         Información
@@ -243,8 +188,9 @@
 
       <h3 class="font-barber text-xl uppercase mt-2 mb-6">Encuéntranos</h3>
 
+      <BusinessContact class="mb-5" />
       <div class="space-y-5">
-        <div class="flex gap-4">
+        <div v-if="business.data.address || business.data.city || business.data.mapsUrl" class="flex gap-4">
           <div
             class="w-9 h-9 rounded-lg border border-white/10 flex items-center justify-center shrink-0"
           >
@@ -266,45 +212,44 @@
 
           <div>
             <p class="text-xs text-white/70">Ubicación</p>
-            <p class="text-xs text-white/30 mt-1">Tu dirección aquí</p>
+            <p v-if="business.data.address" class="text-xs text-white/30 mt-1">{{ business.data.address }}</p><p v-if="business.data.city" class="text-xs text-white/30 mt-1">{{ business.data.city }}</p><a v-if="business.data.mapsUrl" :href="business.data.mapsUrl" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block text-xs text-[#ffb700] hover:text-white focus-visible:outline-2 focus-visible:outline-[#ffb700]">Cómo llegar</a>
           </div>
         </div>
 
-        <div class="flex gap-4">
-          <div
-            class="w-9 h-9 rounded-lg border border-white/10 flex items-center justify-center shrink-0"
-          >
-            <svg
-              class="w-4 h-4 text-[#ffb700]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="12" r="9" stroke-width="1.5" />
-              <path
-                stroke-linecap="round"
-                stroke-width="1.5"
-                d="M12 7v5l3 2"
-              />
-            </svg>
-          </div>
 
-          <div>
-            <p class="text-xs text-white/70">Horario</p>
-            <p class="text-xs text-white/30 mt-1">
-              Lun — Sáb · 09:00 — 20:00
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, onMounted, ref } from "vue";
+import { useBusinessStore } from "@/stores/business";
+import BusinessContact from "@/components/UI/BusinessContact.vue";
 import { useRevealOnScroll } from "@/composables/useRevealOnScroll";
 
+const business = useBusinessStore();
+const socialStyles: Record<string, {card: string; icon: string}> = {
+  instagram: {
+    card: "border-pink-400/20 bg-pink-400/[0.035] text-pink-300 hover:border-pink-400/45 hover:bg-pink-400/[0.07]",
+    icon: "border-pink-400/25 bg-linear-to-br from-amber-400/15 via-pink-500/15 to-violet-500/15 text-pink-300",
+  },
+  facebook: {
+    card: "border-blue-400/20 bg-blue-400/[0.035] text-blue-300 hover:border-blue-400/45 hover:bg-blue-400/[0.07]",
+    icon: "border-blue-400/25 bg-blue-500/15 text-blue-400",
+  },
+  tiktok: {
+    card: "border-cyan-300/20 bg-cyan-300/[0.025] text-cyan-200 hover:border-cyan-300/40 hover:bg-cyan-300/[0.055]",
+    icon: "border-cyan-300/20 bg-cyan-300/10 text-cyan-200 [&>svg]:drop-shadow-[1px_1px_0_#fe2c55]",
+  },
+};
+const networks = computed(() => ["instagram", "facebook", "tiktok"].filter(key => business.data[key]).map(key => {
+  const href = business.data[key] as string;
+  let display = href;
+  try { const url = new URL(href); display = decodeURIComponent(url.pathname).replace(/^\/+|\/+$/g, ""); } catch {}
+  return { key, href, display, label: ({instagram: "Instagram", facebook: "Facebook", tiktok: "TikTok"} as Record<string, string>)[key] };
+}));
+onMounted(() => business.load());
 const gridRef = ref<HTMLElement | null>(null);
 
 // Anima cada cuadro por separado (selector por defecto: [data-anim])

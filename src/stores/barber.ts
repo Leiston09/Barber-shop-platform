@@ -9,33 +9,7 @@ export interface Barber {
   name: string;
   email: string;
   role: "barber";
-}
-
-export interface ScheduleBreak {
-  startTime: string;
-  endTime: string;
-}
-
-export interface BarberScheduleDay {
-  day: number;
-  isWorking: boolean;
-  startTime?: string;
-  endTime?: string;
-  breaks: ScheduleBreak[];
-}
-
-export interface BlockedDate {
-  date: string;
-  startTime?: string;
-  endTime?: string;
-  reason?: string;
-}
-
-export interface BarberSchedule {
-  _id: string;
-  barber: string;
-  schedule: BarberScheduleDay[];
-  blockedDates: BlockedDate[];
+  photoUpdatedAt?: string;
 }
 
 export interface BarberClientAppointment {
@@ -58,13 +32,10 @@ export interface BarberClient {
 
 export const useBarberStore = defineStore("barber", () => {
   const barbers = ref<Barber[]>([]);
-  const schedule = ref<BarberSchedule | null>(null);
 
   const loading = ref(false);
-  const loadingSchedule = ref(false);
 
   const error = ref("");
-  const scheduleError = ref("");
 
   // Clientes del barbero
   const myClients = ref<BarberClient[]>([]);
@@ -90,79 +61,6 @@ export const useBarberStore = defineStore("barber", () => {
     }
   }
 
-  async function getSchedule(barberId: string) {
-    if (!barberId) {
-      schedule.value = null;
-      return;
-    }
-
-    loadingSchedule.value = true;
-    scheduleError.value = "";
-
-    try {
-      const { data } =
-        await BarberAPI.getSchedule(barberId);
-
-      schedule.value = data;
-    } catch (err: any) {
-      schedule.value = null;
-
-      scheduleError.value =
-        err?.response?.data?.msg ||
-        "Error al obtener el horario";
-    } finally {
-      loadingSchedule.value = false;
-    }
-  }
-
-  async function createSchedule(
-    barberId: string,
-    data: any
-  ) {
-    const response =
-      await BarberAPI.createSchedule(
-        barberId,
-        data
-      );
-
-    schedule.value = response.data;
-
-    return response;
-  }
-
-  async function updateSchedule(
-    barberId: string,
-    data: any
-  ) {
-    const response =
-      await BarberAPI.updateSchedule(
-        barberId,
-        data
-      );
-
-    schedule.value = response.data;
-
-    return response;
-  }
-
-  async function deleteSchedule(
-    barberId: string
-  ) {
-    const response =
-      await BarberAPI.deleteSchedule(
-        barberId
-      );
-
-    schedule.value = null;
-
-    return response;
-  }
-
-  function clearSchedule() {
-    schedule.value = null;
-    scheduleError.value = "";
-  }
-
   async function getMyClients() {
     loadingClients.value = true;
     clientsError.value = "";
@@ -179,19 +77,17 @@ export const useBarberStore = defineStore("barber", () => {
     }
   }
 
+  function clearPrivateData() {
+    myClients.value = [];
+    clientsError.value = "";
+  }
+
   return {
+    clearPrivateData,
     barbers,
-    schedule,
     loading,
-    loadingSchedule,
     error,
-    scheduleError,
     getBarbers,
-    getSchedule,
-    createSchedule,
-    updateSchedule,
-    deleteSchedule,
-    clearSchedule,
 
     // Clientes del barbero
     myClients,

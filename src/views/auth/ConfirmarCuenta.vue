@@ -1,60 +1,6 @@
-<template>
-  <div><h1>Desde Confirmar-cuenta</h1></div>
-</template>
-
+<template><section class="m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl border border-white/15 bg-black/75 p-6 text-center text-white"><h1 class="font-barber text-2xl">{{ loading ? 'Verificando tu cuenta' : success ? 'Tu cuenta está confirmada' : 'No pudimos confirmar tu cuenta' }}</h1><p class="mt-4 text-sm leading-6 text-white/65" role="status">{{ message }}</p><RouterLink v-if="!loading" :to="{name:'Login'}" class="mt-6 inline-flex min-h-11 items-center rounded-lg bg-[#ffb700] px-5 text-sm font-medium text-black">Ir a iniciar sesión</RouterLink></section></template>
 <script setup lang="ts">
-import AuthAPI from "@/api/AuthAPI";
-import { onMounted, onUnmounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-
-// Tipar toast correctamente
-import { useToast } from 'vue-toast-notification'
-
-const toast = useToast()
-
-const router = useRouter();
-const route = useRoute();
-const { token } = route.params as { token?: string };
-
-// Timeout ref para cleanup
-let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-onMounted(async () => {
-  if (!token) {
-    toast?.open({
-      message: "Token de verificación no encontrado",
-      type: "error",
-    });
-    timeoutId = setTimeout(() => router.push({ name: "Login" }), 2000);
-    return;
-  }
-
-  try {
-    const { data } = await AuthAPI.verifyAccount(token);
-    
-    toast.open({
-      message: data.msg,
-      type: "success",
-    });
-
-    timeoutId = setTimeout(() => {
-      router.push({ name: "Login" });
-    }, 1000);
-    
-  } catch (error: any) {
-    const errorMsg = error?.response?.data?.msg || "Error al verificar la cuenta (token)";
-
-    toast.open({
-      message: errorMsg,
-      type: "error",
-    });
-  }
-});
-
-// Limpiar timeout si el componente se destruye
-onUnmounted(() => {
-  if (timeoutId) {
-    clearTimeout(timeoutId);
-  }
-});
+import {ref,onMounted} from "vue";import {useRoute} from "vue-router";import AuthAPI from "@/api/AuthAPI";
+const route=useRoute(),loading=ref(true),success=ref(false),message=ref("Comprobando el enlace de confirmación…");
+onMounted(async()=>{try{const token=route.params.token;if(typeof token!=="string")throw Error();await AuthAPI.verifyAccount(token);success.value=true;message.value="Ya puedes iniciar sesión y reservar tu próxima visita.";}catch(e:any){message.value=e?.response?.data?.msg||"El enlace está incompleto o ha vencido. Solicita un nuevo correo de confirmación.";}finally{loading.value=false;}});
 </script>

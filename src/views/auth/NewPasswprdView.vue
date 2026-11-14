@@ -1,8 +1,9 @@
 <template>
   <div
-    class="min-h-[100dvh] w-full bg-[#050505] flex items-center justify-center px-5 py-10 sm:px-8"
+    class="w-full flex-1 bg-[#050505] flex items-center justify-center px-5 py-6 sm:px-8 sm:py-8"
   >
     <div class="w-full max-w-md">
+      <AuthBackLink />
       <!-- TOKEN VÁLIDO -->
       <div
         v-if="validToken"
@@ -35,47 +36,13 @@
             </p>
           </div>
 
-          <FormKit
-            id="newPasswordForm"
-            type="form"
-            :actions="false"
-            incomplete-message="No se pudo actualizar la contraseña. Revisa los campos."
-            @submit="handleSubmit"
-            :config="{
-              classes: {
-                form: 'space-y-5',
-              },
-            }"
-          >
-            <FormKit
-              type="password"
-              label="Nueva contraseña"
-              name="password"
-              placeholder="Ingresa tu nueva contraseña"
-              validation="required|length:8"
-              :validation-messages="{
-                required: 'La contraseña es obligatoria',
-                length: 'La contraseña debe tener al menos 8 caracteres',
-              }"
-              :classes="{
-                outer: 'mb-0',
-                label:
-                  'block text-[9px] uppercase tracking-[0.25em] text-white/50 font-medium mb-2',
-                inner:
-                  'relative bg-white/[0.03] border border-white/10 rounded-lg transition-all duration-300 focus-within:border-[#ffb700]/50 focus-within:bg-white/[0.05]',
-                input:
-                  'w-full bg-transparent text-white text-sm px-4 py-3.5 outline-none placeholder:text-white/20',
-                message: 'text-red-400/80 text-xs mt-2 font-light',
-              }"
-            />
+          <AuthForm id="newPasswordForm" @submit="handleSubmit" class="mt-5">
+            <AuthField type="password" name="password" label="Nueva contraseña" placeholder="Ingresa tu nueva contraseña" :required="true" />
 
-            <button
-              type="submit"
-              class="w-full mt-3 px-5 py-3.5 bg-[#ffb700] hover:bg-[#e6a500] text-black text-[10px] font-barber uppercase tracking-[0.25em] font-medium rounded-lg transition-all duration-300 hover:shadow-[0_10px_30px_rgba(255,183,0,0.12)] active:scale-[0.99]"
-            >
+            <AuthSubmit>
               Actualizar contraseña
-            </button>
-          </FormKit>
+            </AuthSubmit>
+          </AuthForm>
         </div>
       </div>
 
@@ -139,17 +106,21 @@
           >
             Volver al inicio de sesión
           </button>
-        </div>
+          </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import AuthBackLink from "@/components/UI/AuthBackLink.vue";
+import AuthSubmit from "@/components/UI/AuthSubmit.vue";
+import AuthForm from "@/components/UI/AuthForm.vue";
+import AuthField from "@/components/UI/AuthField.vue";
 import AuthAPI from "@/api/AuthAPI";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useToast } from "vue-toast-notification";
+import { useToast } from "@/lib/notifications";
 
 const toast = useToast();
 const route = useRoute();
@@ -162,7 +133,7 @@ const validToken = ref(false);
 onMounted(async () => {
   if (!token) {
     toast.open({
-      message: "Token no proporcionado",
+      message: "Abre el enlace completo que recibiste por correo para cambiar tu contraseña.",
       type: "error",
     });
 
@@ -188,7 +159,7 @@ const handleSubmit = async (formData: { password: string }) => {
 
   if (!token) {
     toast.open({
-      message: "Token no válido",
+      message: "Este enlace ya no está disponible. Solicita uno nuevo para cambiar tu contraseña.",
       type: "error",
     });
 

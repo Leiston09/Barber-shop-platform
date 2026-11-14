@@ -1,81 +1,62 @@
 <template>
-  <div class="min-h-screen bg-[#0a0a0a] text-white">
-    <!-- HEADER DE RESERVACIONES -->
-    <header class="border-b border-white/5 px-6 sm:px-10 lg:px-14 py-2">
+  <div class="flex flex-1 flex-col bg-[#0a0a0a] text-white">
+    <header
+      class="reservation-header border-b border-white/10 px-5 py-4 sm:px-10 lg:px-14"
+    >
       <div
-        class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-7"
+        class="reservation-header-grid mx-auto max-w-7xl grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-8"
       >
-        <!-- TÍTULO DINÁMICO -->
-        <div>
-          <RouterLink to="/" class="inline-block group">
-            <h1
-              class="font-barber text-2xl md:text-3xl lg:text-4xl font-light text-white tracking-tight transition-colors duration-300 group-hover:text-white/90"
-            >
-              {{ route.name === 'My-appointments' ? 'Mis' : 'Nueva' }}
-
-              <span class="text-[#ffb700] font-medium">
-                {{ route.name === 'My-appointments' ? 'Reservaciones' : 'Cita' }}
-              </span>
-            </h1>
-
-            <div class="flex items-center gap-2 mt-2">
-              <p
-                class="text-white/30 text-[9px] uppercase tracking-[0.3em]"
-              >
-                The Barber Studio
-              </p>
-            </div>
-          </RouterLink>
-        </div>
-
-        <!-- USUARIO + NAVEGACIÓN -->
-        <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between lg:justify-end gap-5 sm:gap-8"
-        >
-          <!-- NAVEGACIÓN -->
-          <nav
-            class="flex items-center p-1 bg-white/[0.025] border border-white/5 rounded-lg w-fit"
+        <div class="min-w-0">
+          <h1
+            class="font-barber text-2xl font-light tracking-tight text-white lg:text-3xl"
           >
-            <RouterLink
-              :to="{ name: 'My-appointments' }"
-              class="relative px-5 py-2.5 text-[9px] font-barber uppercase tracking-[0.2em] rounded-md transition-all duration-300"
-              :class="
-                route.name === 'My-appointments'
-                  ? 'bg-[#ffb700] text-black shadow-[0_0_20px_rgba(255,183,0,0.08)]'
-                  : 'text-white/40 hover:text-white/80'
-              "
-            >
-              Mis Citas
-            </RouterLink>
-
-            <RouterLink
-              :to="{ name: 'BarberSelect' }"
-              class="relative px-5 py-2.5 text-[9px] font-barber uppercase tracking-[0.2em] rounded-md transition-all duration-300"
-              :class="
-                route.name !== 'My-appointments'
-                  ? 'bg-[#ffb700] text-black shadow-[0_0_20px_rgba(255,183,0,0.08)]'
-                  : 'text-white/40 hover:text-white/80'
-              "
-            >
-              Nueva Cita
-            </RouterLink>
-          </nav>
+            {{ isBooking ? "Nueva" : "Mis" }}
+            <span class="text-[#ffb700]">{{
+              isBooking ? "Cita" : "Reservaciones"
+            }}</span>
+          </h1>
+          <p class="mt-1 text-xs text-white/45">The Barber Studio</p>
         </div>
+        <Buttons
+          v-if="isBooking"
+          class="reservation-progress col-span-full row-start-2 w-full lg:col-span-1 lg:col-start-2 lg:row-start-1 lg:max-w-[560px] lg:justify-self-center"
+        />
+        <nav
+          aria-label="Reservaciones"
+          class="reservation-tabs flex w-fit items-center rounded-lg border border-white/10 bg-white/[0.025] p-1 col-start-2 row-start-1 justify-self-end lg:col-start-3 [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-[#ffb700] [&_a:focus-visible]:outline-offset-3 max-[360px]:[&_a]:px-2.5 max-[360px]:[&_a]:text-[.6875rem]"
+        >
+          <RouterLink
+            :to="{ name: 'My-appointments' }"
+            class="rounded-md px-3 py-2.5 text-xs transition-colors sm:px-4"
+            :class="
+              !isBooking
+                ? 'bg-[#ffb700] text-black'
+                : 'text-white/65 hover:text-white'
+            "
+            >Mis citas</RouterLink
+          >
+          <RouterLink
+            :to="{ name: 'AppointmentSlot' }"
+            class="rounded-md px-3 py-2.5 text-xs transition-colors sm:px-4"
+            :class="
+              isBooking
+                ? 'bg-[#ffb700] text-black'
+                : 'text-white/65 hover:text-white'
+            "
+            >Nueva cita</RouterLink
+          >
+        </nav>
       </div>
     </header>
-
-    <!-- CONTENIDO -->
-    <main class="max-w-7xl mx-auto py-5 px-5">
+    <section class="mx-auto w-full max-w-7xl flex-1 px-5 py-6">
       <RouterView />
-    </main>
+    </section>
   </div>
 </template>
-
 <script setup lang="ts">
+import { computed } from "vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
-
+import Buttons from "./AppointmentSteps/Buttons.vue";
 const route = useRoute();
+const isBooking = computed(() => route.name !== "My-appointments");
 </script>
-
-<style scoped>
-</style>

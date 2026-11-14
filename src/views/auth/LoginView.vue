@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative z-10 w-full h-full flex items-center justify-center px-4 sm:px-6 overflow-hidden"
+    class="relative z-10 w-full flex flex-1 items-center justify-center px-4 py-6 sm:px-6 sm:py-8"
   >
     <!-- CONTENIDO -->
     <div class="w-full max-w-md mx-auto">
@@ -14,25 +14,7 @@
         />
 
         <!-- BOTÓN VOLVER -->
-        <RouterLink
-          to="/"
-          class="absolute top-4 left-4 text-white hover:text-[#ffb700] transition-colors duration-300"
-          aria-label="Volver al inicio"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-        </RouterLink>
+
 
         <!-- TÍTULO -->
         <h1
@@ -48,65 +30,29 @@
           Bienvenido de vuelta
         </p>
 
-        <FormKit
-          id="loginForm"
-          type="form"
-          :actions="false"
-          incomplete-message="No se pudo enviar, revisa los mensajes"
-          @submit="handleSubmit"
-          class="mt-4 sm:mt-6"
-        >
-          <FormKit
-            type="email"
-            label="Email"
-            name="email"
-            placeholder="tucorreo@ejemplo.com"
-            validation="required|email"
-            :validation-messages="{
-              required: 'El email es obligatorio',
-              email: 'Ingresa un email válido',
-            }"
-            outer-class="mb-3 sm:mb-4"
-            label-class="text-white/50 text-[10px] sm:text-xs font-barber tracking-[0.2em] font-medium"
-            input-class="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm sm:text-base placeholder-white/30 focus:outline-none focus:border-[#ffb700] transition-colors duration-300"
-          />
+        <AuthForm id="loginForm" @submit="handleSubmit" class="mt-5">
+          <AuthField type="email" name="email" label="Email" placeholder="tucorreo@ejemplo.com" outer-class="mb-3 sm:mb-4" :required="true" />
 
-          <FormKit
-            type="password"
-            label="Contraseña"
-            name="password"
-            placeholder="Password de usuario"
-            validation="required|length:8"
-            :validation-messages="{
-              required: 'La contraseña es obligatoria',
-              length: 'La contraseña debe tener al menos 8 caracteres',
-            }"
-            outer-class="mb-4 sm:mb-5"
-            label-class="text-white/50 text-[10px] sm:text-xs font-barber tracking-[0.2em] font-medium"
-            input-class="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm sm:text-base placeholder-white/30 focus:outline-none focus:border-[#ffb700] transition-colors duration-300"
-          />
+          <AuthField type="password" name="password" label="Contraseña" placeholder="Ingresa tu contraseña" outer-class="mb-4 sm:mb-5" :required="true" />
 
-          <FormKit
-            type="submit"
-            outer-class="w-full"
-            input-class="w-full py-2.5 sm:py-3 bg-[#ffb700] hover:bg-[#e6a500] text-black font-barber font-medium text-sm sm:text-base rounded-lg transition-all duration-300 hover:scale-[1.01] active:scale-[0.98] cursor-pointer shadow-lg shadow-[#ffb700]/20 hover:shadow-[#ffb700]/40"
-          >
+          <AuthSubmit>
             Iniciar sesión
-          </FormKit>
-        </FormKit>
+          </AuthSubmit>
+        </AuthForm>
+        <GuestAccessLink />
 
         <!-- ✅ OLVIDASTE CONTRASEÑA -->
         <div class="text-center mt-3">
           <RouterLink
             :to="{ name: 'Olvide-password' }"
-            class="text-white/25 hover:text-[#ffb700] text-[10px] sm:text-xs font-barber font-light tracking-[0.05em] transition-colors duration-300"
+            class="inline-flex min-h-10 items-center rounded-sm text-xs text-white/65 transition-colors hover:text-[#ffb700] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffb700]"
           >
             ¿Olvidaste tu contraseña?
           </RouterLink>
         </div>
 
         <p
-          class="text-white/30 text-[10px] sm:text-xs text-center mt-4 sm:mt-5 font-barber font-light tracking-[0.05em]"
+          class="text-white/55 text-xs text-center mt-4 sm:mt-5 font-normal leading-6"
         >
           ¿No tienes cuenta?
           <RouterLink
@@ -126,10 +72,14 @@
 </template>
 
 <script setup lang="ts">
+import GuestAccessLink from "@/components/UI/GuestAccessLink.vue";
+import AuthSubmit from "@/components/UI/AuthSubmit.vue";
+import AuthForm from "@/components/UI/AuthForm.vue";
+import AuthField from "@/components/UI/AuthField.vue";
 import AuthAPI from "@/api/AuthAPI";
 import { useUserStore } from "@/stores/user";
 import { useRouter } from "vue-router";
-import { useToast } from "vue-toast-notification";
+import { useToast } from "@/lib/notifications";
 
 interface LoginFormData {
   email: string;

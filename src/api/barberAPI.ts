@@ -3,6 +3,7 @@
 import api from "@/lib/axios";
 
 export default {
+  getRatings() { return api.get<{ _id: string; average: number; count: number }[]>("/barbers/ratings"); },
   getBarbers() {
     return api.get("/barbers");
   },
@@ -19,9 +20,13 @@ export default {
     return api.put(`/barbers/${barberId}`, data);
   },
 
-  deleteSchedule(barberId: string) {
-    return api.delete(`/barbers/${barberId}`);
+  updateProfile(barberId: string, name: string) {
+    return api.patch(`/barbers/${barberId}/profile`, { name });
   },
+  uploadPhoto(barberId: string, photo: string) {
+    return api.put(`/barbers/${barberId}/photo`, { photo });
+  },
+  removePhoto(barberId: string) { return api.delete(`/barbers/${barberId}/photo`); },
 
   getMyClients() {
     return api.get("/barbers/me/clients");

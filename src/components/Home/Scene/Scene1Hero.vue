@@ -1,82 +1,77 @@
+
 <template>
   <div class="absolute inset-0 flex items-center pointer-events-none">
     <div
-      class="w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-20 pt-20 pb-32 sm:pt-24 sm:pb-28 lg:pt-24 lg:pb-16"
+      class="mx-auto w-full max-w-7xl px-5 pt-[calc(var(--app-header-height)+1rem)] pb-[calc(var(--app-mobile-nav-clearance)+1rem)] sm:pl-24 sm:pr-8 lg:pl-32 lg:pr-12 xl:pl-36 xl:pr-16"
     >
       <div
-        class="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-20 items-center"
+        class="grid grid-cols-1 items-center gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-10 xl:gap-16"
       >
-        <!-- GRUPO 1: IMAGEN -->
-        <div data-anim class="flex justify-center">
+        <!-- IMAGEN -->
+        <div data-anim class="min-w-0">
           <div
-            class="relative w-full max-w-[220px] sm:max-w-[260px] lg:max-w-[300px] aspect-[4/5] overflow-hidden"
+            class="relative h-[clamp(180px,27svh,300px)] w-full overflow-hidden rounded-2xl border border-white/15 bg-white shadow-2xl shadow-black/30 sm:h-[clamp(260px,34svh,380px)] lg:h-[clamp(300px,56svh,560px)]"
           >
-            <img
-              src="/img/home/chaleco.jpg"
-              alt="Barbero trabajando"
-              class="w-full h-full object-cover"
+            <SiteImage
+              slot="home-essence"
+              class="h-full w-full object-contain"
             />
 
             <div
-              class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"
+              class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/0 to-transparent"
             />
 
             <div
-              class="absolute bottom-4 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5"
+              class="absolute inset-x-0 bottom-0 p-4 sm:p-5 lg:p-6"
             >
               <p
-                class="text-[#ffb700] text-[8px] sm:text-[9px] uppercase tracking-[0.3em]"
+                class="text-[10px] font-medium tracking-[0.12em] text-[#ffb700] sm:text-[11px]"
               >
-                Sin atajos
+                {{ media.find("home-essence")?.title }}
               </p>
 
               <p
-                class="mt-1.5 sm:mt-2 text-white text-sm sm:text-base lg:text-lg font-serif italic leading-snug"
+                class="mt-2 max-w-xs font-barber text-base leading-snug text-white sm:text-lg lg:text-xl"
               >
-                La diferencia está en cómo lo hacemos.
+                {{ media.find("home-essence")?.description }}
               </p>
             </div>
           </div>
         </div>
 
         <!-- TEXTO -->
-        <div class="max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
-          <!-- GRUPO 2 -->
+        <div class="min-w-0 max-w-xl text-left">
           <p
             data-anim
-            class="text-[#ffb700] text-[10px] sm:text-[10px] lg:text-[11px] uppercase tracking-[0.3em] sm:tracking-[0.35em] font-medium"
+            class="flex items-center gap-3 text-[11px] font-medium tracking-[0.16em] text-[#ffb700] sm:text-xs"
           >
-            01 / El oficio
+            01 / Nuestra esencia
           </p>
 
-          <!-- GRUPO 3 -->
           <h2
             data-anim
-            class="mt-3 sm:mt-4 lg:mt-5 font-barber uppercase text-white text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold leading-[0.9] tracking-[-0.03em]"
+            class="mt-3 font-barber text-[clamp(1.75rem,6vw,2.25rem)] font-medium uppercase leading-[1.02] tracking-[-0.025em] text-white sm:text-[2.5rem] lg:mt-4 lg:text-[clamp(3.25rem,5vw,4.75rem)] lg:leading-[0.92] lg:tracking-[-0.03em]"
           >
-            TU ESTILO
+            LA DIFERENCIA
             <br />
-            COMIENZA
-            <br />
-            <span class="text-[#ffb700]">AQUÍ.</span>
+            <span class="text-[#ffb700]">SE NOTA.</span>
           </h2>
 
-          <!-- GRUPO 4 -->
           <p
             data-anim
-            class="mt-4 sm:mt-5 lg:mt-6 text-white/60 text-sm sm:text-base leading-6 sm:leading-7 font-light max-w-[430px] mx-auto lg:mx-0"
+            class="mt-4 max-w-[440px] text-sm font-light leading-6 text-white/75 sm:text-[15px] lg:mt-5 lg:text-base lg:leading-7"
           >
-            Cada persona tiene una forma distinta de llevar su estilo.
-            Nosotros nos encargamos de entenderla, trabajarla y llevarla
-            a un resultado que realmente se sienta tuyo.
+            Hay lugares donde simplemente te cortas el cabello.
+            Y lugares donde cada detalle eleva la experiencia.
+            En The Barber Studio buscamos marcar esa diferencia
+            en cada visita.
           </p>
 
-          <!-- GRUPO 5 -->
           <p
             data-anim
-            class="mt-3 sm:mt-4 lg:mt-4 text-white/35 text-xs sm:text-sm leading-5 sm:leading-6"
+            class="mt-4 max-w-[440px] pt-4 text-xs leading-5 text-white/55 sm:text-sm sm:leading-6 lg:text-[15px]"
           >
-            No seguimos un molde. Creamos algo que encaje contigo.
+            Un estilo que destaca. Una experiencia que se recuerda.
           </p>
         </div>
       </div>
@@ -85,4 +80,7 @@
 </template>
 
 <script setup lang="ts">
+const media = useSiteMediaStore();
+import { useSiteMediaStore } from "@/stores/siteMedia";
+import SiteImage from "@/components/UI/SiteImage.vue";
 </script>

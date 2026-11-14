@@ -1,8 +1,9 @@
 <template>
   <div
-    class="relative z-10 w-full h-full flex items-center justify-center px-4 sm:px-6 overflow-y-auto overflow-x-hidden"
+    class="relative z-10 w-full flex flex-1 items-center justify-center px-4 py-6 sm:px-6 sm:py-8"
   >
     <div class="w-full max-w-2xl mx-auto py-6 sm:py-8">
+      <AuthBackLink />
       <div
         class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/60 relative overflow-hidden"
       >
@@ -49,94 +50,32 @@
         <!-- Separador -->
         <div class="w-12 h-px bg-[#ffb700]/40 mx-auto mt-4" />
 
-        <FormKit
-          id="registerForm"
-          type="form"
-          :actions="false"
-          incomplete-message="No se pudo enviar, revisa los mensajes"
-          @submit="handleSubmit"
-          class="mt-6 sm:mt-8"
-        >
+        <AuthForm id="registerForm" @submit="handleSubmit" class="mt-5">
           <!-- CAMPOS EN 2 COLUMNAS DESDE TABLET/LAPTOP -->
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-0">
             <!-- NOMBRE -->
-            <FormKit
-              type="text"
-              label="Nombre"
-              name="name"
-              placeholder="Tu Nombre"
-              validation="required|length:3"
-              :validation-messages="{
-                required: 'El nombre es obligatorio',
-                length: 'El nombre es muy corto',
-              }"
-              outer-class="mb-4 sm:mb-5"
-              label-class="text-white/50 text-[10px] sm:text-xs font-barber tracking-[0.2em] font-medium uppercase"
-              input-class="w-full px-4 py-3 sm:py-3.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm sm:text-base placeholder-white/30 focus:outline-none focus:border-[#ffb700] transition-colors duration-300"
-            />
+            <AuthField type="text" name="name" label="Nombre y apellido" placeholder="Tu Nombre" outer-class="mb-4 sm:mb-5" :required="true" />
 
+            <AuthField type="tel" name="phone" label="Teléfono (opcional)" placeholder="Ej.: 0991234567" outer-class="mb-4" :required="false" />
             <!-- EMAIL -->
-            <FormKit
-              type="email"
-              label="Email"
-              name="email"
-              placeholder="tucorreo@ejemplo.com"
-              validation="required|email"
-              :validation-messages="{
-                required: 'El email es obligatorio',
-                email: 'Ingresa un email válido',
-              }"
-              outer-class="mb-4 sm:mb-5"
-              label-class="text-white/50 text-[10px] sm:text-xs font-barber tracking-[0.2em] font-medium uppercase"
-              input-class="w-full px-4 py-3 sm:py-3.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm sm:text-base placeholder-white/30 focus:outline-none focus:border-[#ffb700] transition-colors duration-300"
-            />
+            <AuthField type="email" name="email" label="Email" placeholder="tucorreo@ejemplo.com" outer-class="mb-4 sm:mb-5 sm:col-span-2" :required="true" />
 
             <!-- CONTRASEÑA -->
-            <FormKit
-              type="password"
-              label="Contraseña"
-              name="password"
-              placeholder="Mínimo 8 caracteres"
-              validation="required|length:8"
-              :validation-messages="{
-                required: 'La contraseña es obligatoria',
-                length: 'La contraseña debe tener al menos 8 caracteres',
-              }"
-              outer-class="mb-4 sm:mb-5"
-              label-class="text-white/50 text-[10px] sm:text-xs font-barber tracking-[0.2em] font-medium uppercase"
-              input-class="w-full px-4 py-3 sm:py-3.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm sm:text-base placeholder-white/30 focus:outline-none focus:border-[#ffb700] transition-colors duration-300"
-            />
+            <AuthField type="password" name="password" label="Contraseña" placeholder="Mínimo 8 caracteres" outer-class="mb-4 sm:mb-5" :required="true" />
 
             <!-- REPETIR CONTRASEÑA -->
-            <FormKit
-              type="password"
-              label="Repetir Contraseña"
-              name="password_confirm"
-              placeholder="Repite tu contraseña"
-              validation="required|confirm"
-              :validation-messages="{
-                required: 'Debes confirmar la contraseña',
-                confirm: 'Las contraseñas no coinciden',
-              }"
-              outer-class="mb-5 sm:mb-6"
-              label-class="text-white/50 text-[10px] sm:text-xs font-barber tracking-[0.2em] font-medium uppercase"
-              input-class="w-full px-4 py-3 sm:py-3.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm sm:text-base placeholder-white/30 focus:outline-none focus:border-[#ffb700] transition-colors duration-300"
-            />
+            <AuthField type="password" name="password_confirm" label="Repetir Contraseña" placeholder="Repite tu contraseña" outer-class="mb-5 sm:mb-6" :required="true" />
           </div>
 
           <!-- BOTÓN -->
-          <FormKit
-            type="submit"
-            outer-class="w-full"
-            input-class="w-full py-3 sm:py-4 bg-[#ffb700] hover:bg-[#e6a500] text-black font-barber font-semibold text-sm sm:text-base rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-lg shadow-[#ffb700]/25 hover:shadow-[#ffb700]/50"
-          >
+          <AuthSubmit>
             Crear cuenta
-          </FormKit>
-        </FormKit>
+          </AuthSubmit>
+        </AuthForm>
 
         <p
-          class="text-white/30 text-[10px] sm:text-xs text-center mt-5 sm:mt-6 font-barber font-light tracking-[0.05em]"
+          class="text-white/55 text-xs text-center mt-5 sm:mt-6 font-normal leading-6"
         >
           ¿Ya tienes cuenta?
           <RouterLink
@@ -156,12 +95,18 @@
 </template>
 
 <script setup lang="ts">
+import AuthBackLink from "@/components/UI/AuthBackLink.vue";
+import AuthSubmit from "@/components/UI/AuthSubmit.vue";
+import AuthForm from "@/components/UI/AuthForm.vue";
+import AuthField from "@/components/UI/AuthField.vue";
+import { ref } from "vue";
 import AuthAPI from "@/api/AuthAPI";
-import { reset } from "@formkit/vue";
+import { resetAuthForm as reset } from "@/helpers/authForm";
 import { useRouter } from "vue-router";
-import { useToast } from "vue-toast-notification";
+import { useToast } from "@/lib/notifications";
 
 interface RegisterFormData {
+  phone?: string;
   name: string;
   email: string;
   password: string;
@@ -170,11 +115,14 @@ interface RegisterFormData {
 
 const toast = useToast();
 const router = useRouter();
+const submitting = ref(false);
 
 const handleSubmit = async ({
   password_confirm,
   ...formdata
 }: RegisterFormData) => {
+  if (submitting.value) return;
+  submitting.value = true;
   try {
     const { data } = await AuthAPI.register(formdata);
 
@@ -198,7 +146,7 @@ const handleSubmit = async ({
       message: errorMsg,
       type: "error",
     });
-  }
+  } finally { submitting.value = false; }
 };
 
 </script>

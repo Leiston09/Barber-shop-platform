@@ -1,189 +1,64 @@
 <template>
-  <div class="border border-white/5 rounded-2xl bg-white/[0.02] p-5 sm:p-6">
-    <p class="text-[9px] uppercase tracking-[0.3em] text-[#ffb700] font-medium mb-1">
-      Resumen
-    </p>
+  <section data-booking-summary aria-label="Resumen de tu reserva" :class="presentation === 'sidebar' ? 'min-w-0' : 'min-w-0 rounded-xl border border-white/10 bg-[#111111] p-4 sm:p-5'">
+    <header class="mb-2 flex min-h-8 items-center justify-between gap-2">
+      <h2 class="font-barber text-2xl text-white">Tu reserva</h2>
+      <span class="shrink-0 rounded-full border border-white/15 bg-white/[0.03] px-2.5 py-1 text-[10px] font-medium text-white/50">Por confirmar</span>
+    </header>
 
-    <h3 class="font-barber text-lg text-white font-light mb-5">
-      Tu reserva
-    </h3>
-
-    <!-- BARBERO -->
-    <div class="mb-4 pb-4 border-b border-white/5">
-      <p class="text-[8px] uppercase tracking-[0.25em] text-white/25 mb-2">
-        Barbero
-      </p>
-
-      <div v-if="appointmentBooking.barber" class="flex items-center gap-3">
-        <img
-          :src="`/img/barbers/barber${barberIndex + 1}.jpg`"
-          :alt="appointmentBooking.barber.name"
-          class="w-10 h-10 rounded-full object-cover border border-[#ffb700]/30"
-        />
-
-        <div class="min-w-0">
-          <p class="text-white/85 text-xs truncate">
-            {{ appointmentBooking.barber.name }}
-          </p>
-
-          <p class="text-white/30 text-[10px] truncate">
-            {{ appointmentBooking.barber.email }}
-          </p>
+    <div class="flex items-start gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-[15px]">
+      <svg aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-white/45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3.5" y="5.5" width="17" height="15" rx="2.5" /><path d="M7.5 3v5m9-5v5M4 11h16" />
+      </svg>
+      <div class="min-w-0">
+        <p class="text-sm leading-relaxed text-white/75 first-letter:uppercase">{{ shortDate || 'Fecha por elegir' }}</p>
+        <div class="mt-1 flex flex-wrap items-baseline gap-3">
+          <strong class="text-lg font-medium tabular-nums" :class="booking.time ? 'text-[#ffb700]' : 'text-white/40'">{{ booking.time || 'Hora por elegir' }}</strong>
+          <span v-if="booking.time" class="text-xs text-white/40">60 min</span>
         </div>
       </div>
-
-      <p v-else class="text-white/25 text-xs italic">
-        Sin seleccionar
-      </p>
     </div>
 
-    <!-- SERVICIOS -->
-    <div class="mb-4 pb-4 border-b border-white/5">
-      <p class="text-[8px] uppercase tracking-[0.25em] text-white/25 mb-2">
-        Servicios
-      </p>
+    <div class="mx-0.5 my-5 flex items-start gap-3">
+      <BarberPortrait v-if="booking.barber" :id="booking.barber._id" :name="booking.barber.name" compact class="h-11! w-11 shrink-0 rounded-lg border border-white/10 sm:h-11!" />
+      <span v-else aria-hidden="true" class="flex size-11 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.025]">
+        <svg class="size-5 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="3.5" /><path d="M5 21v-2a7 7 0 0 1 14 0v2" /></svg>
+      </span>
+      <div class="min-w-0">
+        <p class="text-xs leading-relaxed text-white/45">Barbero</p>
+        <p class="mt-0.5 break-words text-sm leading-relaxed" :class="booking.barber ? 'text-white/90' : 'text-white/45'">{{ booking.barber?.name || 'Elige tu profesional' }}</p>
+      </div>
+    </div>
 
-      <ul
-        v-if="appointmentBooking.services.length"
-        class="space-y-1.5"
-      >
-        <li
-          v-for="service in appointmentBooking.services"
-          :key="service._id"
-          class="flex justify-between text-xs gap-3"
-        >
-          <span class="text-white/70 truncate">
-            {{ service.name }}
-          </span>
-
-          <span class="text-white/40 shrink-0">
-            {{ formatCurrency(service.price) }}
-          </span>
+    <div class="border-t border-white/10 pt-4">
+      <h3 class="text-xs text-white/45">Servicios</h3>
+      <ul v-if="booking.services.length" class="mt-3 space-y-3">
+        <li v-for="service in booking.services" :key="service._id" class="flex justify-between gap-4 text-sm leading-relaxed">
+          <span class="min-w-0 break-words text-white/80">{{ service.name }}</span>
+          <span class="shrink-0 tabular-nums text-white/55">{{ formatCurrency(service.price) }}</span>
         </li>
       </ul>
-
-      <p v-else class="text-white/25 text-xs italic">
-        Sin seleccionar
-      </p>
+      <p v-else class="mt-2 text-sm leading-relaxed text-white/40">Aún no has elegido servicios.</p>
     </div>
 
-    <!-- FECHA Y HORA -->
-    <div class="mb-4 pb-4 border-b border-white/5">
-      <p class="text-[8px] uppercase tracking-[0.25em] text-white/25 mb-2">
-        Fecha y hora
-      </p>
-
-      <p
-        v-if="appointmentBooking.date"
-        class="text-white/70 text-xs"
-      >
-        {{ displayDate(appointmentBooking.date) }}
-      </p>
-
-      <p v-else class="text-white/25 text-xs italic">
-        Sin seleccionar
-      </p>
-
-      <p
-        v-if="appointmentBooking.time"
-        class="text-[#ffb700] text-sm mt-1"
-      >
-        {{ appointmentBooking.time }}
-      </p>
+    <div class="mt-5 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
+      <div class="min-w-0">
+        <p class="text-sm text-white/75">Total de tu reserva</p>
+        <span class="mt-1 block text-xs leading-relaxed text-white/35">{{ booking.services.length ? 'Servicios seleccionados' : 'Se calcula al elegir servicios' }}</span>
+      </div>
+      <strong class="shrink-0 font-barber text-3xl font-normal tabular-nums text-[#ffb700]">{{ formatCurrency(booking.totalService) }}</strong>
     </div>
-
-    <!-- TOTAL -->
-    <div class="flex items-center justify-between mb-5">
-      <span
-        class="text-[9px] uppercase tracking-[0.3em] text-white/35 font-medium"
-      >
-        Total
-      </span>
-
-      <span class="font-barber text-xl text-[#ffb700]">
-        {{ formatCurrency(appointmentBooking.totalService) }}
-      </span>
-    </div>
-
-    <!-- BOTÓN SEGÚN EL PASO -->
-    <RouterLink
-      v-if="nextStep && route.name !== 'New-Appointments-details'"
-      :to="{ name: nextStep.route }"
-      class="flex items-center justify-center w-full px-4 py-3.5 rounded-xl bg-[#ffb700] text-black text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] text-center hover:bg-[#e6a500] transition-colors active:scale-[0.98]"
-    >
-      {{ nextStep.label }}
-    </RouterLink>
-
-    <button
-      v-if="route.name === 'New-Appointments-details' && nextStep"
-      type="button"
-      :disabled="!appointmentBooking.validateReservation"
-      @click="handleSave"
-      class="w-full text-center px-4 py-3.5 rounded-xl bg-[#ffb700] text-black text-[11px] sm:text-xs font-bold uppercase tracking-[0.12em] hover:bg-[#e6a500] transition-colors active:scale-[0.98] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-    >
-      Confirmar Reservación
-    </button>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { RouterLink, useRoute } from "vue-router";
 import { useAppointmentBookingStore } from "@/stores/appointmentCreator";
-import { useBarberStore } from "@/stores/barber";
-import { useToast } from "vue-toast-notification";
 import { formatCurrency } from "@/helpers";
-import { displayDate } from "@/helpers/date";
+import BarberPortrait from "@/components/UI/BarberPortrait.vue";
 
-const route = useRoute();
-const appointmentBooking = useAppointmentBookingStore();
-const barberStore = useBarberStore();
-const toast = useToast();
-
-const barberIndex = computed(() => {
-  const index = barberStore.barbers.findIndex(
-    (barber) => barber._id === appointmentBooking.barber?._id,
-  );
-
-  return index >= 0 ? index : 0;
-});
-
-const handleSave = () => {
-  appointmentBooking.saveAppointment(toast);
-};
-
-const nextStep = computed(() => {
-  if (route.name === "BarberSelect") {
-    return appointmentBooking.barber
-      ? {
-          label: "Continuar con servicios",
-          route: "New-appointments",
-        }
-      : null;
-  }
-
-  if (route.name === "New-appointments") {
-    return appointmentBooking.barber &&
-      appointmentBooking.services.length > 0
-      ? {
-          label: "Continuar con fecha y hora",
-          route: "New-Appointments-details",
-        }
-      : null;
-  }
-
-  if (route.name === "New-Appointments-details") {
-    return appointmentBooking.barber &&
-      appointmentBooking.services.length > 0 &&
-      appointmentBooking.date &&
-      appointmentBooking.time
-      ? {
-          label: "Confirmar reservación",
-          route: "New-Appointments-confirm",
-        }
-      : null;
-  }
-
-  return null;
-});
+withDefaults(defineProps<{ presentation?: "default" | "sidebar" }>(), { presentation: "default" });
+const booking = useAppointmentBookingStore();
+const shortDate = computed(() => booking.date
+  ? new Intl.DateTimeFormat("es-EC", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(booking.date + "T12:00:00Z"))
+  : "");
 </script>

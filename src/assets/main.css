@@ -1,6 +1,72 @@
 /* main.css */
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
 @import "tailwindcss";
 
 @theme {
   --font-barber: "Playfair Display", serif;
+  --font-bebas: "Bebas Neue", sans-serif;
+  --text-10xl: 10rem;
+  --text-11xl: 11rem;
+  --text-12xl: 12rem;
+  --text-13xl: 13rem;
+  --animate-booking-entrance: booking-entrance 0.55s ease both;
+  --animate-booking-availability: booking-availability 2s ease-in-out infinite;
+  @keyframes booking-entrance {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes booking-availability {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 6px #69d69b60;
+    }
+    50% {
+      opacity: 0.65;
+      box-shadow: 0 0 13px #69d69ba0;
+    }
+  }
+}
+/* Una sola altura minima para cada layout; el contenido puede crecer. */
+:root {
+  --app-viewport: 100vh;
+  --app-header-height: 64px;
+  --app-mobile-nav-height: 70px;
+  --app-mobile-nav-gap: 0.75rem;
+  --app-mobile-nav-clearance: calc(
+    var(--app-mobile-nav-height) + var(--app-mobile-nav-gap) +
+      var(--app-mobile-nav-gap) + env(safe-area-inset-bottom, 0px)
+  );
+  color-scheme: dark;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --app-viewport: 100dvh;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #0a0a0a;
+}
+
+#app,
+.app-shell {
+  min-height: var(--app-viewport);
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --app-mobile-nav-clearance: 0px;
+  }
 }

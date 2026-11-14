@@ -7,16 +7,18 @@ export default {
     return api.get("/services");
   },
 
-  getById(id: string) {
-    return api.get(`/services/${id}`);
-  },
+  adminAll() { return api.get("/services/admin"); },
 
-  create(data: { name: string; price: number }) {
+  create(data: { name: string; price: number; description?: string; photo?: string | null; active?: boolean }) {
     return api.post("/services", data);
   },
 
-  update(id: string, data: { name: string; price: number }) {
+  update(id: string, data: { name: string; price: number; description?: string; photo?: string | null; active?: boolean; version?: number }) {
     return api.put(`/services/${id}`, data);
+  },
+
+  updatePromotion(id: string, promotion: import("@/helpers/promotions").Promotion | null, version: number) {
+    return api.put(`/services/${id}/promotion`, { promotion, version });
   },
 
   delete(id: string) {

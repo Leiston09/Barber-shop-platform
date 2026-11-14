@@ -23,6 +23,9 @@ export interface AdminAppointmentBarber {
 }
 
 export interface AdminAppointment {
+  attendance?: "pending" | "attended" | "no_show";
+  attendanceVersion?: number;
+  attendanceHistory?: { actorName: string; at: string; previous: string; result: string; reason: string }[];
   _id: string;
   services: AdminService[];
   date: string;
@@ -68,6 +71,9 @@ export interface AdminUser {
   protected: boolean;
   appointmentsCount: number;
   futureAppointmentsCount: number;
+  assignedAppointmentsCount?: number;
+  assignedFutureAppointmentsCount?: number;
+  selfFutureAppointmentsCount?: number;
   totalSpent: number;
   lastAppointment: string | null;
   appointments: AdminUserAppointment[];
@@ -246,24 +252,9 @@ export const useAdminStore = defineStore("admin", () => {
     try {
       const { data } = await AdminAPI.updateUserBlockStatus(id, blocked);
 
-      // Actualizar localmente
-      const idx = users.value.findIndex((u) => u._id === id);
-      if (idx !== -1) {
-        users.value[idx] = {
-          ...users.value[idx]!,
-          blocked,
-          // ⬇️ si se bloqueó, el backend lo pasa a cliente
-          role: blocked ? "client" : users.value[idx]!.role,
-          admin: blocked ? false : users.value[idx]!.admin,
-          appointmentsCount: blocked
-            ? users.value[idx]!.appointmentsCount -
-              users.value[idx]!.futureAppointmentsCount
-            : users.value[idx]!.appointmentsCount,
-          futureAppointmentsCount: blocked
-            ? 0
-            : users.value[idx]!.futureAppointmentsCount,
-        };
-      }
+      // Volver a consultar los resultados reales; el bloqueo conserva el historial.
+      appointments.value = [];
+      await getAllUsers();
 
       toast.open({ message: data.msg, type: "success" });
       return true;
@@ -294,7 +285,17 @@ export const useAdminStore = defineStore("admin", () => {
     }
   }
 
+  function clearPrivateData() {
+    appointments.value = [];
+    clients.value = [];
+    users.value = [];
+    error.value = null;
+    clientsError.value = null;
+    usersError.value = null;
+  }
+
   return {
+    clearPrivateData,
     appointments,
     clients,
 

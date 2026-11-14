@@ -1,196 +1,229 @@
 <template>
-  <div
-    ref="sectionRef"
-    class="w-full min-h-full bg-[#050505] flex items-center justify-center px-6 py-5 overflow-hidden"
+  <section
+    aria-labelledby="services-title"
+    class="w-full flex-1 bg-neutral-950 px-5 py-6 text-white sm:px-10 sm:py-8 lg:px-15"
   >
-    <div class="w-full max-w-5xl mx-auto">
-      <div class="text-center mb-5">
-        <p
-          data-anim
-          class="text-[#ffb700]/80 text-[9px] uppercase tracking-[0.3em] font-medium"
-        >
-          The Barber Studio
-        </p>
+    <div class="mx-auto max-w-4xl">
+      <!-- ENCABEZADO CENTRADO -->
+      <header class="mx-auto mb-5 max-w-2xl text-center sm:mb-6">
+        <p class="mb-2 text-xs font-medium text-[#ffb700]">The Barber Studio</p>
 
         <h1
-          data-anim
-          class="mt-2 font-barber uppercase text-4xl sm:text-5xl lg:text-6xl text-white/90 font-semibold leading-[0.9] tracking-[-0.03em]"
+          id="services-title"
+          class="font-barber text-3xl font-medium uppercase leading-none tracking-tight sm:text-3xl lg:text-4xl"
         >
-          Elige tu
-          <span class="text-[#ffb700]">estilo.</span>
+          Tu estilo, en buenas manos.
         </h1>
 
-        <p
-          data-anim
-          class="text-white/35 text-xs sm:text-sm font-light mt-3 max-w-md mx-auto leading-relaxed"
-        >
-          Selecciona el servicio que quieres reservar para continuar.
+        <p class="mx-auto mt-2 max-w-xl text-sm leading-6 text-white/60">
+          Descubre nuestros servicios y prepara tu próxima visita. La barbería
+          ya está disponible para reservar en línea.
         </p>
-      </div>
+      </header>
 
-      <!-- TARJETAS DE SERVICIOS -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
+      <!-- TARJETAS SIN MODIFICACIONES -->
+      <div class="grid items-stretch gap-4 sm:gap-5 md:grid-cols-2">
         <!-- BARBERÍA -->
         <RouterLink
-          data-card-left
           :to="{ name: 'Reservaciones' }"
-          class="group relative h-[280px] sm:h-[320px] rounded-xl overflow-hidden border border-white/10 hover:border-[#ffb700]/35 transition-all duration-500 bg-gradient-to-br from-[#1a1408] via-[#0d0d0d] to-black"
+          aria-labelledby="barber-service-title"
+          class="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-white/15 bg-neutral-900/60 transition-colors hover:border-[#ffb700]/60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ffb700]"
         >
-          <img
-            src="/img/services/barberia.png"
-            alt="Barbería"
-            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            @error="(e) => ((e.target as HTMLImageElement).style.opacity = '0')"
-          />
+          <div class="relative h-36 overflow-hidden bg-[#201b15] sm:h-40">
+            <SiteImage
+              v-if="!failedImages.has('barber')"
+              slot="service-barber"
+              decoding="async"
+              draggable="false"
+              class="h-full w-full select-none object-cover"
+              @error="failedImages.add('barber')"
+            />
 
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"
-          />
-
-          <div
-            class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ffb700]/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          />
-
-          <div class="absolute inset-x-0 bottom-0 p-5 text-center">
-            <p
-              class="text-[#ffb700]/80 text-[8px] uppercase tracking-[0.3em] font-medium mb-2"
+            <div
+              v-else
+              class="flex h-full items-center justify-center text-white/35"
             >
-              Barbería
-            </p>
+              <svg
+                aria-hidden="true"
+                class="size-16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+              >
+                <circle cx="6" cy="6" r="2.5" />
+                <circle cx="6" cy="18" r="2.5" />
+                <path
+                  d="m8 8 12 12M14 10l6-6M8 16l12-12"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div
+              class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 to-transparent"
+            />
+          </div>
+
+          <div class="flex flex-1 flex-col p-4 sm:p-5">
+            <div
+              class="mb-2 flex items-center gap-2 text-xs font-medium text-[#ffb700]"
+            >
+              <svg
+                aria-hidden="true"
+                class="size-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+              >
+                <rect x="3" y="5" width="18" height="16" rx="2" />
+                <path
+                  d="M16 3v4M8 3v4M3 11h18m-13 5 2 2 5-5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+
+              Reserva en línea
+            </div>
 
             <h2
-              class="font-barber uppercase text-3xl sm:text-4xl text-white/90 font-semibold leading-[0.9] tracking-[-0.025em]"
+              id="barber-service-title"
+              class="font-barber text-2xl font-medium uppercase leading-none tracking-tight "
             >
-              Corte y
-              <span class="text-[#ffb700]">estilo</span>
+              Barbería
             </h2>
 
-            <p
-              class="text-white/45 text-xs sm:text-sm font-light mt-3 max-w-sm mx-auto leading-relaxed"
-            >
-              Cortes, barba, afeitado clásico y asesoría de imagen.
+            <p class="mt-2 text-sm leading-5 text-white/65">
+              Cortes, arreglo de barba, afeitado clásico y asesoría para
+              encontrar el estilo que va contigo.
             </p>
 
-            <span
-              class="inline-block mt-4 text-white/55 text-[8px] uppercase tracking-[0.25em] transition-colors duration-300 group-hover:text-[#ffb700]"
-            >
-              Reservar servicio
-            </span>
+            <div class="mt-auto pt-4">
+              <span
+                class="flex min-h-10 w-full items-center justify-between gap-3 rounded-xl bg-[#ffb700] px-4 py-2.5 text-sm font-semibold text-neutral-950 transition-colors hover:bg-[#e6a500] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ffb700] motion-reduce:transition-none"
+              >
+                <span>Ir a reservas de barbería</span>
+
+                <svg
+                  aria-hidden="true"
+                  class="size-4 shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path
+                    d="m9 5 7 7-7 7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+
+              <p class="mt-2 text-xs leading-5 text-white/45">
+                Consulta los horarios y elige a tu barbero al reservar.
+              </p>
+            </div>
           </div>
         </RouterLink>
 
         <!-- TATUAJES -->
-        <button
-          type="button"
-          data-card-right
-          @click="handleTatuajesClick"
-          class="group relative h-[280px] sm:h-[320px] rounded-xl overflow-hidden border border-white/10 hover:border-[#ffb700]/35 transition-all duration-500 bg-gradient-to-br from-[#1a1408] via-[#0d0d0d] to-black cursor-not-allowed text-left"
+        <article
+          aria-labelledby="tattoo-service-title"
+          role="link"
+          aria-disabled="true"
+          class="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/40 cursor-not-allowed"
         >
-          <img
-            src="/img/services/tatuajes.png"
-            alt="Tatuajes"
-            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 opacity-60 group-hover:scale-105"
-            @error="(e) => ((e.target as HTMLImageElement).style.opacity = '0')"
-          />
+          <div class="relative h-36 overflow-hidden bg-[#e8e7e3] sm:h-40">
+            <SiteImage
+              v-if="!failedImages.has('tattoo')"
+              slot="service-tattoo"
+              decoding="async"
+              draggable="false"
+              class="h-full w-full select-none object-contain p-5 grayscale mix-blend-multiply sm:p-7"
+              @error="failedImages.add('tattoo')"
+            />
 
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"
-          />
-
-          <div
-            class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ffb700]/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          />
-
-          <!-- PRÓXIMAMENTE -->
-          <div
-            class="absolute top-3 right-3 bg-black/70 backdrop-blur-sm border border-[#ffb700]/30 px-3 py-1.5 rounded-full"
-          >
-            <span
-              class="text-[#ffb700] text-[8px] uppercase tracking-[0.25em] font-medium"
+            <div
+              v-else
+              class="flex h-full items-center justify-center text-neutral-500"
             >
-              Próximamente
-            </span>
+              <svg
+                aria-hidden="true"
+                class="size-16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+              >
+                <path
+                  d="m4 20 3-1 12-12-2-2L5 17l-1 3Zm10-12 3 3M16 4l4 4M3 22h18"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
           </div>
 
-          <div class="absolute inset-x-0 bottom-0 p-5 text-center">
-            <p
-              class="text-[#ffb700]/80 text-[8px] uppercase tracking-[0.3em] font-medium mb-2"
-            >
-              Tatuajes
-            </p>
+          <div class="flex flex-1 flex-col p-4 sm:p-5">
+            <p class="mb-2 text-xs font-medium text-white/50">Próximamente</p>
 
             <h2
-              class="font-barber uppercase text-3xl sm:text-4xl text-white/90 font-semibold leading-[0.9] tracking-[-0.025em]"
+              id="tattoo-service-title"
+              class="font-barber text-2xl font-medium uppercase leading-none tracking-tight"
             >
-              Tinta y
-              <span class="text-[#ffb700]">detalle</span>
+              Tatuajes
             </h2>
 
-            <p
-              class="text-white/45 text-xs sm:text-sm font-light mt-3 max-w-sm mx-auto leading-relaxed"
-            >
-              Diseño personalizado, línea fina, blackwork y color.
+            <p class="mt-2 text-sm leading-5 text-white/55">
+              Diseños personalizados, línea fina, blackwork y color. Un nuevo
+              espacio para llevar tus ideas a la piel.
             </p>
 
-            <span
-              class="inline-block mt-4 text-white/55 text-[8px] uppercase tracking-[0.25em] transition-colors duration-300 group-hover:text-[#ffb700]"
-            >
-              Reservar servicio
-            </span>
+            <div class="mt-auto pt-4">
+              <p
+                class="flex min-h-10 items-center gap-3 rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white/50"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="size-4 shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                >
+                  <rect x="5" y="10" width="14" height="11" rx="2" />
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round" />
+                </svg>
+
+                Reservas aún no disponibles
+              </p>
+
+              <p class="mt-2 text-xs leading-5 text-white/45">
+                Esta categoría estará disponible más adelante.
+              </p>
+            </div>
           </div>
-        </button>
+        </article>
       </div>
+
+      <!-- MENSAJE INFERIOR CENTRADO -->
+      <p
+        class="mx-auto mt-4 max-w-2xl text-center text-xs leading-5 text-white/50"
+      >
+        Para gestionar tus citas necesitas iniciar sesión. Dentro de reservas
+        podrás consultar tus citas o crear una nueva.
+      </p>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import SiteImage from "@/components/UI/SiteImage.vue";
+import { reactive } from "vue";
 import { RouterLink } from "vue-router";
-import { useToast } from "vue-toast-notification";
-import { useRevealOnScroll } from "@/composables/useRevealOnScroll";
 
-const sectionRef = ref<HTMLElement | null>(null);
-const toast = useToast();
-
-// Tarjeta de tatuajes deshabilitada
-const handleTatuajesClick = () => {
-  toast.open({
-    message: "Esta función está en mantenimiento",
-    type: "warning",
-    duration: 3000,
-  });
-};
-
-// Encabezado
-useRevealOnScroll(sectionRef);
-
-// Tarjeta izquierda
-useRevealOnScroll(sectionRef, {
-  selector: "[data-card-left]",
-  y: 0,
-  x: -150,
-  duration: 1.1,
-  stagger: 0,
-  start: "top 75%",
-  ease: "power3.out",
-});
-
-// Tarjeta derecha
-useRevealOnScroll(sectionRef, {
-  selector: "[data-card-right]",
-  y: 0,
-  x: 150,
-  duration: 1.1,
-  stagger: 0,
-  start: "top 75%",
-  ease: "power3.out",
-});
+const failedImages = reactive(new Set<string>());
 </script>
-
-<style scoped>
-img {
-  user-select: none;
-  -webkit-user-drag: none;
-}
-</style>
