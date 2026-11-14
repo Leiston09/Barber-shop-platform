@@ -7,7 +7,7 @@
     </header>
     <p v-if="error && !formOpen" role="alert" class="mt-4 rounded-lg border border-red-400/25 p-3 text-sm leading-6 text-red-200">{{ error }}</p>
     <aside class="mt-5 rounded-xl border border-white/10 bg-white/[0.02] p-4"><h3 class="text-sm font-medium text-white/80">Cómo se aplican las promociones</h3><p class="mt-2 max-w-3xl text-xs leading-6 text-white/50">Una promoción habilitada ofrece el descuento durante las fechas indicadas, siempre que el servicio esté publicado. Al desactivarla, deja de ofrecerse para nuevas reservas. Las citas ya guardadas conservan su importe.</p></aside>
-    <template>
+    <div>
       <p v-if="!offers.length" class="mt-5 text-sm leading-6 text-white/40">No hay promociones configuradas.</p>
       <ul v-else class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         <li v-for="service in offers" :key="service._id" class="rounded-lg bg-white/[0.035] p-3">
@@ -19,7 +19,7 @@
       </ul>
 
       <p v-if="!disabled && !eligible.length" class="mt-2 text-xs leading-5 text-white/40">Añade un servicio con precio mayor que cero para preparar una promoción.</p>
-    </template>
+    </div>
     <dialog ref="editorDialog" aria-labelledby="promotion-editor-title" @cancel.prevent="closeForm" @click.self="closeForm" class="m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%_-_1.5rem)] max-w-2xl overflow-hidden rounded-2xl border border-white/15 bg-[#111] p-0 text-white shadow-2xl backdrop:bg-black/75 open:flex open:flex-col">
       <header class="flex shrink-0 items-center justify-between gap-3 border-b border-white/10 px-4 py-4 sm:px-6"><h2 id="promotion-editor-title" class="font-barber text-2xl font-normal">{{ selected?.promotion ? 'Editar promoción' : 'Nueva promoción' }}</h2><button type="button" :disabled="busy" @click="closeForm" aria-label="Cerrar promoción" class="flex size-10 items-center justify-center rounded-lg border border-white/15 text-xl text-white/60 disabled:opacity-40">×</button></header>
       <p v-if="error" role="alert" class="mx-4 mt-4 shrink-0 rounded-lg border border-red-400/25 p-3 text-sm text-red-200 sm:mx-6">{{ error }}</p>
