@@ -16,6 +16,7 @@ export interface User {
   name: string;
   email: string;
   admin: boolean;
+  isPrincipalAdmin?: boolean;
   role: UserRole;
 }
 
@@ -58,6 +59,7 @@ export const useUserStore = defineStore("user", () => {
   const isAdmin = computed(
     () => user.value?.role === "admin" || user.value?.admin === true,
   );
+  const isPrincipalAdmin = computed(() => user.value?.role === "admin" && user.value?.isPrincipalAdmin === true);
   const isBarber = computed(() => user.value?.role === "barber");
 
   function logout() {
@@ -81,6 +83,7 @@ export const useUserStore = defineStore("user", () => {
     isAuthenticated,
     isAdmin,
     isBarber,
+    isPrincipalAdmin,
     logout,
     init,
   };
